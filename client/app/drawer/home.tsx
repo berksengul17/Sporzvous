@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
@@ -11,7 +11,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
-          <TextInput style={styles.searchText}>Search</TextInput>
+          <TextInput style={styles.searchText} placeholder='Search'/>
         </View>
         <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
           <Ionicons name="person-circle" size={60} color="black" />
@@ -27,78 +27,48 @@ export default function HomeScreen() {
             <AntDesign name="plussquare" size={40} color="orange" />
           </TouchableOpacity>
         </View>
-      <ScrollView style={styles.content}>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-      </ScrollView>
+        <FlatList
+        data={[
+          {key: 'Devin'},
+          {key: 'Dan'},
+          {key: 'Dominic'},
+          {key: 'Jackson'},
+          {key: 'James'},
+          {key: 'Joel'},
+          {key: 'John'},
+          {key: 'Jillian'},
+          {key: 'Jimmy'},
+          {key: 'Julie'},
+          {key: 'Julie1'},
+          {key: 'Julie2'},
+          {key: 'Julie3'},
+          {key: 'Julie4'},
+          {key: 'Julie5'},
+          {key: 'Julie6'},
+          {key: 'Julie7'},
+          {key: 'Julie8'},
+          {key: 'Julie9'},
+          {key: 'Julie10'},
+          {key: 'Julie11'},
+          {key: 'Julie111'},
+          {key: 'Julie1111'},
+          {key: 'Julie11111'},
+          {key: 'Julie111111'},
+          {key: 'Julie1111111'},
+          {key: 'Julie111111111'},
+          {key: 'Julie222'},
+          {key: 'Julie2222'},
+          {key: 'Julie22222'},
+          {key: 'Julie33'},
+          {key: 'Julie44'},
+          {key: 'Julie55'},
+          {key: 'Julie66'},
+          {key: 'Julie77'},
+          {key: 'Julie88'},
+          {key: 'Julie99'},
+        ]}
+        renderItem={({item, index}) => <Text key={index}>{item.key}</Text>}
+      />
       <View style={styles.wave}>
       <Image source={require('../../assets/images/Waves.png')}/>
       </View>
@@ -114,7 +84,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'space-between'
     
   },
   searchBar: {
@@ -124,21 +93,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10,
     borderRadius: 10,
-    flexGrow: 1
+    flex: 1
   },
   titleview: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: '3%'
+    marginTop: '3%',
   },
   searchText: {
     marginLeft: 10,
     color: 'gray',
+    flex: 1
   },
   content: {
-   padding: 20,
-   marginBottom: '47%',
-   
+   padding: 20
   },
   title: {
     fontSize: 22,
@@ -161,7 +129,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   wave: {
-    position: 'absolute',
+    position: 'static',
     bottom: 0,
     width: '100%',
     resizeMode: 'cover',
