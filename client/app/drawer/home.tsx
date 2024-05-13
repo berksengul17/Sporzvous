@@ -1,9 +1,15 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { TextInput } from 'react-native-gesture-handler';
-
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { TextInput } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   return (
@@ -13,20 +19,20 @@ export default function HomeScreen() {
           <Ionicons name="search" size={20} color="gray" />
           <TextInput style={styles.searchText}>Search</TextInput>
         </View>
-        <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
+        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
           <Ionicons name="person-circle" size={60} color="black" />
-          <Text style={{alignSelf:'center'}}>Profile</Text>
+          <Text style={{ alignSelf: "center" }}>Profile</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.titleview}>
-          <Text style={styles.title}>Upcoming Events</Text>
-          <TouchableOpacity style={{justifyContent:'center'}}>
-            <AntDesign name="filter" size={40} color="orange" style={{}}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={{justifyContent:'center'}}>
-            <AntDesign name="plussquare" size={40} color="orange" />
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.title}>Upcoming Events</Text>
+        <TouchableOpacity style={{ justifyContent: "center" }}>
+          <AntDesign name="filter" size={40} color="orange" style={{}} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ justifyContent: "center" }}>
+          <AntDesign name="plussquare" size={40} color="orange" />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.content}>
         <View style={styles.event}>
           <Text style={styles.username}>Username</Text>
@@ -53,7 +59,55 @@ export default function HomeScreen() {
           <Text style={styles.eventName}>Title of the event</Text>
           <Text style={styles.sport}>Sport</Text>
         </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
       </ScrollView>
+      <View style={styles.wave}>
+        <Image source={require("../../assets/images/Waves.png")} />
+      </View>
     </View>
   );
 }
@@ -61,53 +115,59 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent:'space-between'
-    
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   searchBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     alignItems: "center",
     marginHorizontal: 10,
     borderRadius: 10,
-    flexGrow: 1
+    flexGrow: 1,
   },
   titleview: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: '3%'
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: "3%",
   },
   searchText: {
     marginLeft: 10,
-    color: 'gray',
+    color: "gray",
   },
   content: {
-   padding: 20,
+    padding: 20,
+    marginBottom: "47%",
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color:'orange',
+    fontWeight: "bold",
+    color: "orange",
     marginBottom: 10,
   },
   event: {
     marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   username: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   eventName: {
-    color: 'gray',
+    color: "gray",
   },
   sport: {
-    fontStyle: 'italic',
+    fontStyle: "italic",
+  },
+  wave: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    resizeMode: "cover",
   },
 });

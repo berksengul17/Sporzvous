@@ -39,12 +39,13 @@ const Layout = () => {
     <Drawer
       drawerContent={CustomDrawerContent}
       screenOptions={{
+        headerTintColor: "orange",
         drawerHideStatusBarOnOpen: true,
         drawerActiveBackgroundColor: "#4E3833",
         drawerActiveTintColor: "#fff",
         drawerLabelStyle: { marginLeft: -20 },
         drawerStyle: {
-          backgroundColor: "darkorange",
+          backgroundColor: "orange",
         },
       }}
     >
