@@ -28,7 +28,7 @@ const FriendItem = ({ friend }) => (
   </View>
 );
 
-export default function HomeScreen() {
+export default function InboxScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
