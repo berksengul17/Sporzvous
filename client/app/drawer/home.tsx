@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,7 +18,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
-          <TextInput style={styles.searchText}>Search</TextInput>
+          <TextInput style={styles.searchText} placeholder="Search" />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
           <Ionicons name="person-circle" size={60} color="black" />
@@ -59,55 +60,7 @@ export default function HomeScreen() {
           <Text style={styles.eventName}>Title of the event</Text>
           <Text style={styles.sport}>Sport</Text>
         </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
-        <View style={styles.event}>
-          <Text style={styles.username}>Username</Text>
-          <Text style={styles.eventName}>Title of the event</Text>
-          <Text style={styles.sport}>Sport</Text>
-        </View>
       </ScrollView>
-      <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
-      </View>
     </View>
   );
 }
@@ -142,7 +95,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    marginBottom: "47%",
   },
   title: {
     fontSize: 22,
@@ -166,6 +118,12 @@ const styles = StyleSheet.create({
   },
   wave: {
     position: "absolute",
+    bottom: 0,
+    width: "100%",
+    resizeMode: "cover",
+  },
+  wave: {
+    position: "static",
     bottom: 0,
     width: "100%",
     resizeMode: "cover",
