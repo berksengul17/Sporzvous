@@ -4,6 +4,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
 
+const eventData = [
+  { id: '1', title: 'Esenyurt sssssssssssssssssssssssssssssHailsaha', sport: 'Football', host: 'Çağan Özsir' },
+  { id: '2', title: 'Tennis', sport: 'Tennis', host: 'Emre Erol'},
+  { id: '3', title: 'Berk’s Tennis', sport: 'Tennis', host: 'Berk Şengül'},
+  { id: '4', title: 'Bornova Futbol', sport: 'Football', host: 'Emre Erol'},
+  // Add more events here
+];
+
+const EventItem = ({ event }) => (
+  <View style={styles.eventContainer}>
+    <View style={styles.eventhostrow}><Text >{event.host}</Text></View>
+    <View style={styles.eventtitlerow}><Text numberOfLines={1}>{event.title}</Text></View>
+    <View style={styles.eventsportrow}><Text >{event.sport}</Text></View>
+  </View>
+);
 
 export default function HomeScreen() {
   return (
@@ -28,46 +43,9 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
         <FlatList
-        data={[
-          {key: 'Devin'},
-          {key: 'Dan'},
-          {key: 'Dominic'},
-          {key: 'Jackson'},
-          {key: 'James'},
-          {key: 'Joel'},
-          {key: 'John'},
-          {key: 'Jillian'},
-          {key: 'Jimmy'},
-          {key: 'Julie'},
-          {key: 'Julie1'},
-          {key: 'Julie2'},
-          {key: 'Julie3'},
-          {key: 'Julie4'},
-          {key: 'Julie5'},
-          {key: 'Julie6'},
-          {key: 'Julie7'},
-          {key: 'Julie8'},
-          {key: 'Julie9'},
-          {key: 'Julie10'},
-          {key: 'Julie11'},
-          {key: 'Julie111'},
-          {key: 'Julie1111'},
-          {key: 'Julie11111'},
-          {key: 'Julie111111'},
-          {key: 'Julie1111111'},
-          {key: 'Julie111111111'},
-          {key: 'Julie222'},
-          {key: 'Julie2222'},
-          {key: 'Julie22222'},
-          {key: 'Julie33'},
-          {key: 'Julie44'},
-          {key: 'Julie55'},
-          {key: 'Julie66'},
-          {key: 'Julie77'},
-          {key: 'Julie88'},
-          {key: 'Julie99'},
-        ]}
-        renderItem={({item, index}) => <Text key={index}>{item.key}</Text>}
+          data={eventData}
+          renderItem={({ item }) => <EventItem event={item} />}
+          keyExtractor={item => item.id}
       />
       <View style={styles.wave}>
       <Image source={require('../../assets/images/Waves.png')}/>
@@ -84,7 +62,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    
   },
   searchBar: {
     flexDirection: 'row',
@@ -106,20 +83,33 @@ const styles = StyleSheet.create({
     flex: 1
     
   },
-  content: {
-   padding: 20
+  eventContainer: {
+    marginVertical: 20,
+    marginHorizontal: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+   
   },
+  
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color:'orange',
     marginBottom: 10,
+    alignSelf: 'center'
+    
   },
-  event: {
-    marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+  eventhostrow: {
+    flex: 1
   },
+  eventtitlerow: {
+    flex: 1
+  },
+  eventsportrow: {
+    flex: 1,
+    alignItems: 'center'
+  },
+  
   username: {
     fontWeight: 'bold',
   },
