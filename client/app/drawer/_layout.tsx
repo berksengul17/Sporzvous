@@ -1,11 +1,53 @@
-import { View, Text } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { View } from "react-native";
+import {
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer";
+
+const CustomDrawerContent = (props: any) => {
+  const router = useRouter();
+  const { top, bottom } = useSafeAreaInsets();
+  return (
+    <View style={{ flex: 1 }}>
+      <DrawerContentScrollView
+        {...props}
+        scrollEnabled={false}
+        contentContainerStyle={{ paddingTop: top }}
+      >
+        <DrawerItemList {...props} />
+        <DrawerItem
+          labelStyle={{ marginLeft: -20 }}
+          label={"Log out"}
+          onPress={() => router.replace("/")}
+          icon={({ color, size }) => (
+            <Ionicons name="log-out" color={color} size={size} />
+          )}
+        />
+      </DrawerContentScrollView>
+    </View>
+  );
+};
 
 const Layout = () => {
   return (
-    <Drawer>
+    <Drawer
+      drawerContent={CustomDrawerContent}
+      screenOptions={{
+        drawerHideStatusBarOnOpen: true,
+        drawerActiveBackgroundColor: "#4E3833",
+        drawerActiveTintColor: "#fff",
+        drawerLabelStyle: { marginLeft: -20 },
+        drawerStyle: {
+          backgroundColor: "darkorange",
+        },
+      }}
+    >
       <Drawer.Screen
         name="home"
         options={{
