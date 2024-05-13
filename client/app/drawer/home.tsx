@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 export default function HomeScreen() {
@@ -10,7 +11,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
-          <Text style={styles.searchText}>Search</Text>
+          <TextInput style={styles.searchText}>Search</TextInput>
         </View>
         <TouchableOpacity style={{marginTop: '2%'}}>
           <Ionicons name="person-circle" size={60} color="black" />
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10,
     borderRadius: 10,
-  
     flexGrow: 1
   },
   titleview: {
