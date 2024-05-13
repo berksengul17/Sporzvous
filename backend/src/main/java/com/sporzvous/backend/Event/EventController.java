@@ -32,11 +32,11 @@ public class EventController {
                                           @RequestParam(required = false) LocalDate eventDate,
                                           @RequestParam(required = false) int isEventOver,
                                           @RequestParam(required = false) Long userId,
-                                          @RequestParam(required = false) double minRating) {
+                                          @RequestParam(required = false, defaultValue = "0") double minRating) {
         try {
             return ResponseEntity.ok(eventService.filterEvents(sport, locationCity, locationDistrict,
                                                             eventDate, isEventOver, userId, minRating));
-        } catch(IllegalArgumentException e) {
+        } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }

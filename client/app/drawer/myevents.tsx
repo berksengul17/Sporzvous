@@ -52,7 +52,6 @@ export default function MyEvents() {
          data={eventData}
          renderItem={({ item }) => <EventItem event={item} />}
          keyExtractor={item => item.id}
-         style={styles.list}
       />
       <View style={styles.wave}>
         <Image source={require('../../assets/images/Waves.png')}/>
