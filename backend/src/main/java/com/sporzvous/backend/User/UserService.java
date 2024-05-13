@@ -45,6 +45,11 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
     public void createPasswordResetTokenForUser(User user, String token) {
         if (passwordResetTokenRepository.findByUser(user).isPresent()) {
             passwordResetTokenRepository.deleteByUser(user);

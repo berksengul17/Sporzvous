@@ -3,6 +3,7 @@ package com.sporzvous.backend.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Comment.Comment;
+import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Rating.Rating;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,9 +30,15 @@ public class User {
     private String favoriteSport;
     private int eventCount;
     private int isVerified;
+    private UserStatus status;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Feedback feedback;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Comment> comments;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Rating> ratings;
