@@ -17,6 +17,7 @@ public class Rating {
     private Long ratingId;
     private double rating;
     private String field;
+    private String content;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;

@@ -2,7 +2,6 @@ package com.sporzvous.backend.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sporzvous.backend.Comment.Comment;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Rating.Rating;
 import jakarta.persistence.*;
@@ -34,10 +33,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Feedback feedback;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Comment> comments;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
