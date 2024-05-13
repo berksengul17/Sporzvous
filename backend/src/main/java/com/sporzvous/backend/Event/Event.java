@@ -29,7 +29,7 @@ public class Event {
     private LocalDate eventDate;
     private LocalTime eventTime;
     private Double skillRating;
-    private String locationIndex;
+//    private String locationIndex;
     @ManyToMany
     @JoinTable(
             name = "event_user",

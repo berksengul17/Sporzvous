@@ -63,7 +63,7 @@ public class UserController {
         return ResponseEntity.ok("You should receive a password reset email shortly");
     }
 
-    @PostMapping
+    @PostMapping("/addFeedback")
     public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {
         try {
 
@@ -87,4 +87,18 @@ public class UserController {
 
         }
     }
+//    @PostMapping("/createEvent")
+//    public ResponseEntity<?> createEvent(@RequestParam("title")String title,
+//                                         @RequestParam("sport")String sport,
+//                                         @RequestParam("locationCity")String locationCity,
+//                                         @RequestParam("locationDistrict")String locationDistrict,
+//                                         @RequestParam("participants")Integer participants,
+//                                         @RequestParam("teamNumber")Integer teamNumber,
+//                                         @RequestParam("eventDate") LocalDate eventDate,
+//                                         @RequestParam("eventTime") LocalDate eventTime,
+//                                         @RequestParam("skillRating") Double skillRating) {
+//
+//
+//    }
+//
 }
