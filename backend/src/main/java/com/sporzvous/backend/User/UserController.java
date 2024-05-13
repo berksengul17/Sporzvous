@@ -1,5 +1,7 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.Feedback.Feedback;
+import com.sporzvous.backend.Feedback.FeedbackService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final FeedbackService feedbackService;
     private final JavaMailSender mailSender;
     private final Environment env;
 
@@ -76,5 +79,30 @@ public class UserController {
 
     private String getAppUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {
+        try {
+
+            if (request.getTitle().length() < 3 || request.getTitle().length() > 30) {
+                return ResponseEntity.badRequest().body("Title must be between 3 and 30 characters.");
+            } else if (request.getContent().length() < 20 || request.getContent().length() > 100) {
+                return ResponseEntity.badRequest().body("File must be a PDF.");
+            }
+
+            if (request.getUser() == null) {
+                // Call createFeedback from service
+                Feedback feedback = feedbackService.createFeedback(request);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Feedback with ID" + feedback.getFeedbackId() + "created successfully");
+            } else {
+                // Call createReport from service
+                Feedback feedback = feedbackService.createReport(request);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Report with ID" + feedback.getFeedbackId() + "created successfully");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error " + e.getMessage());
+
+        }
     }
 }

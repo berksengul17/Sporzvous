@@ -11,9 +11,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-@AllArgsConstructor
-@NoArgsConstructor
 
 public class Feedback {
     @Id
@@ -26,6 +23,21 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Feedback(FeedbackCategory category, String title, String content) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+
+    }
+    public Feedback(FeedbackCategory category, String title, String content, User user) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
