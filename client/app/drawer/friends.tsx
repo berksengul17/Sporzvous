@@ -10,12 +10,14 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TextInput 
-          placeholder='Search'
-          style={styles.input}
-        /> 
-        <MaterialCommunityIcons name="email-send-outline" size={24} color="black" />
-        <AntDesign name="adduser" size={24} color="black" />
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={20} color="gray" />
+          <TextInput style={styles.searchText} placeholder='Search'/>
+        </View>
+        <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
+          <Ionicons name="person-circle" size={60} color="black" />
+          <Text style={{alignSelf:'center'}}>Profile</Text>
+        </TouchableOpacity>
       </View>
 
 
@@ -29,16 +31,30 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    
     backgroundColor: 'white',
   },
   header: {
-    margin: 5
+    flexDirection: 'row',
+    alignItems: 'center',
+    
   },
-  input: {
-
+  searchBar: {
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: '#F0F0F0',
+    alignItems: "center",
+    marginHorizontal: 10,
+    borderRadius: 10,
+    flex: 1
+  },
+  searchText: {
+    marginLeft: 10,
+    color: 'gray',
+    flex: 1
   },
   wave: {
-    position: 'absolute',
+    position: 'static',
     bottom: 0,
     width: '100%',
     resizeMode: 'cover',
