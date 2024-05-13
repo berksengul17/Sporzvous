@@ -14,10 +14,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +30,10 @@ public class Event {
     private LocalTime eventTime;
     private Double skillRating;
     private String locationIndex;
+    private int isEventOver;
+    @ManyToOne
+    @JoinColumn(name="organizer_id", referencedColumnName="userId", nullable=false)
+    private User organizer;
     @ManyToMany
     @JoinTable(
             name = "event_user",

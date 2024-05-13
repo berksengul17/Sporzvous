@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/event")
 @AllArgsConstructor
@@ -21,6 +23,24 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterEvents(@RequestParam(required = false) String sport,
+                                          @RequestParam(required = false) String locationCity,
+                                          @RequestParam(required = false) String locationDistrict,
+                                          @RequestParam(required = false) LocalDate eventDate,
+                                          @RequestParam(required = false) int isEventOver,
+                                          @RequestParam(required = false) Long userId,
+                                          @RequestParam(required = false) double minRating) {
+        try {
+            return ResponseEntity.ok(eventService.filterEvents(sport, locationCity, locationDistrict,
+                                                            eventDate, isEventOver, userId, minRating));
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/getUsers/{eventId}")

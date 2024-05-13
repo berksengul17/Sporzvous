@@ -2,7 +2,7 @@ package com.sporzvous.backend.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sporzvous.backend.Comment.Comment;
+import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Rating.Rating;
 import jakarta.persistence.*;
@@ -31,18 +31,15 @@ public class User {
     private int eventCount;
     private int isVerified;
     private UserStatus status;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Feedback feedback;
-
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Event> events;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Comment> comments;
-
+    private List<Feedback> feedbacks;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Rating> ratings;
-
     @ManyToMany
     @JoinTable(
             name = "user_friends",

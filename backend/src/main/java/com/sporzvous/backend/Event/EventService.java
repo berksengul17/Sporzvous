@@ -4,6 +4,7 @@ import com.sporzvous.backend.User.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -14,6 +15,11 @@ public class EventService {
 
     public Event saveEvent(Event event) {
         return eventRepository.save(event);
+    }
+
+    public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
+                                    LocalDate eventDate, int isEventOver, Long userId, double minRating) {
+        return eventRepository.filterEvents(sport, locationCity, locationDistrict, eventDate, isEventOver, userId, minRating);
     }
 
     public List<User> getEventUsers(Long eventId) {
@@ -29,4 +35,6 @@ public class EventService {
 
         eventRepository.delete(event);
     }
+
+
 }
