@@ -1,4 +1,4 @@
-package com.sporzvous.backend.PasswordResetToken;
+package com.sporzvous.backend.Token;
 
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Data
-public class PasswordResetToken {
+public class Token {
     private static final int EXPIRATION = 60 * 24;
 
     @Id
@@ -24,10 +24,10 @@ public class PasswordResetToken {
 
     private Date expiryDate;
 
-    public PasswordResetToken() {
+    public Token() {
 
     }
-    public PasswordResetToken(final String token, final User user) {
+    public Token(final String token, final User user) {
         this.token = token;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);

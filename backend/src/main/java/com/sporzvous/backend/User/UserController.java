@@ -1,12 +1,10 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.MailSender.MailSenderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,14 +18,16 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final JavaMailSender mailSender;
-    private final Environment env;
+    private final MailSenderService mailSenderService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<String> signUp(@RequestBody User request) {
+    public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
-            User newUser = userService.signUp(request);
-            return ResponseEntity.ok(newUser.getUsername() + " signed up successfully");
+            User newUser = userService.signUp(userInfo);
+            String token = UUID.randomUUID().toString();
+            userService.createTokenForUser(newUser, token);
+            mailSenderService.sendVerificationEmail(request, token, newUser);
+            return ResponseEntity.ok(newUser.getUsername() + " signed up successfully. Verify your email address to login.");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
@@ -53,28 +53,8 @@ public class UserController {
             throw new IllegalArgumentException("User with email" + email + "is not found");
         }
         String token = UUID.randomUUID().toString();
-        userService.createPasswordResetTokenForUser(user, token);
-        mailSender.send(constructResetTokenEmail(getAppUrl(request), token, user));
+        userService.createTokenForUser(user, token);
+        mailSenderService.sendResetTokenEmail(request, token, user);
         return ResponseEntity.ok("You should receive a password reset email shortly");
-    }
-
-    private SimpleMailMessage constructResetTokenEmail(
-            String contextPath, String token, User user) {
-        String url = contextPath + "/security/user/changePassword?token=" + token;
-        return constructEmail("Reset Password", "Reset password \r\n" + url, user);
-    }
-
-    private SimpleMailMessage constructEmail(String subject, String body,
-                                             User user) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setSubject(subject);
-        email.setText(body);
-        email.setTo(user.getEmail());
-        email.setFrom(env.getProperty("support.email"));
-        return email;
-    }
-
-    private String getAppUrl(HttpServletRequest request) {
-        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }

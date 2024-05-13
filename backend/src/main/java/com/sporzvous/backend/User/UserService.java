@@ -1,7 +1,7 @@
 package com.sporzvous.backend.User;
 
-import com.sporzvous.backend.PasswordResetToken.PasswordResetToken;
-import com.sporzvous.backend.PasswordResetToken.PasswordResetTokenRepository;
+import com.sporzvous.backend.Token.Token;
+import com.sporzvous.backend.Token.TokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final TokenRepository tokenRepository;
 
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
@@ -50,19 +50,19 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    public void createPasswordResetTokenForUser(User user, String token) {
-        if (passwordResetTokenRepository.findByUser(user).isPresent()) {
-            passwordResetTokenRepository.deleteByUser(user);
+    public void createTokenForUser(User user, String token) {
+        if (tokenRepository.findByUser(user).isPresent()) {
+            tokenRepository.deleteByUser(user);
         }
 
-        passwordResetTokenRepository.save(new PasswordResetToken(token, user));
+        tokenRepository.save(new Token(token, user));
     }
     public void changeUserPassword(User user, String password) {
         user.setPassword(password);
         userRepository.save(user);
     }
     public Optional<User> getUserByPasswordResetToken(String token) {
-        return Optional.ofNullable(passwordResetTokenRepository.findByToken(token).getUser());
+        return Optional.ofNullable(tokenRepository.findByToken(token).getUser());
     }
 
     private boolean isValidEmail(String emailAddress) {

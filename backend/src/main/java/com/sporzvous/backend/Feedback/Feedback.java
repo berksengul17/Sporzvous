@@ -13,8 +13,6 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
-
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
