@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
@@ -53,7 +53,55 @@ export default function HomeScreen() {
           <Text style={styles.eventName}>Title of the event</Text>
           <Text style={styles.sport}>Sport</Text>
         </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
+        <View style={styles.event}>
+          <Text style={styles.username}>Username</Text>
+          <Text style={styles.eventName}>Title of the event</Text>
+          <Text style={styles.sport}>Sport</Text>
+        </View>
       </ScrollView>
+      <View style={styles.wave}>
+      <Image source={require('../../assets/images/Waves.png')}/>
+      </View>
     </View>
   );
 }
@@ -89,6 +137,8 @@ const styles = StyleSheet.create({
   },
   content: {
    padding: 20,
+   marginBottom: '47%',
+   
   },
   title: {
     fontSize: 22,
@@ -110,4 +160,10 @@ const styles = StyleSheet.create({
   sport: {
     fontStyle: 'italic',
   },
+  wave: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    resizeMode: 'cover',
+  }
 });
