@@ -30,6 +30,10 @@ public class Event {
     private LocalTime eventTime;
     private Double skillRating;
     private String locationIndex;
+    private int isEventOver;
+    @ManyToOne
+    @JoinColumn(name="organizer_id", referencedColumnName="userId", nullable=false)
+    private User organizer;
     @ManyToMany
     @JoinTable(
             name = "event_user",
