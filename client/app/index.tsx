@@ -16,7 +16,9 @@ import CustomButton from "@/components/CustomButton";
 const LoginPage = () => {
   return (
     <View style={styles.container}>
-      <AuthHeader />
+      <View style={styles.header}>
+        <AuthHeader />
+      </View>
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
@@ -56,6 +58,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     padding: 20,
+  },
+  header: {
+    height: "25%",
   },
   formContainer: {
     marginTop: 50,
