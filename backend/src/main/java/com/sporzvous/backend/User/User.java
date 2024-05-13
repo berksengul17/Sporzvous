@@ -30,14 +30,11 @@ public class User {
     private int eventCount;
     private int isVerified;
     private UserStatus status;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Feedback feedback;
-
+    private List<Feedback> feedbacks;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Rating> ratings;
-
     @ManyToMany
     @JoinTable(
             name = "user_friends",

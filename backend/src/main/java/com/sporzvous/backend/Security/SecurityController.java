@@ -18,32 +18,14 @@ public class SecurityController {
     private final SecurityService securityService;
     private final UserService userService;
 
+    @GetMapping("/user/verify")
+    public RedirectView showVerifyPage(@RequestParam("token") String token) {
+        return handleTokenValidation(token, "http://localhost:3000/user/verified", "http://localhost:3000/user/verify");
+    }
+
     @GetMapping("/user/changePassword")
     public RedirectView showChangePasswordPage(@RequestParam("token") String token) {
-
-        String result = securityService.validatePasswordResetToken(token);
-
-        if(result != null) {
-            String message = "";
-            switch(result) {
-                case "disabled":
-                    message = "Your account is disabled please check your mail and click on the confirmation link.";
-
-                case "expired":
-                    message = "Your token has expired. Please request a new token again.";
-
-                case "invalidUser":
-                    message = "This username is invalid, or does not exist.";
-
-                case "invalidToken":
-                    message = "Invalid token.";
-            }
-            // FIXME url değişçek
-            return new RedirectView("http://localhost:3000/user/resetpassword");
-        } else {
-            // FIXME url değişçek
-            return new RedirectView("http://localhost:3000/user/setnewpassword?token=" + token);
-        }
+        return handleTokenValidation(token, "http://localhost:3000/user/setnewpassword", "http://localhost:3000/user/resetpassword");
     }
 
     @PostMapping("/user/savePassword")
@@ -75,6 +57,33 @@ public class SecurityController {
             return ResponseEntity.ok("Password reset is done successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("userUser does not exist.");
+        }
+    }
+
+
+    private RedirectView handleTokenValidation(String token, String successUrl, String failureUrl) {
+        String result = securityService.validatePasswordResetToken(token);
+        if (result != null) {
+            String message = "";
+            switch (result) {
+                case "disabled":
+                    message = "Your account is disabled please check your mail and click on the confirmation link.";
+                    break;
+                case "expired":
+                    message = "Your token has expired. Please request a new token again.";
+                    break;
+                case "invalidUser":
+                    message = "This username is invalid, or does not exist.";
+                    break;
+                case "invalidToken":
+                    message = "Invalid token.";
+                    break;
+            }
+            // FIXME url değişçek
+            return new RedirectView(failureUrl);
+        } else {
+            // FIXME url değişçek
+            return new RedirectView(successUrl + "?token=" + token);
         }
     }
 }

@@ -23,14 +23,17 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final FeedbackService feedbackService;
-    private final JavaMailSender mailSender;
+    private final MailSenderService mailSenderService;
     private final Environment env;
 
     @PostMapping("/signUp")
-    public ResponseEntity<String> signUp(@RequestBody User request) {
+    public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
-            User newUser = userService.signUp(request);
-            return ResponseEntity.ok(newUser.getUsername() + " signed up successfully");
+            User newUser = userService.signUp(userInfo);
+            String token = UUID.randomUUID().toString();
+            userService.createTokenForUser(newUser, token);
+            mailSenderService.sendVerificationEmail(request, token, newUser);
+            return ResponseEntity.ok(newUser.getUsername() + " signed up successfully. Verify your email address to login.");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
@@ -56,53 +59,8 @@ public class UserController {
             throw new IllegalArgumentException("User with email" + email + "is not found");
         }
         String token = UUID.randomUUID().toString();
-        userService.createPasswordResetTokenForUser(user, token);
-        mailSender.send(constructResetTokenEmail(getAppUrl(request), token, user));
+        userService.createTokenForUser(user, token);
+        mailSenderService.sendResetTokenEmail(request, token, user);
         return ResponseEntity.ok("You should receive a password reset email shortly");
-    }
-
-    private SimpleMailMessage constructResetTokenEmail(
-            String contextPath, String token, User user) {
-        String url = contextPath + "/security/user/changePassword?token=" + token;
-        return constructEmail("Reset Password", "Reset password \r\n" + url, user);
-    }
-
-    private SimpleMailMessage constructEmail(String subject, String body,
-                                             User user) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setSubject(subject);
-        email.setText(body);
-        email.setTo(user.getEmail());
-        email.setFrom(env.getProperty("support.email"));
-        return email;
-    }
-
-    private String getAppUrl(HttpServletRequest request) {
-        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-    }
-
-    @PostMapping
-    public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {
-        try {
-
-            if (request.getTitle().length() < 3 || request.getTitle().length() > 30) {
-                return ResponseEntity.badRequest().body("Title must be between 3 and 30 characters.");
-            } else if (request.getContent().length() < 20 || request.getContent().length() > 100) {
-                return ResponseEntity.badRequest().body("File must be a PDF.");
-            }
-
-            if (request.getUser() == null) {
-                // Call createFeedback from service
-                Feedback feedback = feedbackService.createFeedback(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Feedback with ID" + feedback.getFeedbackId() + "created successfully");
-            } else {
-                // Call createReport from service
-                Feedback feedback = feedbackService.createReport(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Report with ID" + feedback.getFeedbackId() + "created successfully");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error " + e.getMessage());
-
-        }
     }
 }
