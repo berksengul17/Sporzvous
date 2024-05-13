@@ -37,7 +37,7 @@ export default function SettingsScreen() {
         />
       </View>
     </ScrollView>
-      <View style={styles.wave}>
+    <View style={styles.wave}>
         <Image source={require('../../assets/images/Waves.png')}/>
       </View>
     </View>
@@ -61,6 +61,12 @@ const styles = StyleSheet.create({
   settingText: {
     fontSize: 18,
   },
+  wave: {
+    position: 'static',
+    bottom: 0,
+    width: '100%',
+    resizeMode: 'cover',
+  }
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -84,4 +90,5 @@ const pickerSelectStyles = StyleSheet.create({
     color: 'black',
     paddingRight: 30, // to ensure the text is never behind the icon
   },
+ 
 });
