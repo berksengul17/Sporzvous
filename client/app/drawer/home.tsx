@@ -13,7 +13,7 @@ export default function HomeScreen() {
           <Ionicons name="search" size={20} color="gray" />
           <TextInput style={styles.searchText}>Search</TextInput>
         </View>
-        <TouchableOpacity style={{marginTop: '2%'}}>
+        <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
           <Ionicons name="person-circle" size={60} color="black" />
           <Text style={{alignSelf:'center'}}>Profile</Text>
         </TouchableOpacity>
