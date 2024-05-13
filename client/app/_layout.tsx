@@ -12,6 +12,7 @@ export default function RootLayout() {
         name="forgotpw"
         options={{ headerTitle: "Reset Password Page" }}
       />
+      <Stack.Screen name="drawer" options={{ headerShown: false }} />
     </Stack>
   );
 }

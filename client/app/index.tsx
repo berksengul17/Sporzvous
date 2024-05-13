@@ -6,6 +6,10 @@ export default function Index() {
   return (
     <View>
       <Button
+        title="Press to log in"
+        onPress={() => router.replace("/drawer/home")}
+      />
+      <Button
         title="Register Button"
         onPress={() => router.replace("/register")}
       />
