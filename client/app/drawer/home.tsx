@@ -20,10 +20,10 @@ export default function HomeScreen() {
       <View style={styles.titleview}>
           <Text style={styles.title}>Upcoming Events</Text>
           <TouchableOpacity style={{justifyContent:'center'}}>
-            <AntDesign name="filter" size={40} color="black" style={{}}/>
+            <AntDesign name="filter" size={40} color="orange" style={{}}/>
           </TouchableOpacity>
           <TouchableOpacity style={{justifyContent:'center'}}>
-            <AntDesign name="plussquare" size={40} color="black" />
+            <AntDesign name="plussquare" size={40} color="orange" />
           </TouchableOpacity>
         </View>
       <ScrollView style={styles.content}>
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
+    color:'orange',
     marginBottom: 10,
   },
   event: {
