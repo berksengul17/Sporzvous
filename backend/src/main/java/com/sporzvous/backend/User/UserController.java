@@ -1,8 +1,11 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.Feedback.Feedback;
+import com.sporzvous.backend.Feedback.FeedbackService;
 import com.sporzvous.backend.MailSender.MailSenderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,7 +21,9 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final FeedbackService feedbackService;
     private final MailSenderService mailSenderService;
+    private final Environment env;
 
     @PostMapping("/signUp")
     public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
@@ -56,5 +61,30 @@ public class UserController {
         userService.createTokenForUser(user, token);
         mailSenderService.sendResetTokenEmail(request, token, user);
         return ResponseEntity.ok("You should receive a password reset email shortly");
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {
+        try {
+
+            if (request.getTitle().length() < 3 || request.getTitle().length() > 30) {
+                return ResponseEntity.badRequest().body("Title must be between 3 and 30 characters.");
+            } else if (request.getContent().length() < 20 || request.getContent().length() > 100) {
+                return ResponseEntity.badRequest().body("File must be a PDF.");
+            }
+
+            if (request.getUser() == null) {
+                // Call createFeedback from service
+                Feedback feedback = feedbackService.createFeedback(request);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Feedback with ID" + feedback.getFeedbackId() + "created successfully");
+            } else {
+                // Call createReport from service
+                Feedback feedback = feedbackService.createReport(request);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Report with ID" + feedback.getFeedbackId() + "created successfully");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error " + e.getMessage());
+
+        }
     }
 }
