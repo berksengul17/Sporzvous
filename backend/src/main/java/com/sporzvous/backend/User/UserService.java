@@ -18,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final EventService eventService;
+    private final EventRepository eventRepository;
 
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
@@ -48,6 +49,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
         return eventService.addUserToEvent(eventId, user);
     }
 

@@ -1,12 +1,16 @@
 package com.sporzvous.backend.Event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +18,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class Event {
     @Id
@@ -41,6 +44,41 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "userId"))
     @ToString.Exclude
     private List<User> users;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Team> teams;
+    private Integer maxParticipants;
+
+    public Event(String title, String sport, String locationCity,
+                 String locationDistrict, Integer participants,
+                 Integer teamNumber, LocalDate eventDate,
+                 LocalTime eventTime, Double skillRating,
+                 String locationIndex, int isEventOver, User organizer,
+                 List<User> users, Integer maxParticipants) {
+        this.title = title;
+        this.sport = sport;
+        this.locationCity = locationCity;
+        this.locationDistrict = locationDistrict;
+        this.participants = participants;
+        this.teamNumber = teamNumber;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
+        this.skillRating = skillRating;
+        this.locationIndex = locationIndex;
+        this.isEventOver = isEventOver;
+        this.organizer = organizer;
+        this.users = users;
+        this.maxParticipants = maxParticipants;
+        this.teams = new ArrayList<Team>();
+    }
+
+    @PostConstruct
+    private void teamInitializer() {
+        Team team1 = new Team("Team A", eventId);
+        Team team2 = new Team("Team B", eventId);
+        teams.add(team1);
+        teams.add(team2);
+    }
 
     @Override
     public boolean equals(Object o) {
