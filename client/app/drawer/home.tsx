@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,17 +11,20 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
-
+import { router } from "expo-router";
+import { create } from "react-test-renderer";
 const eventData = [
   {
     id: "1",
     title: "Esenyurt sssssssssssssssssssssssssssssHailsaha",
     sport: "Football",
     host: "Çağan Özsir",
+    playernum: 2, 
+    eventcapacity: 10
   },
-  { id: "2", title: "Tennis", sport: "Tennis", host: "Emre Erol" },
-  { id: "3", title: "Berk’s Tennis", sport: "Tennis", host: "Berk Şengül" },
-  { id: "4", title: "Bornova Futbol", sport: "Football", host: "Emre Erol" },
+  { id: "2", title: "Tennis", sport: "Tennis", host: "Emre Erol", playernum: 3, eventcapacity: 20 },
+  { id: "3", title: "Berk’s Tennis", sport: "Tennis", host: "Berk Şengül", playernum: 2, eventcapacity: 30 },
+  { id: "4", title: "Bornova Futbol", sport: "Football", host: "Emre Erol", playernum: 5, eventcapacity: 40 },
   // Add more events here
 ];
 
@@ -35,6 +38,9 @@ const EventItem = ({ event }) => (
     </View>
     <View style={styles.eventsportrow}>
       <Text>{event.sport}</Text>
+    </View>
+    <View style={styles.eventcapacityrow}>
+      <Text numberOfLines={1}>{event.playernum}/{event.eventcapacity}</Text>
     </View>
   </View>
 );
@@ -61,7 +67,10 @@ export default function HomeScreen() {
         <TouchableOpacity style={{ justifyContent: "center" }}>
           <AntDesign name="filter" size={40} color="orange" style={{}} />
         </TouchableOpacity>
-        <TouchableOpacity style={{ justifyContent: "center" }}>
+        <TouchableOpacity 
+        style={{ justifyContent: "center" }}
+  
+        >
           <AntDesign name="plussquare" size={40} color="orange" />
         </TouchableOpacity>
       </View>
@@ -109,7 +118,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
   },
 
   title: {
@@ -127,9 +136,14 @@ const styles = StyleSheet.create({
   },
   eventsportrow: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "center"
+    
   },
-
+  eventcapacityrow: {
+    
+    alignItems: "flex-end",
+    
+  },
   username: {
     fontWeight: "bold",
   },

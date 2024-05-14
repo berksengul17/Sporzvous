@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image,Button, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import RNPickerSelect from 'react-native-picker-select';
+import { ButtonProps } from 'react-native';
 
 export default function ComplaintsHomePage() {
   const [category, setCategory] = useState('Category');
@@ -49,11 +50,11 @@ export default function ComplaintsHomePage() {
           multiline={true}
           />
         </View>
-          <Button
+          <Button          
           onPress={() => Alert.alert('Submit clicked!')}
-          title='Submit'
-          color='orange'>
-            /</Button>
+          title="Submit"
+          color='orange'
+          />
           
       </View>
       <View style={styles.wave}>
