@@ -3,6 +3,9 @@ package com.sporzvous.backend.User;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Feedback.FeedbackService;
 import com.sporzvous.backend.MailSender.MailSenderService;
+import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.Rating.RatingService;
+import com.sporzvous.backend.Rating.SportField;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -18,14 +21,15 @@ import java.util.UUID;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
     private final FeedbackService feedbackService;
+    private final RatingService ratingService;
     private final MailSenderService mailSenderService;
     private final Environment env;
 
-    @PostMapping("/api/signUp")
+    @PostMapping("/signUp")
     public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
             User newUser = userService.signUp(userInfo);
@@ -70,7 +74,7 @@ public class UserController {
             if (request.getTitle().length() < 3 || request.getTitle().length() > 30) {
                 return ResponseEntity.badRequest().body("Title must be between 3 and 30 characters.");
             } else if (request.getContent().length() < 20 || request.getContent().length() > 100) {
-                return ResponseEntity.badRequest().body("File must be a PDF.");
+                return ResponseEntity.badRequest().body("Content capacity is exceeded");
             }
 
             if (request.getUser() == null) {
@@ -87,6 +91,27 @@ public class UserController {
 
         }
     }
+
+    @PostMapping("/addRating")
+    public ResponseEntity<?> addComment(@RequestParam("sportField")SportField sportField,
+                                        @RequestParam("userRating")Double userRating,
+                                        @RequestParam("content")String content,
+                                        @RequestParam("userId")Long userId) {
+        try {
+            if (content.length() < 20 || content.length() > 100) {
+                return ResponseEntity.badRequest().body("Content capacity is exceeded");
+            }
+            else {
+                Rating rating = ratingService.createRating(userRating, sportField, content, userId);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Rating with ID" + rating.getRatingId() + "created successfully");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error " + e.getMessage());
+        }
+
+    }
+
+
 //    @PostMapping("/createEvent")
 //    public ResponseEntity<?> createEvent(@RequestParam("title")String title,
 //                                         @RequestParam("sport")String sport,
