@@ -8,6 +8,7 @@ import com.sporzvous.backend.Token.TokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -76,6 +77,14 @@ public class UserService {
 
         if (profileUpdateDto.getFavoriteSport() != null) {
             user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
+        }
+        if (profileUpdateDto.getProfilePicture() != null && !profileUpdateDto.getProfilePicture().isEmpty()) {
+            try {
+                byte[] imageBytes = profileUpdateDto.getProfilePicture().getBytes();
+                user.setImage(imageBytes);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Failed to upload profile picture");
+            }
         }
 
         return userRepository.save(user);

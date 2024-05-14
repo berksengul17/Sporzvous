@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Controller
@@ -25,7 +26,6 @@ public class UserController {
     private final FeedbackService feedbackService;
     private final RatingService ratingService;
     private final MailSenderService mailSenderService;
-    private final Environment env;
 
     @PostMapping("/signUp")
     public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {

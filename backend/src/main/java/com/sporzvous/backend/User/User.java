@@ -26,7 +26,7 @@ public class User {
     private String password;
     private String fullName;
     private String username;
-
+    @Lob
     private byte[] image;
     private int age;
     private String gender;
