@@ -37,13 +37,10 @@ public class Event {
     @ManyToOne
     @JoinColumn(name="organizer_id", referencedColumnName="userId", nullable=false)
     private User organizer;
-    @ManyToMany
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "eventId"),
-            inverseJoinColumns = @JoinColumn(name = "userId"))
-    @ToString.Exclude
+
+    @ManyToMany(mappedBy = "events")
     private List<User> users;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Team> teams;

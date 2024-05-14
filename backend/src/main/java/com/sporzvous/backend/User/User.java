@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.Team.Team;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,21 +26,30 @@ public class User {
     private String password;
     private String fullName;
     private String username;
+
+    private byte[] image;
     private int age;
     private String gender;
     private String favoriteSport;
     private int eventCount;
     private int isVerified;
     private UserStatus status;
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "user_events",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
     private List<Event> events;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Feedback> feedbacks;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Rating> ratings;
+
     @ManyToMany
     @JoinTable(
             name = "user_friends",
@@ -47,6 +57,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
     private List<User> friends;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_teams",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "team_id")
+    )
+    private List<Team> teams;
 
 
     public User(Long userId, String email, String username) {
