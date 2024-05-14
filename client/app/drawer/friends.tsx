@@ -1,16 +1,37 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { TextInput } from 'react-native-gesture-handler';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  FlatList,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { TextInput } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const friendsData = [
-  { id: '1', name: 'Emre Erol', lastSeen: '1 Hour', imageUri: require('../../assets/images/friendpp.jpg') },
-  { id: '2', name: 'Jane Doe', lastSeen: '2 Hours', imageUri: require('../../assets/images/friendpp.jpg') },
-  { id: '3', name: 'John Smith', lastSeen: '5 Minutes', imageUri: require('../../assets/images/friendpp.jpg') },
+  {
+    id: "1",
+    name: "Emre Erol",
+    lastSeen: "1 Hour",
+    imageUri: require("../../assets/images/friendpp.jpg"),
+  },
+  {
+    id: "2",
+    name: "Jane Doe",
+    lastSeen: "2 Hours",
+    imageUri: require("../../assets/images/friendpp.jpg"),
+  },
+  {
+    id: "3",
+    name: "John Smith",
+    lastSeen: "5 Minutes",
+    imageUri: require("../../assets/images/friendpp.jpg"),
+  },
   // add more friends here
 ];
 
@@ -36,23 +57,27 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
-          <TextInput style={styles.searchText} placeholder='Search'/>
+          <TextInput
+            style={styles.searchText}
+            placeholder="Search"
+            placeholderTextColor={"gray"}
+          />
         </View>
-        <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
+        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
           <MaterialCommunityIcons name="email-send" size={45} color="orange" />
         </TouchableOpacity>
-        <TouchableOpacity style={{marginTop: '2%', marginRight:'2%'}}>
+        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
           <AntDesign name="adduser" size={45} color="orange" />
         </TouchableOpacity>
       </View>
       <FlatList
-         data={friendsData}
-         renderItem={({ item }) => <FriendItem friend={item} />}
-         keyExtractor={item => item.id}
-         style={styles.list}
+        data={friendsData}
+        renderItem={({ item }) => <FriendItem friend={item} />}
+        keyExtractor={(item) => item.id}
+        style={styles.list}
       />
       <View style={styles.wave}>
-        <Image source={require('../../assets/images/Waves.png')}/>
+        <Image source={require("../../assets/images/Waves.png")} />
       </View>
     </View>
   );
@@ -60,40 +85,40 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    backgroundColor: 'white',
+    flex: 1,
+    backgroundColor: "white",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 15,
   },
   searchBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     alignItems: "center",
     marginHorizontal: 10,
     borderRadius: 10,
-    flex: 1
+    flex: 1,
   },
   searchText: {
     marginLeft: 10,
-    color: 'gray',
-    flex: 1
+    color: "gray",
+    flex: 1,
   },
   list: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   friendContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
     marginHorizontal: 10,
-    backgroundColor: '#FFF', // Change this as necessary
+    backgroundColor: "#FFF", // Change this as necessary
   },
   profileImage: {
     width: 60,
@@ -105,11 +130,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   friendName: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   friendLastSeen: {
-    color: 'grey',
+    color: "grey",
     fontSize: 14,
   },
   iconButton: {
@@ -117,9 +142,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   wave: {
-    position: 'static',
+    position: "static",
     bottom: 0,
-    width: '100%',
-    resizeMode: 'cover',
-  }
+    width: "100%",
+    resizeMode: "cover",
+  },
 });

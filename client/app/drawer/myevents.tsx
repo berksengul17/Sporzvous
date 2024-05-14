@@ -1,17 +1,49 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { TextInput } from 'react-native-gesture-handler';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { Octicons } from '@expo/vector-icons';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  FlatList,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { TextInput } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 
 const eventData = [
-  { id: '1', name: 'Esenyurt Hailsaha', sport: 'Football', host: 'Çağan Özsir', date: '20.04.2024' },
-  { id: '2', name: 'Tennis', sport: 'Tennis', host: 'Emre Erol', date: '05.05.2024' },
-  { id: '3', name: 'Berk’s Tennis', sport: 'Tennis', host: 'Berk Şengül', date: '07.05.2024' },
-  { id: '4', name: 'Bornova Futbol', sport: 'Football', host: 'Emre Erol', date: '12.05.2024' },
+  {
+    id: "1",
+    name: "Esenyurt Hailsaha",
+    sport: "Football",
+    host: "Çağan Özsir",
+    date: "20.04.2024",
+  },
+  {
+    id: "2",
+    name: "Tennis",
+    sport: "Tennis",
+    host: "Emre Erol",
+    date: "05.05.2024",
+  },
+  {
+    id: "3",
+    name: "Berk’s Tennis",
+    sport: "Tennis",
+    host: "Berk Şengül",
+    date: "07.05.2024",
+  },
+  {
+    id: "4",
+    name: "Bornova Futbol",
+    sport: "Football",
+    host: "Emre Erol",
+    date: "12.05.2024",
+  },
   // Add more events here
 ];
 
@@ -41,20 +73,28 @@ export default function MyEvents() {
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
-          <TextInput style={styles.searchText} placeholder='Search'/>
+          <TextInput
+            style={styles.searchText}
+            placeholder="Search"
+            placeholderTextColor={"gray"}
+          />
         </View>
         <TouchableOpacity>
-          <AntDesign name="filter" size={40} color="orange" style={{margin: 4}}/>
+          <AntDesign
+            name="filter"
+            size={40}
+            color="orange"
+            style={{ margin: 4 }}
+          />
         </TouchableOpacity>
-        
       </View>
       <FlatList
-         data={eventData}
-         renderItem={({ item }) => <EventItem event={item} />}
-         keyExtractor={item => item.id}
+        data={eventData}
+        renderItem={({ item }) => <EventItem event={item} />}
+        keyExtractor={(item) => item.id}
       />
       <View style={styles.wave}>
-        <Image source={require('../../assets/images/Waves.png')}/>
+        <Image source={require("../../assets/images/Waves.png")} />
       </View>
     </View>
   );
@@ -63,61 +103,61 @@ export default function MyEvents() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 15,
   },
   searchBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     alignItems: "center",
     marginHorizontal: 10,
     borderRadius: 10,
-    flex: 1
+    flex: 1,
   },
   searchText: {
     marginLeft: 10,
-    flex: 1
+    flex: 1,
   },
   eventContainer: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 5,
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
   eventRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 5,
   },
   eventName: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   eventSport: {
-    color: 'orange',
+    color: "orange",
     marginRight: 10,
   },
   eventHost: {
-    color: 'gray',
+    color: "gray",
   },
   eventDate: {
-    color: 'gray',
+    color: "gray",
   },
   wave: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
-    resizeMode: 'cover',
-  }
+    width: "100%",
+    resizeMode: "cover",
+  },
 });
