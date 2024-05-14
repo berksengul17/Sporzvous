@@ -2,7 +2,7 @@ import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { Alert, View } from "react-native";
 import {
   DrawerContentScrollView,
@@ -80,7 +80,7 @@ const Layout = () => {
         }}
       />
       <Drawer.Screen
-        name="friends"
+        name="(friends)"
         options={{
           headerTitle: "My Friends",
           drawerLabel: "My Friends",

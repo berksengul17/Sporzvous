@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,25 +12,28 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import Modal from "react-native-modal";
+import CustomButton from "@/components/CustomButton";
 
 const friendsData = [
   {
     id: "1",
     name: "Emre Erol",
     lastSeen: "1 Hour",
-    imageUri: require("../../assets/images/friendpp.jpg"),
+    imageUri: require("../../../assets/images/friendpp.jpg"),
   },
   {
     id: "2",
     name: "Jane Doe",
     lastSeen: "2 Hours",
-    imageUri: require("../../assets/images/friendpp.jpg"),
+    imageUri: require("../../../assets/images/friendpp.jpg"),
   },
   {
     id: "3",
     name: "John Smith",
     lastSeen: "5 Minutes",
-    imageUri: require("../../assets/images/friendpp.jpg"),
+    imageUri: require("../../../assets/images/friendpp.jpg"),
   },
   // add more friends here
 ];
@@ -52,8 +55,53 @@ const FriendItem = ({ friend }) => (
 );
 
 export default function HomeScreen() {
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.popUpContainer}>
+        <Modal
+          backdropColor="gray"
+          animationIn={"tada"}
+          animationOut={"fadeOut"}
+          isVisible={isModalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          style={{
+            marginTop: "60%",
+            marginBottom: "100%",
+            marginLeft: "12%",
+            marginRight: "12%",
+            backgroundColor: "white",
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.text}>Add Friend</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Search"
+              placeholderTextColor={"gray"}
+            ></TextInput>
+            <View style={styles.buttons}>
+              <CustomButton
+                title="Cancel"
+                onPress={toggleModal}
+                width={80}
+                backgroundColor="white"
+                color="darkorange"
+              />
+              <CustomButton
+                title="Send Request"
+                onPress={toggleModal}
+                width={130}
+              />
+            </View>
+          </View>
+        </Modal>
+      </View>
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="gray" />
@@ -64,10 +112,20 @@ export default function HomeScreen() {
           />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
-          <MaterialCommunityIcons name="email-send" size={45} color="orange" />
+          <MaterialCommunityIcons
+            name="email-send"
+            size={45}
+            color="orange"
+            onPress={() => router.push("/drawer/(friends)/friendRequests")}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
-          <AntDesign name="adduser" size={45} color="orange" />
+          <AntDesign
+            name="adduser"
+            size={45}
+            color="orange"
+            onPress={toggleModal}
+          />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -77,7 +135,7 @@ export default function HomeScreen() {
         style={styles.list}
       />
       <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
+        <Image source={require("../../../assets/images/Waves.png")} />
       </View>
     </View>
   );
@@ -146,5 +204,32 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     resizeMode: "cover",
+  },
+  popUpContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "pink",
+    width: "25%",
+    flexDirection: "column",
+  },
+  text: {
+    fontSize: 28,
+    marginBottom: 20,
+    textAlign: "center",
+    marginTop: 20,
+    fontWeight: "bold",
+    color: "darkorange",
+  },
+  input: {
+    padding: 10,
+    backgroundColor: "#F0F0F0",
+    alignItems: "center",
+    marginHorizontal: 10,
+    borderRadius: 10,
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 30,
   },
 });
