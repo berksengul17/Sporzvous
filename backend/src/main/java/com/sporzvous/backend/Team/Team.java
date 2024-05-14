@@ -1,8 +1,12 @@
 package com.sporzvous.backend.Team;
 
+import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.List;
@@ -19,15 +23,16 @@ public class Team {
     private Long teamId;
     private String teamName;
     private Integer teamCapacity;
+
     private List<User> users;
     @ManyToOne
     @JoinColumn(name="event_id", nullable=false)
-    private Long eventId;
+    private Event event;
 
 
-    public Team(String teamName, Long eventId, Integer teamCapacity) {
+    public Team(String teamName, Event event, Integer teamCapacity) {
         this.teamName = teamName;
-        this.eventId = eventId;
+        this.event = event;
         this.teamCapacity = teamCapacity;
     }
 
