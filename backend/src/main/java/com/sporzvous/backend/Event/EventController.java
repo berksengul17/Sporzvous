@@ -63,4 +63,15 @@ public class EventController {
                     .body(e.getMessage());
         }
     }
+
+    @PutMapping("/{eventId}/changeTeam")
+    public ResponseEntity<String> changeTeam(@PathVariable Long eventId, @RequestParam Long userId) {
+        try {
+            eventService.changeTeam(eventId, userId);
+            return ResponseEntity.ok("Team changed successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 }
