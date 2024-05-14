@@ -58,6 +58,29 @@ public class UserService {
         return eventService.addUserToEvent(eventId, user);
     }
 
+    public User updateProfile(Long userId, UserProfileUpdateDto profileUpdateDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
+
+        if (profileUpdateDto.getUsername() != null) {
+            user.setUsername(profileUpdateDto.getUsername());
+        }
+
+        if (profileUpdateDto.getAge() != null) {
+            user.setAge(profileUpdateDto.getAge());
+        }
+
+        if (profileUpdateDto.getGender() != null) {
+            user.setGender(profileUpdateDto.getGender());
+        }
+
+        if (profileUpdateDto.getFavoriteSport() != null) {
+            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
+        }
+
+        return userRepository.save(user);
+    }
+
     public User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

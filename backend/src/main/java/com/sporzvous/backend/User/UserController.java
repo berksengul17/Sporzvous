@@ -120,8 +120,16 @@ public class UserController {
         }
     }
 
-
-
+    @PutMapping("/{userId}/edit-profile")
+    public ResponseEntity<String> updateUserProfile(@PathVariable Long userId, @RequestBody UserProfileUpdateDto profileUpdateDto) {
+        try {
+            User updatedUser = userService.updateProfile(userId, profileUpdateDto);
+            return ResponseEntity.ok("User with id" + updatedUser.getUserId() + "updated successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 //    @PostMapping("/createEvent")
 //    public ResponseEntity<?> createEvent(@RequestParam("title")String title,
 //                                         @RequestParam("sport")String sport,
