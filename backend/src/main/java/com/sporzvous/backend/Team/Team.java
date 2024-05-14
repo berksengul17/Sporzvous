@@ -2,25 +2,45 @@ package com.sporzvous.backend.Team;
 
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.util.List;
+import java.util.Objects;
 
-@Data
-
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@Entity
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teamId;
     private String teamName;
+    private Integer teamCapacity;
     private List<User> users;
     @ManyToOne
     @JoinColumn(name="event_id", nullable=false)
     private Long eventId;
 
 
-    public Team(String teamName, Long eventId) {
+    public Team(String teamName, Long eventId, Integer teamCapacity) {
         this.teamName = teamName;
         this.eventId = eventId;
+        this.teamCapacity = teamCapacity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Team team = (Team) o;
+        return teamId != null && Objects.equals(teamId, team.teamId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

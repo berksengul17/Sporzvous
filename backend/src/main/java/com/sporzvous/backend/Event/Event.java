@@ -74,8 +74,8 @@ public class Event {
 
     @PostConstruct
     private void teamInitializer() {
-        Team team1 = new Team("Team A", eventId);
-        Team team2 = new Team("Team B", eventId);
+        Team team1 = new Team("Team A", eventId, maxParticipants/2);
+        Team team2 = new Team("Team B", eventId, maxParticipants/2);
         teams.add(team1);
         teams.add(team2);
     }

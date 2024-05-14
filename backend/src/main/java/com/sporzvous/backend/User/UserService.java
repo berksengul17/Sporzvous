@@ -51,6 +51,10 @@ public class UserService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        if (event.getUsers().size() == event.getMaxParticipants()) {
+            throw new IllegalStateException("Event " + eventId + " is already at full capacity.");
+        }
         return eventService.addUserToEvent(eventId, user);
     }
 

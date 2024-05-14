@@ -1,5 +1,6 @@
 package com.sporzvous.backend.Event;
 
+import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,13 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event with id" + eventId + "not found"));
 
-        event.getUsers().add(user);
+        List<Team> teamList = event.getTeams();
+        if (teamList.get(0).getUsers().size() != teamList.get(0).getTeamCapacity()) {
+            event.getTeams().get(0).getUsers().add(user);
+        }
+        else {
+            event.getTeams().get(1).getUsers().add(user);
+        }
         return eventRepository.save(event);
     }
 
