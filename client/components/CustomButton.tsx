@@ -44,6 +44,8 @@ const Button = ({
 
 const styles = StyleSheet.create({
   container: {
+    borderWidth: 1,
+    borderColor: "darkorange",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
