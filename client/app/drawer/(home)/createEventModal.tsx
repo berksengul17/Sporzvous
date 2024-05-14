@@ -12,7 +12,7 @@ const Page = () => {
             <Text style={styles.eventInformationTitleFonts}>Title</Text>
           </View>
           <View style={styles.eventInformationInput}>
-            <TextInput  clearTextOnFocus='true' placeholder="Esenyurt Halısaha" placeholderTextColor={'grey'} style={styles.inputBox}/>
+            <TextInput  placeholder="Esenyurt Halısaha" placeholderTextColor={'grey'} style={styles.inputBox}/>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
