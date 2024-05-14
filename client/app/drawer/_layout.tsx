@@ -3,7 +3,7 @@ import { Drawer } from "expo-router/drawer";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -13,6 +13,25 @@ import {
 const CustomDrawerContent = (props: any) => {
   const router = useRouter();
   const { top, bottom } = useSafeAreaInsets();
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Log out",
+          onPress: () => router.replace("/"),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView
@@ -24,7 +43,7 @@ const CustomDrawerContent = (props: any) => {
         <DrawerItem
           labelStyle={{ marginLeft: -20 }}
           label={"Log out"}
-          onPress={() => router.replace("/")}
+          onPress={handleLogout}
           icon={({ color, size }) => (
             <Ionicons name="log-out" color={color} size={size} />
           )}
