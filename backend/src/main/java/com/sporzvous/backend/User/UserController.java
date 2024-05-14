@@ -25,7 +25,7 @@ public class UserController {
     private final MailSenderService mailSenderService;
     private final Environment env;
 
-    @PostMapping("/signUp")
+    @PostMapping("/api/signUp")
     public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
             User newUser = userService.signUp(userInfo);

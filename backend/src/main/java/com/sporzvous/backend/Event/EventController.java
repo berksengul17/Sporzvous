@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/event")
+@RequestMapping("/api/event")
 @AllArgsConstructor
 
 public class EventController {

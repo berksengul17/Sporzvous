@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 
 @Controller
-@RequestMapping("/ratings")
+@RequestMapping("/api/ratings")
 @AllArgsConstructor
 public class RatingController {
     private final RatingService ratingService;

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/security")
+@RequestMapping("api//security")
 
 public class SecurityController {
     private final SecurityService securityService;
