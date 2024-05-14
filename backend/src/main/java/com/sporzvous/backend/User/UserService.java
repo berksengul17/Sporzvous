@@ -1,5 +1,8 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.Event.Event;
+import com.sporzvous.backend.Event.EventRepository;
+import com.sporzvous.backend.Event.EventService;
 import com.sporzvous.backend.Token.Token;
 import com.sporzvous.backend.Token.TokenRepository;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final EventService eventService;
+    private final EventRepository eventRepository;
 
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
@@ -38,6 +43,15 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public Event joinEvent(Long userId, Long eventId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        return eventService.addUserToEvent(eventId, user);
     }
 
     public User findUserByEmail(String userEmail) {
