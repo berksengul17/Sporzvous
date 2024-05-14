@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   header: {
-    fontSize: 64,
+    fontSize: 72,
     color: "darkorange",
     fontWeight: "bold",
   },
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   left: {
-    fontSize: 16,
+    fontSize: 20,
     fontStyle: "italic",
     color: "grey",
     alignSelf: "flex-start",
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontFamily: "",
   },
   mid: {
-    fontSize: 16,
+    fontSize: 20,
     fontStyle: "italic",
     color: "grey",
     alignSelf: "center",
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   right: {
-    fontSize: 16,
+    fontSize: 20,
     fontStyle: "italic",
     color: "grey",
     alignSelf: "flex-end",

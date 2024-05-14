@@ -2,10 +2,9 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
-  Image,
-  Button,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React from "react";
 import AuthHeader from "@/components/AuthHeader";
@@ -15,25 +14,27 @@ import CustomButton from "@/components/CustomButton";
 
 const LoginPage = () => {
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <AuthHeader />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <AuthHeader />
+        </View>
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="E-Mail"
+            placeholderTextColor={"gray"}
+          />
+          <CustomButton
+            onPress={() => router.replace("/")}
+            title="Request Password Reset"
+            width={210}
+            margin={20}
+          />
+        </View>
+        <BottomWaves />
       </View>
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="E-Mail"
-          placeholderTextColor={"gray"}
-        />
-        <CustomButton
-          onPress={() => router.replace("/")}
-          title="Request Password Reset"
-          width={210}
-          margin={20}
-        />
-      </View>
-      <BottomWaves />
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -46,6 +47,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: "25%",
+    marginTop: 35,
   },
   formContainer: {
     marginTop: 50,

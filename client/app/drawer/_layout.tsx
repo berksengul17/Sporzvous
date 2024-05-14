@@ -39,20 +39,21 @@ const Layout = () => {
     <Drawer
       drawerContent={CustomDrawerContent}
       screenOptions={{
-        headerTintColor: "orange",
+        headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
+        headerTintColor: "darkorange",
         drawerHideStatusBarOnOpen: true,
         drawerActiveBackgroundColor: "#4E3833",
         drawerActiveTintColor: "#fff",
         drawerLabelStyle: { marginLeft: -20 },
         drawerStyle: {
-          backgroundColor: "orange",
+          backgroundColor: "darkorange",
         },
       }}
     >
       <Drawer.Screen
         name="home"
         options={{
-          headerTitle: "Homepage",
+          headerTitle: "Sporzvous",
           drawerLabel: "Homepage",
           drawerIcon: ({ size, color }) => (
             <Ionicons name="home" size={size} color={color} />
@@ -92,7 +93,7 @@ const Layout = () => {
       <Drawer.Screen
         name="complaint"
         options={{
-          headerTitle: "Complaint",
+          headerTitle: "Sporzvous",
           drawerLabel: "Complaint",
           drawerIcon: ({ size, color }) => (
             <FontAwesome name="warning" size={size} color={color} />
