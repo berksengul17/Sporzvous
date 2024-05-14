@@ -9,13 +9,11 @@ import com.sporzvous.backend.Rating.RatingService;
 import com.sporzvous.backend.Rating.SportField;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Controller
@@ -114,6 +112,16 @@ public class UserController {
         try {
             Event event = userService.joinEvent(userId, eventId);
             return ResponseEntity.ok("User joined to event with id" + event.getEventId());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+    @DeleteMapping("{userId}/leave/{eventId}")
+    public ResponseEntity<?> leaveEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            Event event = userService.leaveEvent(userId, eventId);
+            return ResponseEntity.ok("User left event with id" + event.getEventId());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());

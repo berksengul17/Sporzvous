@@ -44,12 +44,18 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public Event removeUserFromEvent(Long eventId, User user) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event with id " + eventId + " not found"));
+
+        event.getUsers().remove(user);
+        return eventRepository.save(event);
+    }
+
     public void deleteEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         eventRepository.delete(event);
     }
-
-
 }

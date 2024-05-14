@@ -59,6 +59,14 @@ public class UserService {
         return eventService.addUserToEvent(eventId, user);
     }
 
+
+    public Event leaveEvent(Long userId, Long eventId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
+
+        return eventService.removeUserFromEvent(eventId, user);
+    }
+
     public User updateProfile(Long userId, UserProfileUpdateDto profileUpdateDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
