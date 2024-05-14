@@ -17,7 +17,7 @@ public class RatingRepositoryCustomImpl implements RatingRepositoryCustom{
     private EntityManager entityManager;
 
     @Override
-    public List<Rating> filterRatings(String sport, LocalDate date, int score) {
+    public List<Rating> filterRatings(String sport, LocalDate date, int score, RatingCategory category) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Rating> query = cb.createQuery(Rating.class);
         Root<Rating> rating = query.from(Rating.class);
@@ -29,6 +29,9 @@ public class RatingRepositoryCustomImpl implements RatingRepositoryCustom{
         }
         if (date != null) {
             predicates.add(cb.equal(rating.get("publishDate"), date.toString()));
+        }
+        if (category != null) {
+            predicates.add(cb.equal(rating.get("category"), category));
         }
         predicates.add(cb.greaterThanOrEqualTo(rating.get("rating"), score));
 

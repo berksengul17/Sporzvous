@@ -18,6 +18,9 @@ public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ratingId;
+    @Enumerated(EnumType.STRING)
+    private RatingCategory category;
+    @Enumerated(EnumType.STRING)
     private SportField sportField;
     private double rating;
     private String content;

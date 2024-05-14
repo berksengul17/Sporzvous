@@ -4,5 +4,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RatingRepositoryCustom {
-    List<Rating> filterRatings(String sport, LocalDate date, int score);
+    List<Rating> filterRatings(String sport, LocalDate date, int score, RatingCategory category);
 }
