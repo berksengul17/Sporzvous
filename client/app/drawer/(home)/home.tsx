@@ -19,12 +19,33 @@ const eventData = [
     title: "Esenyurt sssssssssssssssssssssssssssssHailsaha",
     sport: "Football",
     host: "Çağan Özsir",
-    playernum: 2, 
-    eventcapacity: 10
+    playernum: 2,
+    eventcapacity: 10,
   },
-  { id: "2", title: "Tennis", sport: "Tennis", host: "Emre Erol", playernum: 3, eventcapacity: 20 },
-  { id: "3", title: "Berk’s Tennis", sport: "Tennis", host: "Berk Şengül", playernum: 2, eventcapacity: 30 },
-  { id: "4", title: "Bornova Futbol", sport: "Football", host: "Emre Erol", playernum: 5, eventcapacity: 40 },
+  {
+    id: "2",
+    title: "Tennis",
+    sport: "Tennis",
+    host: "Emre Erol",
+    playernum: 3,
+    eventcapacity: 20,
+  },
+  {
+    id: "3",
+    title: "Berk’s Tennis",
+    sport: "Tennis",
+    host: "Berk Şengül",
+    playernum: 2,
+    eventcapacity: 30,
+  },
+  {
+    id: "4",
+    title: "Bornova Futbol",
+    sport: "Football",
+    host: "Emre Erol",
+    playernum: 5,
+    eventcapacity: 40,
+  },
   // Add more events here
 ];
 
@@ -40,7 +61,9 @@ const EventItem = ({ event }) => (
       <Text>{event.sport}</Text>
     </View>
     <View style={styles.eventcapacityrow}>
-      <Text numberOfLines={1}>{event.playernum}/{event.eventcapacity}</Text>
+      <Text numberOfLines={1}>
+        {event.playernum}/{event.eventcapacity}
+      </Text>
     </View>
   </View>
 );
@@ -58,18 +81,26 @@ export default function HomeScreen() {
           />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
-          <Ionicons name="person-circle" size={60} color="black" />
+          <Ionicons
+            onPress={() => router.push("drawer/(home)/profile")}
+            name="person-circle"
+            size={60}
+            color="black"
+          />
           <Text style={{ alignSelf: "center" }}>Profile</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.titleview}>
         <Text style={styles.title}>Upcoming Events</Text>
-        <TouchableOpacity style={{ justifyContent: "center" }}>
+        <TouchableOpacity
+          onPress={() => router.push("drawer/(home)/filterModal")}
+          style={{ justifyContent: "center" }}
+        >
           <AntDesign name="filter" size={40} color="orange" style={{}} />
         </TouchableOpacity>
-        <TouchableOpacity 
-        style={{ justifyContent: "center" }}
-  
+        <TouchableOpacity
+          onPress={() => router.push("drawer/(home)/createEventModal")}
+          style={{ justifyContent: "center" }}
         >
           <AntDesign name="plussquare" size={40} color="orange" />
         </TouchableOpacity>
@@ -80,7 +111,7 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
       />
       <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
+        <Image source={require("../../../assets/images/Waves.png")} />
       </View>
     </View>
   );
@@ -136,13 +167,10 @@ const styles = StyleSheet.create({
   },
   eventsportrow: {
     flex: 1,
-    alignItems: "center"
-    
+    alignItems: "center",
   },
   eventcapacityrow: {
-    
     alignItems: "flex-end",
-    
   },
   username: {
     fontWeight: "bold",

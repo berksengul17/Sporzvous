@@ -70,7 +70,7 @@ const Layout = () => {
       }}
     >
       <Drawer.Screen
-        name="home"
+        name="(home)"
         options={{
           headerTitle: "Sporzvous",
           drawerLabel: "Homepage",
