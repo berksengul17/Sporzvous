@@ -29,6 +29,14 @@ public class EventService {
         return event.getUsers();
     }
 
+    public Event addUserToEvent(Long eventId, User user) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event with id" + eventId + "not found"));
+
+        event.getUsers().add(user);
+        return eventRepository.save(event);
+    }
+
     public void deleteEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));

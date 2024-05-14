@@ -1,5 +1,6 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Feedback.FeedbackService;
 import com.sporzvous.backend.MailSender.MailSenderService;
@@ -12,10 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -110,6 +108,18 @@ public class UserController {
         }
 
     }
+
+    @PostMapping("{userId}/join/{eventId}")
+    public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            Event event = userService.joinEvent(userId, eventId);
+            return ResponseEntity.ok("User joined to event with id" + event.getEventId());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
 
 
 //    @PostMapping("/createEvent")
