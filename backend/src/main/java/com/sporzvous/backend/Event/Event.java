@@ -1,5 +1,6 @@
 package com.sporzvous.backend.Event;
 
+import UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
@@ -45,6 +46,9 @@ public class Event {
     @JsonIgnore
     private List<Team> teams;
     private Integer maxParticipants;
+
+    @OneToMany(mappedBy = "event")
+    private UserEvent userEvent;
 
     public Event(String title, String sport, String locationCity,
                  String locationDistrict, Integer participants,

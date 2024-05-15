@@ -1,5 +1,6 @@
 package com.sporzvous.backend.User;
 
+import UserEvent.UserEventService;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.Event.EventService;
@@ -20,6 +21,7 @@ public class UserService {
     private final TokenRepository tokenRepository;
     private final EventService eventService;
     private final EventRepository eventRepository;
+    private final UserEventService userEventService;
 
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
@@ -58,6 +60,7 @@ public class UserService {
         if (event.getUsers().size() == event.getMaxParticipants()) {
             throw new IllegalStateException("Event " + eventId + " is already at full capacity.");
         }
+        userEventService.createUserEvent(user, event);
         return eventService.addUserToEvent(eventId, user);
     }
 

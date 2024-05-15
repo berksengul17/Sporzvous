@@ -1,6 +1,7 @@
 package com.sporzvous.backend.User;
 
 
+import UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
@@ -74,6 +75,10 @@ public class User {
 
     @OneToMany(mappedBy = "receiver")
     private Set<FriendRequest> receivedRequests = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private UserEvent userEvent;
+
 
 
     public User(Long userId, String email, String username) {
