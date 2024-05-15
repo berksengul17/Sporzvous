@@ -6,9 +6,7 @@ import React, { useState } from "react";
 import {
   Keyboard,
   StyleSheet,
-  Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -31,9 +29,7 @@ const Page = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <AuthHeader />
-        </View>
+        <AuthHeader />
         <View style={styles.formContainer}>
           <TextInput
             style={styles.input}
@@ -57,14 +53,7 @@ const Page = () => {
             placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
-          <View style={styles.pickerContainer}>
-            <TouchableOpacity onPress={() => setShowCountryPicker(true)}>
-              <View style={styles.pickerButton}>
-                <Text style={styles.pickerButtonText}>
-                  {country ? country.name.common : "Select Nationality"}
-                </Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.input}>
             <CountryPicker
               {...{
                 countryCode,
@@ -82,7 +71,7 @@ const Page = () => {
           </View>
           <View style={styles.buttons}>
             <CustomButton
-              onPress={() => router.replace("/")}
+              onPress={() => router.back()}
               title="Back"
               backgroundColor="#6F6F6F"
               width={90}
@@ -109,26 +98,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
-  header: {
-    height: "25%",
-    marginTop: 35,
-  },
   formContainer: {
     marginTop: 20,
     width: "100%",
     alignItems: "center",
   },
   input: {
-    width: "90%",
+    width: "70%",
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
-  },
-  pickerContainer: {
-    width: "90%",
+    justifyContent: "center",
   },
   pickerButton: {
     height: 40,
@@ -149,8 +132,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "65%",
     marginTop: 20,
+    gap: 10,
   },
 });

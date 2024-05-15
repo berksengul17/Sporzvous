@@ -58,10 +58,10 @@ const EventItem = ({ event }) => (
       <Text style={styles.eventHost}>{event.host}</Text>
       <Text style={styles.eventDate}>{event.date}</Text>
       <TouchableOpacity>
-        <Octicons name="upload" size={24} color="orange" />
+        <Octicons name="upload" size={24} color="#FF5C00" />
       </TouchableOpacity>
       <TouchableOpacity>
-        <AntDesign name="delete" size={24} color="orange" />
+        <AntDesign name="delete" size={24} color="#FF5C00" />
       </TouchableOpacity>
     </View>
   </View>
@@ -83,7 +83,7 @@ export default function MyEvents() {
           <AntDesign
             name="filter"
             size={40}
-            color="orange"
+            color="#FF5C00"
             style={{ margin: 4 }}
           />
         </TouchableOpacity>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   eventSport: {
-    color: "orange",
+    color: "#FF5C00",
     marginRight: 10,
   },
   eventHost: {

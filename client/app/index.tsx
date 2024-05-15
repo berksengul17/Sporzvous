@@ -16,17 +16,15 @@ const LoginPage = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <AuthHeader />
-        </View>
+        <AuthHeader />
         <View style={styles.formContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { marginBottom: 15 }]}
             placeholder="Username"
             placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { marginBottom: 24 }]}
             placeholder="Password"
             placeholderTextColor={"#6F6F6F"}
             secureTextEntry
@@ -36,14 +34,12 @@ const LoginPage = () => {
             title="Login"
             width={100}
           />
-          {/* <Button
-            onPress={() => router.replace("/forgotpw")}
-            title="Reset Password"
-            color={"#FF5C00"}
-          /> */}
-          <CustomText text="Reset Password" />
+          <CustomText
+            text="Reset Password"
+            customStyle={{ color: "#FF5C00", marginVertical: 16 }}
+          />
           <CustomButton
-            onPress={() => router.replace("/register")}
+            onPress={() => router.navigate("/register")}
             title="Sign up for free"
             backgroundColor="#6F6F6F"
           />
@@ -61,17 +57,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
-  header: {
-    height: "25%",
-    marginTop: 35,
-  },
+
   formContainer: {
     marginTop: 50,
     width: "100%",
     alignItems: "center",
+    flex: 1,
   },
   input: {
-    width: "90%",
+    width: "70%",
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,

@@ -93,13 +93,13 @@ export default function HomeScreen() {
           onPress={() => router.push("drawer/(home)/filterModal")}
           style={{ justifyContent: "center" }}
         >
-          <AntDesign name="filter" size={40} color="orange" style={{}} />
+          <AntDesign name="filter" size={40} color="#FF5C00" style={{}} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push("drawer/(home)/createEventModal")}
           style={{ justifyContent: "center" }}
         >
-          <AntDesign name="plussquare" size={40} color="orange" />
+          <AntDesign name="plussquare" size={40} color="#FF5C00" />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "orange",
+    color: "#FF5C00",
     marginBottom: 10,
     alignSelf: "center",
   },

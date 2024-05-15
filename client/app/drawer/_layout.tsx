@@ -60,6 +60,7 @@ const Layout = () => {
       screenOptions={{
         headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
         headerTintColor: "#FF5C00",
+        headerTitleAlign: "center",
         drawerHideStatusBarOnOpen: true,
         drawerActiveBackgroundColor: "#4E3833",
         drawerActiveTintColor: "#fff",

@@ -23,7 +23,7 @@ const Button = ({
   backgroundColor = "#FF5C00",
   color = "white",
   width = 150,
-  margin = 5,
+  margin = 0,
 }: Props) => {
   const buttonStyle: ViewStyle = {
     width,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,
-    backgroundColor: "orange",
+    backgroundColor: "#FF5C00",
     paddingVertical: 14,
     paddingHorizontal: 10,
   },

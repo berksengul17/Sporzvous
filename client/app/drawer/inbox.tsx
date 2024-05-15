@@ -37,7 +37,7 @@ const FriendItem = ({ friend }) => (
         <FontAwesome5
           name="check-double"
           size={14}
-          color="orange"
+          color="#FF5C00"
           style={{ padding: 5 }}
         />
         <Text style={styles.friendLastSeen}>{friend.lastMessage}</Text>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   friendLastSeen: {
-    color: "grey",
+    color: "#6F6F6F",
     fontSize: 14,
   },
   iconButton: {

@@ -44,7 +44,7 @@ export default function ComplaintsHomePage() {
         <View style={{ margin: 20, flexDirection: "row" }}>
           <TextInput
             placeholder="Content"
-            placeholderTextColor={"grey"}
+            placeholderTextColor={"#6F6F6F"}
             style={styles.contentBox}
             multiline={true}
           />
@@ -52,7 +52,7 @@ export default function ComplaintsHomePage() {
         <Button
           onPress={() => Alert.alert("Submit clicked!")}
           title="Submit"
-          color="orange"
+          color="#FF5C00"
         />
       </View>
       <View style={styles.wave}>

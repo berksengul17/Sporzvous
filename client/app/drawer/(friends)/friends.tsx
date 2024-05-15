@@ -47,10 +47,10 @@ const FriendItem = ({ friend }) => (
       <Text style={styles.friendLastSeen}>Last seen: {friend.lastSeen}</Text>
     </View>
     <TouchableOpacity style={styles.iconButton}>
-      <AntDesign name="message1" size={24} color="orange" />
+      <AntDesign name="message1" size={24} color="#FF5C00" />
     </TouchableOpacity>
     <TouchableOpacity style={styles.iconButton}>
-      <AntDesign name="adduser" size={24} color="orange" />
+      <AntDesign name="adduser" size={24} color="#FF5C00" />
     </TouchableOpacity>
   </View>
 );
@@ -116,7 +116,7 @@ export default function HomeScreen() {
           <MaterialCommunityIcons
             name="email-send"
             size={45}
-            color="orange"
+            color="#FF5C00"
             onPress={() => router.push("/drawer/(friends)/friendRequests")}
           />
         </TouchableOpacity>
@@ -124,7 +124,7 @@ export default function HomeScreen() {
           <AntDesign
             name="adduser"
             size={45}
-            color="orange"
+            color="#FF5C00"
             onPress={toggleModal}
           />
         </TouchableOpacity>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   friendLastSeen: {
-    color: "grey",
+    color: "#6F6F6F",
     fontSize: 14,
   },
   iconButton: {
