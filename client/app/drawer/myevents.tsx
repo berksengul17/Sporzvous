@@ -1,19 +1,19 @@
+import {
+  AntDesign,
+  FontAwesome5,
+  Ionicons,
+  Octicons,
+} from "@expo/vector-icons";
 import React from "react";
 import {
+  FlatList,
+  Image,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Image,
-  FlatList,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Octicons } from "@expo/vector-icons";
 
 const eventData = [
   {
@@ -72,11 +72,11 @@ export default function MyEvents() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="gray" />
+          <Ionicons name="search" size={20} color="#6F6F6F" />
           <TextInput
             style={styles.searchText}
             placeholder="Search"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
         </View>
         <TouchableOpacity>
@@ -149,10 +149,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   eventHost: {
-    color: "gray",
+    color: "#6F6F6F",
   },
   eventDate: {
-    color: "gray",
+    color: "#6F6F6F",
   },
   wave: {
     position: "absolute",

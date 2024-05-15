@@ -1,20 +1,21 @@
+import CustomButton from "@/components/CustomButton";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  FlatList,
+  Image,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Image,
-  FlatList,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import Modal from "react-native-modal";
-import CustomButton from "@/components/CustomButton";
 
 const friendsData = [
   {
@@ -65,7 +66,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.popUpContainer}>
         <Modal
-          backdropColor="gray"
+          backdropColor="#6F6F6F"
           animationIn={"tada"}
           animationOut={"fadeOut"}
           isVisible={isModalVisible}
@@ -83,7 +84,7 @@ export default function HomeScreen() {
             <TextInput
               style={styles.input}
               placeholder="Search"
-              placeholderTextColor={"gray"}
+              placeholderTextColor={"#6F6F6F"}
             ></TextInput>
             <View style={styles.buttons}>
               <CustomButton
@@ -91,7 +92,7 @@ export default function HomeScreen() {
                 onPress={toggleModal}
                 width={80}
                 backgroundColor="white"
-                color="darkorange"
+                color="#FF5C00"
               />
               <CustomButton
                 title="Send Request"
@@ -104,11 +105,11 @@ export default function HomeScreen() {
       </View>
       <View style={styles.header}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="gray" />
+          <Ionicons name="search" size={20} color="#6F6F6F" />
           <TextInput
             style={styles.searchText}
             placeholder="Search"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
   },
   searchText: {
     marginLeft: 10,
-    color: "gray",
+    color: "#6F6F6F",
     flex: 1,
   },
   list: {
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontWeight: "bold",
-    color: "darkorange",
+    color: "#FF5C00",
   },
   input: {
     padding: 10,

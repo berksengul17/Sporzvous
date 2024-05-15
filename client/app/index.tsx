@@ -1,17 +1,16 @@
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Button,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
-import React from "react";
 import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
-import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import { router } from "expo-router";
+import React from "react";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const LoginPage = () => {
   return (
@@ -24,12 +23,12 @@ const LoginPage = () => {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
           <CustomButton
@@ -37,15 +36,16 @@ const LoginPage = () => {
             title="Login"
             width={100}
           />
-          <Button
+          {/* <Button
             onPress={() => router.replace("/forgotpw")}
             title="Reset Password"
-            color={"darkorange"}
-          />
+            color={"#FF5C00"}
+          /> */}
+          <CustomText text="Reset Password" />
           <CustomButton
             onPress={() => router.replace("/register")}
             title="Sign up for free"
-            backgroundColor="gray"
+            backgroundColor="#6F6F6F"
           />
         </View>
         <BottomWaves />

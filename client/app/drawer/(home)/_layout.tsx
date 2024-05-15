@@ -1,7 +1,6 @@
-import React from "react";
-import { Stack, router } from "expo-router";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
-import { SlideInRight } from "react-native-reanimated";
+import { Stack, router } from "expo-router";
+import React from "react";
 
 const _layout = () => {
   return (
@@ -12,13 +11,13 @@ const _layout = () => {
         options={{
           presentation: "modal",
           headerTitle: "Create a new event",
-          headerTitleStyle: { color: "darkorange", fontWeight: "bold" },
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo
               name="cross"
               onPress={() => router.back()}
               size={30}
-              color={"darkorange"}
+              color={"#FF5C00"}
             />
           ),
         }}
@@ -28,13 +27,13 @@ const _layout = () => {
         options={{
           presentation: "modal",
           headerTitle: "Filter",
-          headerTitleStyle: { color: "darkorange", fontWeight: "bold" },
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo
               name="cross"
               onPress={() => router.back()}
               size={30}
-              color={"darkorange"}
+              color={"#FF5C00"}
             />
           ),
         }}
@@ -44,21 +43,17 @@ const _layout = () => {
         options={{
           presentation: "modal",
           headerTitle: "Sporzvous",
-          headerTitleStyle: { color: "darkorange", fontWeight: "bold" },
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo
               name="cross"
               onPress={() => router.back()}
               size={30}
-              color={"darkorange"}
+              color={"#FF5C00"}
             />
           ),
           headerRight: () => (
-            <FontAwesome
-              name="pencil-square-o"
-              size={30}
-              color={"darkorange"}
-            />
+            <FontAwesome name="pencil-square-o" size={30} color={"#FF5C00"} />
           ),
         }}
       />

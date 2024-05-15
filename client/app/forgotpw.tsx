@@ -1,16 +1,15 @@
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
-import React from "react";
 import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
-import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import { router } from "expo-router";
+import React from "react";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const LoginPage = () => {
   return (
@@ -23,7 +22,7 @@ const LoginPage = () => {
           <TextInput
             style={styles.input}
             placeholder="E-Mail"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
           <CustomButton
             onPress={() => router.replace("/")}

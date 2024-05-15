@@ -1,8 +1,8 @@
 import React from "react";
 import {
   StyleSheet,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
@@ -20,17 +20,16 @@ interface Props {
 const Button = ({
   title,
   onPress,
-  backgroundColor = "darkorange",
+  backgroundColor = "#FF5C00",
   color = "white",
   width = 150,
-  height = 45,
   margin = 5,
 }: Props) => {
   const buttonStyle: ViewStyle = {
-    height,
     width,
     backgroundColor,
     margin,
+    borderColor: backgroundColor,
   };
 
   return (
@@ -45,7 +44,6 @@ const Button = ({
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: "darkorange",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 10,

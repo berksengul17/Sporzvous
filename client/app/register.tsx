@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-} from "react-native";
-import { router } from "expo-router";
 import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import CountryPicker from "react-native-country-picker-modal";
 
 const Page = () => {
@@ -38,23 +38,23 @@ const Page = () => {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={styles.input}
             placeholder="E-mail"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
           <TextInput
             style={styles.input}
             placeholder="Confirm Password"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
           <View style={styles.pickerContainer}>
@@ -84,13 +84,13 @@ const Page = () => {
             <CustomButton
               onPress={() => router.replace("/")}
               title="Back"
-              backgroundColor="gray"
+              backgroundColor="#6F6F6F"
               width={90}
             />
             <CustomButton
               onPress={() => router.replace("/")}
               title="Sign up"
-              backgroundColor="darkorange"
+              backgroundColor="#FF5C00"
             />
           </View>
         </View>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   pickerButtonText: {
     fontSize: 16,
-    color: "gray",
+    color: "#6F6F6F",
   },
   countryText: {
     marginTop: 10,

@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 const AuthHeader = () => {
   return (
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 72,
-    color: "darkorange",
+    color: "#FF5C00",
     fontWeight: "bold",
   },
   subContainer: {
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 10,
     fontWeight: "bold",
-    fontFamily: "",
+    fontFamily: "JejuHallasan",
   },
   mid: {
     fontSize: 20,
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 30,
     fontWeight: "bold",
+    fontFamily: "JejuHallasan",
   },
   right: {
     fontSize: 20,
@@ -59,5 +60,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginTop: 50,
     fontWeight: "bold",
+    fontFamily: "JejuHallasan",
   },
 });

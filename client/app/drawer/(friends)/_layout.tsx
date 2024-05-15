@@ -1,7 +1,6 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { Stack, router } from "expo-router";
 import { Entypo } from "@expo/vector-icons";
+import { Stack, router } from "expo-router";
+import React from "react";
 
 const Layout = () => {
   return (
@@ -12,13 +11,13 @@ const Layout = () => {
         options={{
           presentation: "modal",
           headerTitle: "Friend Requests",
-          headerTitleStyle: { color: "darkorange", fontWeight: "bold" },
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo
               name="cross"
               onPress={() => router.back()}
               size={30}
-              color={"darkorange"}
+              color={"#FF5C00"}
             />
           ),
         }}

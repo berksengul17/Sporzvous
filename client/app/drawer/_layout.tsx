@@ -1,14 +1,14 @@
-import React from "react";
-import { Drawer } from "expo-router/drawer";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router, useRouter } from "expo-router";
-import { Alert, View } from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
+import { useRouter } from "expo-router";
+import { Drawer } from "expo-router/drawer";
+import React from "react";
+import { Alert, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomDrawerContent = (props: any) => {
   const router = useRouter();
@@ -59,13 +59,13 @@ const Layout = () => {
       drawerContent={CustomDrawerContent}
       screenOptions={{
         headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
-        headerTintColor: "darkorange",
+        headerTintColor: "#FF5C00",
         drawerHideStatusBarOnOpen: true,
         drawerActiveBackgroundColor: "#4E3833",
         drawerActiveTintColor: "#fff",
         drawerLabelStyle: { marginLeft: -20 },
         drawerStyle: {
-          backgroundColor: "darkorange",
+          backgroundColor: "#FF5C00",
         },
       }}
     >
