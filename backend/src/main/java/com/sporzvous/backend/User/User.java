@@ -4,6 +4,7 @@ package com.sporzvous.backend.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
+import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
 import com.sporzvous.backend.Team.Team;
 import jakarta.persistence.*;
@@ -11,7 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -65,6 +68,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "team_id")
     )
     private List<Team> teams;
+
+    @OneToMany(mappedBy = "sender")
+    private Set<FriendRequest> sentRequests = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private Set<FriendRequest> receivedRequests = new HashSet<>();
 
 
     public User(Long userId, String email, String username) {

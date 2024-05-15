@@ -25,6 +25,8 @@ public class UserService {
 
         if (isEmailTaken) {
             throw new IllegalArgumentException("Email is already taken");
+        } else if (userRepository.findByUsername(user.getUsername()) != null){
+            throw new IllegalArgumentException("Username is already taken");
         } else if (!isValidEmail(user.getEmail())) {
             throw new IllegalArgumentException("Invalid email address");
         } else if (user.getUsername().length() > 30 || user.getUsername().length() < 2) {
@@ -87,8 +89,11 @@ public class UserService {
     }
 
     public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (userRepository.findByUsername(username) == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        return userRepository.findByUsername(username);
     }
 
     public void createTokenForUser(User user, String token) {
