@@ -1,18 +1,7 @@
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  FlatList,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 
 const friendsData = [
   {
@@ -63,11 +52,11 @@ export default function InboxScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="gray" />
+          <Ionicons name="search" size={20} color="#6F6F6F" />
           <TextInput
             style={styles.searchText}
             placeholder="Search"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
         </View>
       </View>
@@ -105,7 +94,7 @@ const styles = StyleSheet.create({
   },
   searchText: {
     marginLeft: 10,
-    color: "gray",
+    color: "#6F6F6F",
     flex: 1,
   },
   list: {

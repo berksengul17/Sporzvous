@@ -29,7 +29,7 @@ public class User {
     private String password;
     private String fullName;
     private String username;
-
+    @Lob
     private byte[] image;
     private int age;
     private String gender;
@@ -39,7 +39,7 @@ public class User {
     private UserStatus status;
     @ManyToMany
     @JoinTable(
-            name = "user_events",
+            name = "user_event",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
@@ -55,7 +55,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_friends",
+            name = "user_friend",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
@@ -63,7 +63,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_teams",
+            name = "user_team",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "team_id")
     )

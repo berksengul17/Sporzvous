@@ -14,10 +14,14 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
 
-    public List<Rating> filterRatings(String sport, LocalDate date, int score) {
-        return ratingRepository.filterRatings(sport, date, score);
+    public List<Rating> filterRatings(FilterState filterState) {
+        return ratingRepository.filterRatings(
+                filterState.getSport(),
+                filterState.getDate(),
+                filterState.getScore() != null ? filterState.getScore() : 0,
+                filterState.getCategory()
+        );
     }
-
     public Rating createRating(Double userRating, SportField sportField, String content, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

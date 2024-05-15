@@ -1,8 +1,7 @@
 // app/drawer/friends/addFriendPopup.tsx
 import CustomButton from "@/components/CustomButton";
-import { router } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import Modal from "react-native-modal";
 
 const AddFriendPopup = () => {
@@ -17,7 +16,7 @@ const AddFriendPopup = () => {
       <Button title="Show modal" onPress={toggleModal} />
 
       <Modal
-        backdropColor="gray"
+        backdropColor="#6F6F6F"
         isVisible={isModalVisible}
         style={{
           marginTop: "60%",
@@ -32,7 +31,7 @@ const AddFriendPopup = () => {
           <TextInput
             style={styles.input}
             placeholder="Search"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           ></TextInput>
           <View style={styles.buttons}>
             <CustomButton
@@ -40,7 +39,7 @@ const AddFriendPopup = () => {
               onPress={toggleModal}
               width={80}
               backgroundColor="white"
-              color="darkorange"
+              color="#FF5C00"
             />
             <CustomButton
               title="Send Request"
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontWeight: "bold",
-    color: "darkorange",
+    color: "#FF5C00",
   },
   input: {
     padding: 10,

@@ -1,6 +1,36 @@
-import { Stack } from "expo-router";
+import {
+  OpenSans_400Regular,
+  OpenSans_700Bold_Italic,
+} from "@expo-google-fonts/open-sans";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack } from "expo-router";
+import { useEffect } from "react";
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  let [loaded, error] = useFonts({
+    OpenSans_400Regular,
+    OpenSans_700Bold_Italic,
+    JejuHallasan: require("../assets/fonts/JejuHallasan-Regular.ttf"),
+  });
+
+  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />

@@ -1,18 +1,15 @@
-import React, { useState } from "react";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React from "react";
 import {
+  FlatList,
+  Image,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Image,
-  FlatList,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
-import { router } from "expo-router";
-import { create } from "react-test-renderer";
 const eventData = [
   {
     id: "1",
@@ -73,11 +70,11 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="gray" />
+          <Ionicons name="search" size={20} color="#6F6F6F" />
           <TextInput
             style={styles.searchText}
             placeholder="Search"
-            placeholderTextColor={"gray"}
+            placeholderTextColor={"#6F6F6F"}
           />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
@@ -142,7 +139,7 @@ const styles = StyleSheet.create({
   },
   searchText: {
     marginLeft: 10,
-    color: "gray",
+    color: "#6F6F6F",
     flex: 1,
   },
   eventContainer: {
@@ -176,7 +173,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   eventName: {
-    color: "gray",
+    color: "#6F6F6F",
   },
   sport: {
     fontStyle: "italic",
