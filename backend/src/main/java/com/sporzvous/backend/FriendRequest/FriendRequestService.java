@@ -24,6 +24,7 @@ public class FriendRequestService {
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
         return friendRequestRepository.save(friendRequest);
     }
+
     public FriendRequest respondToFriendRequest(Long requestId, FriendRequestStatus status) {
 
         FriendRequest friendRequest = friendRequestRepository.findById(requestId)
@@ -31,5 +32,12 @@ public class FriendRequestService {
 
         friendRequest.setFriendRequestStatus(status);
         return friendRequestRepository.save(friendRequest);
+    }
+
+    public void deleteFriendship(Long requestId) {
+        FriendRequest friendRequest = friendRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Friendship not found"));
+
+        friendRequestRepository.delete(friendRequest);
     }
 }

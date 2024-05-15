@@ -3,12 +3,9 @@ package com.sporzvous.backend.FriendRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-    @RestController
+@RestController
     @RequestMapping("/api/friendrequests")
     public class FriendRequestController {
 
@@ -37,9 +34,16 @@ import org.springframework.web.bind.annotation.RestController;
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
-
-
-
+        }
+        @DeleteMapping("/deleteFriend")
+        public ResponseEntity<?> deleteFriend(@RequestParam Long requestId) {
+            try {
+                friendRequestService.deleteFriendship(requestId);
+                return ResponseEntity.noContent().build();
+            } catch(IllegalArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            }
         }
     }
+
 
