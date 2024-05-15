@@ -86,4 +86,28 @@ public class User {
         this.email = email;
         this.username = username;
     }
+
+    public User(Long userId, String email, String fullName, String username, byte[] image, int age, String gender,
+                String favoriteSport, int eventCount, int isVerified, UserStatus status, List<Event> events,
+                List<Feedback> feedbacks, List<Rating> ratings, List<User> friends, List<Team> teams,
+                Set<FriendRequest> sentRequests, Set<FriendRequest> receivedRequests) {
+        this.userId = userId;
+        this.email = email;
+        this.fullName = fullName;
+        this.username = username;
+        this.image = image;
+        this.age = age;
+        this.gender = gender;
+        this.favoriteSport = favoriteSport;
+        this.eventCount = eventCount;
+        this.isVerified = isVerified;
+        this.status = status;
+        this.events = events;
+        this.feedbacks = feedbacks;
+        this.ratings = ratings;
+        this.friends = friends;
+        this.teams = teams;
+        this.sentRequests = sentRequests;
+        this.receivedRequests = receivedRequests;
+    }
 }

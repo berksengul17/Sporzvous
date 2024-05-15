@@ -44,7 +44,10 @@ public class UserService {
 
         if (user.isPresent() && user.get().getPassword().equals(userCredentials.getPassword())) {
             User userInfo = user.get();
-            return new User(userInfo.getUserId(), userInfo.getEmail(), userInfo.getUsername());
+            return new User(userInfo.getUserId(), userInfo.getEmail(), userInfo.getUsername(), userInfo.getFullName(), userInfo.getImage(),
+                    userInfo.getAge(), userInfo.getGender(), userInfo.getFavoriteSport(), userInfo.getEventCount(), userInfo.getIsVerified(),
+                    userInfo.getStatus(), userInfo.getEvents(), userInfo.getFeedbacks(), userInfo.getRatings(), userInfo.getFriends(),
+                    userInfo.getTeams(), userInfo.getSentRequests(), userInfo.getReceivedRequests());
         }
 
         return null;
