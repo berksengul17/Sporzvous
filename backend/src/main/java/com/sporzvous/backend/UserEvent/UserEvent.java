@@ -1,4 +1,4 @@
-package UserEvent;
+package com.sporzvous.backend.UserEvent;
 
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
@@ -7,16 +7,15 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 @Entity
-
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@Table(name="user_event")
 public class UserEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long UserEventId;
+    private long userEventId;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
