@@ -6,14 +6,15 @@ import {
   Image,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+
 const eventData = [
   {
     id: "1",
-    title: "Esenyurt sssssssssssssssssssssssssssssHailsaha",
+    title: "Esenyurt Hailsaha",
     sport: "Football",
     host: "Çağan Özsir",
     playernum: 2,
@@ -77,27 +78,18 @@ export default function HomeScreen() {
             placeholderTextColor={"#6F6F6F"}
           />
         </View>
-        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
-          <Ionicons
-            onPress={() => router.push("drawer/(home)/profile")}
-            name="person-circle"
-            size={60}
-            color="black"
-          />
-          <Text style={{ alignSelf: "center" }}>Profile</Text>
+        <TouchableOpacity
+          onPress={() => router.push("drawer/(home)/filterModal")}
+          style={styles.filterButton}
+        >
+          <AntDesign name="filter" size={40} color="#FF5C00" />
         </TouchableOpacity>
       </View>
       <View style={styles.titleview}>
         <Text style={styles.title}>Upcoming Events</Text>
         <TouchableOpacity
-          onPress={() => router.push("drawer/(home)/filterModal")}
-          style={{ justifyContent: "center" }}
-        >
-          <AntDesign name="filter" size={40} color="#FF5C00" style={{}} />
-        </TouchableOpacity>
-        <TouchableOpacity
           onPress={() => router.push("drawer/(home)/createEventModal")}
-          style={{ justifyContent: "center" }}
+          style={styles.addButton}
         >
           <AntDesign name="plussquare" size={40} color="#FF5C00" />
         </TouchableOpacity>
@@ -122,19 +114,26 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 10,
+    marginVertical: 15,
   },
   searchBar: {
+    flex: 1,
+    padding: 8,
     flexDirection: "row",
-    padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
     borderRadius: 10,
-    flex: 1,
+  },
+  filterButton: {
+    justifyContent: "center",
+    marginLeft: 10,
   },
   titleview: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: "3%",
   },
   searchText: {
@@ -148,12 +147,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
   },
-
   title: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#FF5C00",
-    marginBottom: 10,
+    alignSelf: "center",
+  },
+  addButton: {
+    position: "absolute",
+    right: 10,
     alignSelf: "center",
   },
   eventhostrow: {

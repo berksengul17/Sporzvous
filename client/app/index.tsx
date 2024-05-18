@@ -2,8 +2,9 @@ import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -13,6 +14,20 @@ import {
 } from "react-native";
 
 const LoginPage = () => {
+  const { login } = useUserContext();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onLogin = async () => {
+    console.log(email, password);
+
+    await login({ email, password }, (response) => {
+      console.log("response", response.data);
+      router.replace("/drawer/home");
+    });
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -20,19 +35,23 @@ const LoginPage = () => {
         <View style={styles.formContainer}>
           <TextInput
             style={[styles.input, { marginBottom: 15 }]}
+            value={email}
+            onChangeText={setEmail}
             placeholder="Username"
             placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={[styles.input, { marginBottom: 24 }]}
+            value={password}
+            onChangeText={setPassword}
             placeholder="Password"
             placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
           <CustomButton
-            onPress={() => router.replace("/drawer/home")}
+            onPress={onLogin}
             title="Login"
-            width={100}
+            containerStyle={{ width: 100 }}
           />
           <CustomText
             text="Reset Password"
@@ -41,7 +60,10 @@ const LoginPage = () => {
           <CustomButton
             onPress={() => router.navigate("/register")}
             title="Sign up for free"
-            backgroundColor="#6F6F6F"
+            containerStyle={{
+              backgroundColor: "#6F6F6F",
+              borderColor: "#6F6F6F",
+            }}
           />
         </View>
         <BottomWaves />

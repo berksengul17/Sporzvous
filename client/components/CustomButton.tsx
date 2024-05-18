@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  Platform,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -10,32 +12,15 @@ import {
 interface Props {
   title: string;
   onPress: () => void;
-  backgroundColor?: string;
-  color?: string;
-  width?: number;
-  height?: number;
-  margin?: number;
+  containerStyle?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
-const Button = ({
-  title,
-  onPress,
-  backgroundColor = "#FF5C00",
-  color = "white",
-  width = 150,
-  margin = 0,
-}: Props) => {
-  const buttonStyle: ViewStyle = {
-    width,
-    backgroundColor,
-    margin,
-    borderColor: backgroundColor,
-  };
-
+const Button = ({ title, onPress, containerStyle, textStyle }: Props) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={[styles.container, buttonStyle]}>
-        <Text style={[styles.text, { color }]}>{title}</Text>
+      <View style={[styles.container, containerStyle]}>
+        <Text style={[styles.text, textStyle]}>{title}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -48,6 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 10,
     backgroundColor: "#FF5C00",
+    borderColor: "#FF5C00",
     paddingVertical: 14,
     paddingHorizontal: 10,
   },
@@ -56,6 +42,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 16,
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans_400Regular",
+    }),
   },
 });
 

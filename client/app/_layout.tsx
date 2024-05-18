@@ -1,3 +1,4 @@
+import { UserProvider } from "@/context/UserProvider";
 import {
   OpenSans_400Regular,
   OpenSans_700Bold_Italic,
@@ -32,11 +33,13 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="register" options={{ headerShown: false }} />
-      <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
-      <Stack.Screen name="drawer" options={{ headerShown: false }} />
-    </Stack>
+    <UserProvider>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
+        <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
+        <Stack.Screen name="drawer" options={{ headerShown: false }} />
+      </Stack>
+    </UserProvider>
   );
 }
