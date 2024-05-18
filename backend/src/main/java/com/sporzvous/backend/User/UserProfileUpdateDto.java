@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class UserProfileUpdateDto {
     private String username;
+    private String fullName;
     private Integer age;
     private String gender;
     private String favoriteSport;

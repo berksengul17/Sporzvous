@@ -83,6 +83,10 @@ public class UserService {
             user.setUsername(profileUpdateDto.getUsername());
         }
 
+        if (profileUpdateDto.getFullName() != null) {
+            user.setFullName(profileUpdateDto.getFullName());
+        }
+
         if (profileUpdateDto.getAge() != null) {
             user.setAge(profileUpdateDto.getAge());
         }
