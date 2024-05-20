@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-const API_URL = "http://192.168.1.43:8082/api/user";
+const API_URL = "http://192.168.1.103:8082/api/user";
 
 export const signUp = async (
   {
