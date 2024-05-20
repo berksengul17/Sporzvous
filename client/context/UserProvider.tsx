@@ -29,7 +29,7 @@ type UserProps = {
   updateProfile: (newUserInfo: User) => Promise<void>;
 };
 
-const API_URL = "http://192.168.1.43:8082/api/user";
+const API_URL = "http://192.168.1.103:8082/api/user";
 
 const UserContext = createContext<UserProps | null>(null);
 

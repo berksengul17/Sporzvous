@@ -39,7 +39,7 @@ const _layout = () => {
         }}
       />
       <Stack.Screen
-        name="profile"
+        name="(profile)"
         options={{
           presentation: "modal",
           headerTitle: "Sporzvous",

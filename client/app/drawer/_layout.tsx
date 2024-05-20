@@ -80,11 +80,11 @@ const Layout = () => {
           ),
           headerShown: true,
           headerRight: () => (
-            <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
+            <TouchableOpacity style={{ marginRight: "10%" }}>
               <Ionicons
-                onPress={() => router.push("drawer/(home)/profile")}
+                onPress={() => router.push("drawer/(home)/(profile)")}
                 name="person-circle"
-                size={60}
+                size={48}
                 color="black"
               />
             </TouchableOpacity>

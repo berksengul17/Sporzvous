@@ -8,130 +8,136 @@ import {
   Text,
   TextInput,
   View,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
 
 const Page = () => {
   return (
-    <SafeAreaView style={styles.createEventContainer}>
-      <View style={styles.eventInformationContainer}>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Title</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.createEventContainer}>
+        <View style={styles.eventInformationContainer}>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Title</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="Esenyurt Halısaha"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
           </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="Esenyurt Halısaha"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Sport</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="Football"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Location</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="İstanbul"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>
+                People Count
+              </Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="14"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Team Count</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="2"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Date</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="11.01.2021"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text style={styles.eventInformationTitleFonts}>Time</Text>
+            </View>
+            <View style={styles.eventInformationInput}>
+              <TextInput
+                placeholder="14:00"
+                placeholderTextColor={"#6F6F6F"}
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+          <View style={styles.eventInformationRow}>
+            <View style={styles.eventInformationTitle}>
+              <Text numberOfLines={2} style={styles.eventInformationTitleFonts}>
+                Minimum Skill Level
+              </Text>
+            </View>
+            <View style={styles.ratingStars}>
+              <Rating
+                type="star"
+                ratingCount={5}
+                imageSize={30}
+                style={styles.ratingStars}
+                onFinishRating={(rating) => console.log("Rated: ", rating)}
+              />
+            </View>
           </View>
         </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Sport</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="Football"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Choose Location"
+            onPress={() => Alert.alert("Button clicked")}
+            color="green"
+          />
+          <CustomButton
+            title="Create"
+            onPress={() => Alert.alert("Button clicked")}
+          />
         </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Location</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="İstanbul"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
+        <View style={styles.wave}>
+          <Image source={require("../../../assets/images/Waves.png")} />
         </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>People Count</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="14"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
-        </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Team Count</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="2"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
-        </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Date</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="11.01.2021"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
-        </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text style={styles.eventInformationTitleFonts}>Time</Text>
-          </View>
-          <View style={styles.eventInformationInput}>
-            <TextInput
-              placeholder="14:00"
-              placeholderTextColor={"#6F6F6F"}
-              style={styles.inputBox}
-            />
-          </View>
-        </View>
-        <View style={styles.eventInformationRow}>
-          <View style={styles.eventInformationTitle}>
-            <Text numberOfLines={2} style={styles.eventInformationTitleFonts}>
-              Minimum Skill Level
-            </Text>
-          </View>
-          <View style={styles.ratingStars}>
-            <Rating
-              type="star"
-              ratingCount={5}
-              imageSize={30}
-              style={styles.ratingStars}
-              onFinishRating={(rating) => console.log("Rated: ", rating)}
-            />
-          </View>
-        </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Choose Location"
-          onPress={() => Alert.alert("Button clicked")}
-          color="green"
-        />
-        <CustomButton
-          title="Create"
-          onPress={() => Alert.alert("Button clicked")}
-        />
-      </View>
-      <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
