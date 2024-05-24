@@ -1,6 +1,8 @@
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
+import { useNavigation } from '@react-navigation/native';  // Import useNavigation hook
+
 import {
   FlatList,
   Image,
@@ -47,24 +49,30 @@ const eventData = [
   // Add more events here
 ];
 
-const EventItem = ({ event }) => (
-  <View style={styles.eventContainer}>
-    <View style={styles.eventhostrow}>
-      <Text>{event.host}</Text>
-    </View>
-    <View style={styles.eventtitlerow}>
-      <Text numberOfLines={1}>{event.title}</Text>
-    </View>
-    <View style={styles.eventsportrow}>
-      <Text>{event.sport}</Text>
-    </View>
-    <View style={styles.eventcapacityrow}>
-      <Text numberOfLines={1}>
-        {event.playernum}/{event.eventcapacity}
-      </Text>
-    </View>
-  </View>
-);
+const EventItem = ({ event }) => {
+  const navigation = useNavigation();  // Hook to access the navigation object
+  return (
+    <TouchableOpacity 
+      style={styles.eventContainer}
+      onPress={() => router.push('join_event')} // Assuming 'EventDetails' is the route name
+    >
+      <View style={styles.eventhostrow}>
+        <Text>{event.host}</Text>
+      </View>
+      <View style={styles.eventtitlerow}>
+        <Text numberOfLines={1}>{event.title}</Text>
+      </View>
+      <View style={styles.eventsportrow}>
+        <Text>{event.sport}</Text>
+      </View>
+      <View style={styles.eventcapacityrow}>
+        <Text numberOfLines={1}>
+          {event.playernum}/{event.eventcapacity}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default function HomeScreen() {
   return (
