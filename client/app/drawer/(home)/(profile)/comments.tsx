@@ -1,86 +1,57 @@
 import React, { useMemo, useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
-  Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Button,
+  Text,
 } from "react-native";
-import {
-  FontAwesome,
-  MaterialCommunityIcons,
-  FontAwesome5,
-  AntDesign,
-  FontAwesome6,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import CommentItem from "@/components/CommentItem";
+import { router } from "expo-router";
+import CustomText from "@/components/CustomText";
 
-const normalizeTypeName = (type) => type.replace(/\s+/g, "").toLowerCase();
+const parseDate = (dateStr) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize today's date to remove time part
 
-const iconMapping = {
-  organisation: { name: "briefcase", library: FontAwesome },
-  football: { name: "soccer-ball-o", library: FontAwesome },
-  basketball: { name: "basketball", library: MaterialCommunityIcons },
-  tennis: { name: "tennis", library: MaterialCommunityIcons },
-  volleyball: { name: "volleyball-ball", library: FontAwesome5 },
-  baseball: { name: "baseball-bat-ball", library: FontAwesome6 },
-  tabletennis: { name: "table-tennis", library: FontAwesome5 },
-  badminton: { name: "badminton", library: MaterialCommunityIcons },
-  fitness: { name: "fitness-center", library: MaterialIcons },
+  const [day, month, year] = dateStr.split("/");
+  const commentDate = new Date(year, month - 1, day);
+  commentDate.setHours(0, 0, 0, 0); // Normalize comment date
+
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const daysAgo = Math.floor((today - commentDate) / millisecondsPerDay);
+
+  if (daysAgo === 0) {
+    return "Today";
+  } else if (daysAgo < 7) {
+    return `${daysAgo} days ago`;
+  } else if (daysAgo < 30) {
+    const weeksAgo = Math.floor(daysAgo / 7);
+    return `${weeksAgo} week${weeksAgo > 1 ? "s" : ""} ago`;
+  } else if (daysAgo < 365) {
+    const monthsAgo = Math.floor(daysAgo / 30);
+    return `${monthsAgo} month${monthsAgo > 1 ? "s" : ""} ago`;
+  } else {
+    const yearsAgo = Math.floor(daysAgo / 365);
+    return `${yearsAgo} year${yearsAgo > 1 ? "s" : ""} ago`;
+  }
 };
-
-const getIcon = (type) => {
-  const normalizedType = normalizeTypeName(type);
-  const { name, library } = iconMapping[normalizedType] || {
-    name: "question-circle",
-    library: FontAwesome,
-  };
-  return React.createElement(library, {
-    name: name,
-    size: 24,
-    color: "#FF5C00",
-  });
-};
-
-const CommentItem = ({ comment }) => (
-  <View style={styles.commentContainer}>
-    <TouchableOpacity
-      style={styles.picAndName}
-      onPress={() => console.log("Profile clicked!")} //buraya router.push(commentor.profile) tarzı bi şey yazılcak sanırım
-    >
-      <Image
-        source={{
-          uri: comment.profilePicUrl || "https://via.placeholder.com/48",
-        }} // Placeholder URL for profile picture
-        style={styles.profilePic}
-      />
-      <Text style={styles.commentor}>{comment.commentor}</Text>
-    </TouchableOpacity>
-    <View style={styles.commentDetails}>
-      <View style={styles.commentHeader}>
-        {getIcon(comment.type)}
-        <Text style={styles.typeRating}>
-          {comment.type}: {comment.rating}
-        </Text>
-      </View>
-      <Text style={styles.commentPreview}>{comment.commentPreview}</Text>
-      <Text style={styles.commentInfo}>{comment.commentDate}</Text>
-    </View>
-  </View>
-);
 
 const Page = () => {
   const [selectedType, setSelectedType] = useState("All");
-
-  const commentData = [
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedSport, setSelectedSport] = useState("");
+  const [commentData, setCommentData] = useState([
     {
       id: "1",
-      type: "Organisation",
+      type: "Organization",
       rating: "5",
       commentor: "Çağan Özsir",
-      commentDate: "Today",
+      commentDate: "24/05/2024",
       commentPreview: "Harika bir organizasyondu eline sağlık.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -89,7 +60,7 @@ const Page = () => {
       type: "Football",
       rating: "4",
       commentor: "Emre Erol",
-      commentDate: "2 days ago",
+      commentDate: "22/05/2024",
       commentPreview: "Çok iyi futbol oynuyorsun.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -98,7 +69,7 @@ const Page = () => {
       type: "Basketball",
       rating: "2",
       commentor: "Berk Şengül",
-      commentDate: "Today",
+      commentDate: "22/05/2024",
       commentPreview: "Adam bütün maç leş attı.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -107,7 +78,7 @@ const Page = () => {
       type: "Tennis",
       rating: "5",
       commentor: "Emrecan Çuhadar",
-      commentDate: "1 week ago",
+      commentDate: "20/05/2024",
       commentPreview: "Bu adamla oynaması aşırı keyifli.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -116,7 +87,7 @@ const Page = () => {
       type: "Volleyball",
       rating: "1",
       commentor: "Çağlar Özsir",
-      commentDate: "5 days ago",
+      commentDate: "15/05/2024",
       commentPreview: "Daha manşet atmayı bilmiyor.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -125,7 +96,7 @@ const Page = () => {
       type: "Table Tennis",
       rating: "5",
       commentor: "Emrecan Çuhadar",
-      commentDate: "5 days ago",
+      commentDate: "18/04/2024",
       commentPreview: "Yine bu adama yenildim.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -134,7 +105,7 @@ const Page = () => {
       type: "Baseball",
       rating: "1",
       commentor: "Çağlar Özsir",
-      commentDate: "5 days ago",
+      commentDate: "12/05/2024",
       commentPreview: "Türkiyede beyzbol mu oynanır aq.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
@@ -143,30 +114,64 @@ const Page = () => {
       type: "Football",
       rating: "4",
       commentor: "Kylian Mbappe",
-      commentDate: "2 days ago",
+      commentDate: "12/03/2024",
       commentPreview:
         "Ben de Sporzvous kullanıyorum, bu uygulama harika dostum.",
       profilePicUrl: "https://via.placeholder.com/48",
     },
-  ];
+  ]);
+
+  const sortedComments = useMemo(() => {
+    return commentData
+      .map((comment) => ({
+        ...comment,
+        readableDate: parseDate(comment.commentDate),
+        // Adding a sortableDate for consistent sorting
+        sortableDate: new Date(
+          comment.commentDate.split("/").reverse().join("-")
+        ),
+      }))
+      .sort((a, b) => b.sortableDate - a.sortableDate); // Sort by newly created sortableDate
+  }, [commentData]);
 
   const filterCounts = useMemo(() => {
-    const countMap = { All: commentData.length };
-    commentData.forEach((comment) => {
-      countMap[comment.type] = (countMap[comment.type] || 0) + 1;
+    const countMap = { All: sortedComments.length, Organization: 0, Sports: 0 };
+    sortedComments.forEach((comment) => {
+      if (comment.type === "Organization") {
+        countMap["Organization"] += 1;
+      } else {
+        countMap["Sports"] += 1;
+      }
     });
     return countMap;
-  }, [commentData]);
+  }, [sortedComments]);
 
-  const filters = useMemo(() => {
-    const types = new Set(commentData.map((comment) => comment.type));
+  const filters = useMemo(
+    () => ["All", "Organization", "Sports"],
+    [commentData]
+  );
+
+  const filteredComments = useMemo(() => {
+    switch (selectedType) {
+      case "All":
+        return sortedComments;
+      case "Organization":
+        return sortedComments.filter(
+          (comment) => comment.type === "Organization"
+        );
+      case "Sports":
+        return sortedComments.filter(
+          (comment) => comment.type !== "Organization"
+        );
+      default:
+        return [];
+    }
+  }, [selectedType, sortedComments]);
+
+  const sportTypes = useMemo(() => {
+    const types = new Set(sortedComments.map((comment) => comment.type));
     return ["All", ...types];
-  }, [commentData]);
-
-  const filteredComments =
-    selectedType === "All"
-      ? commentData
-      : commentData.filter((comment) => comment.type === selectedType);
+  }, [sortedComments]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -185,13 +190,21 @@ const Page = () => {
               ]}
               onPress={() => setSelectedType(filter)}
             >
-              <Text
-                style={styles.filterText}
-              >{`${filter} (${filterCounts[filter]})`}</Text>
+              <CustomText
+                text={`${filter} (${filterCounts[filter]})`}
+                customStyle={
+                  selectedType === filter
+                    ? styles.filterTextSelected
+                    : styles.filterText
+                }
+              />
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <TouchableOpacity style={styles.filterIcon}>
+        <TouchableOpacity
+          style={styles.filterIcon}
+          onPress={() => setModalVisible(true)}
+        >
           <AntDesign name="filter" size={30} color="#FF5C00" />
         </TouchableOpacity>
       </View>
@@ -200,6 +213,33 @@ const Page = () => {
         renderItem={({ item }) => <CommentItem comment={item} />}
         keyExtractor={(item) => item.id}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <CustomText
+              text={`Filter by Sport Type`}
+              customStyle={styles.modalText}
+            />
+            {sportTypes.map((type, index) => (
+              <Button
+                key={index}
+                title={`${type}`}
+                onPress={() => {
+                  setSelectedSport(type);
+                  setModalVisible(!modalVisible);
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -207,52 +247,6 @@ const Page = () => {
 export default Page;
 
 const styles = StyleSheet.create({
-  commentContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFF",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-    alignItems: "center", // Align items vertically in the center
-    marginBottom: 5,
-  },
-  picAndName: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    maxWidth: "20%",
-  },
-  profilePic: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  commentor: {
-    fontSize: 12,
-    color: "#333",
-    marginTop: 4,
-  },
-  commentDetails: {
-    flex: 1,
-  },
-  commentHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  typeRating: {
-    marginLeft: 10,
-    fontWeight: "bold",
-    color: "#FF5C00",
-  },
-  commentPreview: {
-    color: "#333",
-    marginBottom: 5,
-  },
-  commentInfo: {
-    fontSize: 12,
-    color: "#999",
-  },
   filterContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -277,8 +271,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
   },
+  filterTextSelected: {
+    color: "#FFF", // Example style for selected filter text
+  },
   filterIcon: {
     marginLeft: "auto",
     padding: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });

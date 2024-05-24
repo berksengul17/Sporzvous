@@ -23,6 +23,22 @@ const Layout = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="filterComments"
+        options={{
+          presentation: "modal",
+          headerTitle: "Filter",
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerLeft: () => (
+            <Entypo
+              name="cross"
+              onPress={() => router.back()}
+              size={30}
+              color={"#FF5C00"}
+            />
+          ),
+        }}
+      />
     </Stack>
   );
 };
