@@ -6,6 +6,7 @@ import {
 } from "@expo/vector-icons";
 import React from "react";
 import {
+  Alert,
   FlatList,
   Image,
   StyleSheet,
@@ -14,6 +15,10 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { router, useNavigation } from "expo-router";
 
 const eventData = [
   {
@@ -22,6 +27,7 @@ const eventData = [
     sport: "Football",
     host: "Çağan Özsir",
     date: "20.04.2024",
+    status: "finished"
   },
   {
     id: "2",
@@ -29,6 +35,7 @@ const eventData = [
     sport: "Tennis",
     host: "Emre Erol",
     date: "05.05.2024",
+    status: "onGoing"
   },
   {
     id: "3",
@@ -36,6 +43,7 @@ const eventData = [
     sport: "Tennis",
     host: "Berk Şengül",
     date: "07.05.2024",
+    status: "onGoing"
   },
   {
     id: "4",
@@ -43,29 +51,56 @@ const eventData = [
     sport: "Football",
     host: "Emre Erol",
     date: "12.05.2024",
+    status: "finished"
   },
   // Add more events here
 ];
+function EventStatus(event) {
+  const status = event.status;
+  if (
+    status == "finished"
+  ) {    return <Entypo name="check" size={24} color="black" style={styles.check} />;  }  
+  return <MaterialCommunityIcons name="timer-sand-complete" size={24} color="black" backgroundColor="#CCAA0E" style={styles.sandwatch} />;}
 
-const EventItem = ({ event }) => (
+const Status = ({ event }) => {
+  return (
+    EventStatus(event)
+  )
+}
+const EventItem = ({ event }) => {
+  const navigation = useNavigation();
+
+  return (
+
   <View style={styles.eventContainer}>
+    <TouchableOpacity onPress={() => navigation.navigate('ratePlayersFinished', { event })} style={styles.eventRow}>
+      <View style={styles.labelView}>
+        <Text style={styles.eventName}>{event.name}</Text>
+      </View>
+      <View style={styles.labelView}>
+        <Text style={styles.eventSport}>{event.sport}</Text>
+      </View>
+      <Status event={event}/>
+    </TouchableOpacity>
     <View style={styles.eventRow}>
-      <Text style={styles.eventName}>{event.name}</Text>
-      <Text style={styles.eventSport}>{event.sport}</Text>
-      <FontAwesome5 name="check-circle" size={24} color="green" />
-    </View>
-    <View style={styles.eventRow}>
-      <Text style={styles.eventHost}>{event.host}</Text>
-      <Text style={styles.eventDate}>{event.date}</Text>
-      <TouchableOpacity>
-        <Octicons name="upload" size={24} color="#FF5C00" />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <AntDesign name="delete" size={24} color="#FF5C00" />
-      </TouchableOpacity>
+      <View style={styles.labelView}>
+        <Text style={styles.eventHost}>{event.host}</Text>
+      </View>
+      <View style={styles.labelView}>
+        <Text style={styles.eventDate}>{event.date}</Text>
+      </View>
+      <View style={styles.buttonView}>
+        <TouchableOpacity>
+          <Feather name="upload" size={24} color="#FF5C00" style={{marginRight: '10%'}} />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <AntDesign name="delete" size={24} color="#FF5C00"  />
+        </TouchableOpacity>
+      </View>
     </View>
   </View>
-);
+  );
+};
 
 export default function MyEvents() {
   return (
@@ -125,15 +160,11 @@ const styles = StyleSheet.create({
   },
   eventContainer: {
     backgroundColor: "#f8f8f8",
-    borderRadius: 5,
+    borderRadius: 20,
+    borderWidth: 1,
     padding: 10,
     marginVertical: 5,
     marginHorizontal: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   eventRow: {
     flexDirection: "row",
@@ -142,17 +173,46 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   eventName: {
-    fontWeight: "bold",
+    color: "#6F6F6F",
   },
   eventSport: {
-    color: "#FF5C00",
-    marginRight: 10,
+    color: "#6F6F6F",
   },
   eventHost: {
     color: "#6F6F6F",
   },
   eventDate: {
     color: "#6F6F6F",
+  },
+  sandwatch: {
+    borderWidth: 1,
+    backgroundColor: "#FAFF00",
+    borderColor: "#FAFF00",
+    borderRadius: 6,
+    overflow: 'hidden',
+    padding: 2,
+  },
+  check: {
+    borderWidth: 1,
+    backgroundColor: "#00FF94",
+    borderColor: "#00FF94",
+    borderRadius: 6,
+    overflow: 'hidden',
+    padding: 2,
+  },
+  labelView:{
+    
+    borderWidth: 1,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 10
+
+  },
+  buttonView: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    
+    
   },
   wave: {
     position: "absolute",

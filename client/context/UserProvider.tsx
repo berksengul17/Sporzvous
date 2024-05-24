@@ -29,7 +29,7 @@ type UserProps = {
   updateProfile: (newUserInfo: User) => Promise<void>;
 };
 
-const API_URL = "http://192.168.1.102:8082/api/user";
+const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
 
 const UserContext = createContext<UserProps | null>(null);
 
