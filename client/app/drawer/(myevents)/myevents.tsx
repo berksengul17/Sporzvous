@@ -15,9 +15,9 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 
 const eventData = [
@@ -27,7 +27,7 @@ const eventData = [
     sport: "Football",
     host: "Çağan Özsir",
     date: "20.04.2024",
-    status: "finished"
+    status: "finished",
   },
   {
     id: "2",
@@ -35,7 +35,7 @@ const eventData = [
     sport: "Tennis",
     host: "Emre Erol",
     date: "05.05.2024",
-    status: "onGoing"
+    status: "onGoing",
   },
   {
     id: "3",
@@ -43,7 +43,7 @@ const eventData = [
     sport: "Tennis",
     host: "Berk Şengül",
     date: "07.05.2024",
-    status: "onGoing"
+    status: "onGoing",
   },
   {
     id: "4",
@@ -51,7 +51,7 @@ const eventData = [
     sport: "Football",
     host: "Emre Erol",
     date: "12.05.2024",
-    status: "finished"
+    status: "finished",
   },
   // Add more events here
 ];
@@ -59,54 +59,63 @@ function EventStatus({ status }) {
   if (status === "finished") {
     return <Entypo name="check" size={24} color="black" style={styles.check} />;
   }
-  return <MaterialCommunityIcons name="timer-sand-complete" size={24} color="black" style={styles.sandwatch} />;
+  return (
+    <MaterialCommunityIcons
+      name="timer-sand-complete"
+      size={24}
+      color="black"
+      style={styles.sandwatch}
+    />
+  );
 }
 
 const Status = ({ event }) => {
-  return (
-    EventStatus(event)
-  )
-}
+  return EventStatus(event);
+};
 
 const EventItem = ({ event }) => {
   const navigation = useNavigation();
 
   const navigateByCondition = () => {
-    if (event.status === 'finished') {
-      navigation.navigate('ratePlayersFinished', { event });
+    if (event.status === "finished") {
+      router.replace("drawer/(myevents)/ratePlayersFinished", { event });
     } else {
-      navigation.navigate('ratePlayersUnfinished', { event });
+      navigation.navigate("ratePlayersUnfinished", { event });
     }
   };
   return (
-
-  <View style={styles.eventContainer}>
-    <TouchableOpacity onPress={navigateByCondition} style={styles.eventRow}>
-      <View style={styles.labelView}>
-        <Text style={styles.eventName}>{event.name}</Text>
-      </View>
-      <View style={styles.labelView}>
-        <Text style={styles.eventSport}>{event.sport}</Text>
-      </View>
-      <Status event={event}/>
-    </TouchableOpacity>
-    <View style={styles.eventRow}>
-      <View style={styles.labelView}>
-        <Text style={styles.eventHost}>{event.host}</Text>
-      </View>
-      <View style={styles.labelView}>
-        <Text style={styles.eventDate}>{event.date}</Text>
-      </View>
-      <View style={styles.buttonView}>
-        <TouchableOpacity>
-          <Feather name="upload" size={24} color="#FF5C00" style={{marginRight: '10%'}} />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <AntDesign name="delete" size={24} color="#FF5C00"  />
-        </TouchableOpacity>
+    <View style={styles.eventContainer}>
+      <TouchableOpacity onPress={navigateByCondition} style={styles.eventRow}>
+        <View style={styles.labelView}>
+          <Text style={styles.eventName}>{event.name}</Text>
+        </View>
+        <View style={styles.labelView}>
+          <Text style={styles.eventSport}>{event.sport}</Text>
+        </View>
+        <Status event={event} />
+      </TouchableOpacity>
+      <View style={styles.eventRow}>
+        <View style={styles.labelView}>
+          <Text style={styles.eventHost}>{event.host}</Text>
+        </View>
+        <View style={styles.labelView}>
+          <Text style={styles.eventDate}>{event.date}</Text>
+        </View>
+        <View style={styles.buttonView}>
+          <TouchableOpacity>
+            <Feather
+              name="upload"
+              size={24}
+              color="#FF5C00"
+              style={{ marginRight: "10%" }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <AntDesign name="delete" size={24} color="#FF5C00" />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
-  </View>
   );
 };
 
@@ -137,7 +146,7 @@ export default function MyEvents() {
         keyExtractor={(item) => item.id}
       />
       <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
+        <Image source={require("../../../assets/images/Waves.png")} />
       </View>
     </View>
   );
@@ -197,7 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFF00",
     borderColor: "#FAFF00",
     borderRadius: 6,
-    overflow: 'hidden',
+    overflow: "hidden",
     padding: 2,
   },
   check: {
@@ -205,22 +214,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#00FF94",
     borderColor: "#00FF94",
     borderRadius: 6,
-    overflow: 'hidden',
+    overflow: "hidden",
     padding: 2,
   },
-  labelView:{
-    
+  labelView: {
     borderWidth: 1,
     paddingVertical: 5,
     paddingHorizontal: 15,
-    borderRadius: 10
-
+    borderRadius: 10,
   },
   buttonView: {
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    
-    
+    justifyContent: "flex-end",
+    flexDirection: "row",
   },
   wave: {
     position: "absolute",

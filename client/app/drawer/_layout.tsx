@@ -112,7 +112,7 @@ const Layout = () => {
         }}
       />
       <Drawer.Screen
-        name="myevents"
+        name="(myevents)"
         options={{
           headerTitle: "My Events",
           drawerLabel: "My Events",

@@ -57,6 +57,22 @@ const _layout = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="join_event"
+        options={{
+          presentation: "modal",
+          headerTitle: "Join Event",
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerLeft: () => (
+            <Entypo
+              name="cross"
+              onPress={() => router.back()}
+              size={30}
+              color={"#FF5C00"}
+            />
+          ),
+        }}
+      />
     </Stack>
   );
 };

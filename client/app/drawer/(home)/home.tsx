@@ -1,7 +1,7 @@
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { useNavigation } from '@react-navigation/native';  // Import useNavigation hook
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 
 import {
   FlatList,
@@ -46,15 +46,14 @@ const eventData = [
     playernum: 5,
     eventcapacity: 40,
   },
-  
 ];
 
 const EventItem = ({ event }) => {
-  const navigation = useNavigation();  
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.eventContainer}
-      onPress={() => router.push('join_event')}
+      onPress={() => router.push("drawer/(home)/join_event")}
     >
       <View style={styles.eventhostrow}>
         <Text>{event.host}</Text>

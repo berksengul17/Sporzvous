@@ -10,10 +10,9 @@ import {
   Alert,
 } from "react-native";
 import { Rating } from "react-native-ratings";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 import CustomButton from "@/components/CustomButton";
 import { router } from "expo-router";
-
 
 const eventData = {
   organizerName: "Çağan Özsır",
@@ -23,7 +22,7 @@ const eventData = {
   teamCount: 2,
   date: "11.01.2001",
   time: "14:00",
-  skillLevel: 3
+  skillLevel: 3,
 };
 
 const JoinEventPage = () => {
@@ -37,7 +36,9 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Organizer</Text>
           </View>
           <View style={styles.valueView}>
-            <TouchableOpacity onPress={() => navigation.navigate('OrganizerProfile')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("OrganizerProfile")}
+            >
               <Text style={styles.value}>{eventData.organizerName}</Text>
             </TouchableOpacity>
           </View>
@@ -93,31 +94,31 @@ const JoinEventPage = () => {
         <View style={styles.eventInformationRow}>
           <View style={styles.labelView}>
             <Text style={styles.label}>Minimum Skill Level</Text>
-            </View>
+          </View>
           <View style={styles.ratingStars}>
-          <Rating
-            readonly
-            startingValue={eventData.skillLevel}
-            type="star"
-            ratingCount={5}
-            imageSize={30}
-          />
+            <Rating
+              readonly
+              startingValue={eventData.skillLevel}
+              type="star"
+              ratingCount={5}
+              imageSize={30}
+            />
           </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
-          <Button
-            title="Choose Location"
-            onPress={() => Alert.alert("Button clicked")}
-            color="green"
-          />
-          <CustomButton
-            title="Join          "
-            onPress={() => router.replace("drawer/(home)/home")}
-          />
-        </View>
+        <Button
+          title="Choose Location"
+          onPress={() => Alert.alert("Button clicked")}
+          color="green"
+        />
+        <CustomButton
+          title="Join          "
+          onPress={() => router.replace("drawer/(home)/home")}
+        />
+      </View>
       <View style={styles.wave}>
-        <Image source={require("../assets/images/Waves.png")} />
+        <Image source={require("../../../assets/images/Waves.png")} />
       </View>
     </SafeAreaView>
   );
@@ -131,42 +132,39 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   backButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     margin: 10,
   },
   eventInformationContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-    padding: 5
+    justifyContent: "space-between",
+    padding: 5,
   },
   eventInformationRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 5
-
+    marginVertical: 5,
   },
   label: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   value: {
     fontSize: 18,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     padding: 8,
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#F0F0F0',
-    backgroundColor: '#F0F0F0',
-    overflow: 'hidden'
-  
-   
+    borderColor: "#F0F0F0",
+    backgroundColor: "#F0F0F0",
+    overflow: "hidden",
   },
   valueView: {
     flex: 1,
   },
   labelView: {
-    flex: 1
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -175,7 +173,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ratingStars: {
-    flex:1
+    flex: 1,
   },
   wave: {
     position: "static",
