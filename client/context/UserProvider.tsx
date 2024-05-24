@@ -29,7 +29,7 @@ type UserProps = {
   updateProfile: (newUserInfo: User) => Promise<void>;
 };
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
 
 const UserContext = createContext<UserProps | null>(null);
 

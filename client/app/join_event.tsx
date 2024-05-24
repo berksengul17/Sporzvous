@@ -12,9 +12,7 @@ import {
 import { Rating } from "react-native-ratings";
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from "@/components/CustomButton";
-import { green } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import { router } from "expo-router";
-import drawer from "expo-router/drawer";
 
 
 const eventData = {

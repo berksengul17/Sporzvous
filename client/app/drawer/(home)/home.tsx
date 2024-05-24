@@ -46,15 +46,15 @@ const eventData = [
     playernum: 5,
     eventcapacity: 40,
   },
-  // Add more events here
+  
 ];
 
 const EventItem = ({ event }) => {
-  const navigation = useNavigation();  // Hook to access the navigation object
+  const navigation = useNavigation();  
   return (
     <TouchableOpacity 
       style={styles.eventContainer}
-      onPress={() => router.push('join_event')} // Assuming 'EventDetails' is the route name
+      onPress={() => router.push('join_event')}
     >
       <View style={styles.eventhostrow}>
         <Text>{event.host}</Text>

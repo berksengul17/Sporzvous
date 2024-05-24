@@ -18,6 +18,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { router, useNavigation } from "expo-router";
 
 const eventData = [
   {
@@ -66,9 +67,13 @@ const Status = ({ event }) => {
     EventStatus(event)
   )
 }
-const EventItem = ({ event }) => (
+const EventItem = ({ event }) => {
+  const navigation = useNavigation();
+
+  return (
+
   <View style={styles.eventContainer}>
-    <TouchableOpacity onPress={() => Alert.alert(event.name + "is clicked")} style={styles.eventRow}>
+    <TouchableOpacity onPress={() => navigation.navigate('ratePlayersFinished', { event })} style={styles.eventRow}>
       <View style={styles.labelView}>
         <Text style={styles.eventName}>{event.name}</Text>
       </View>
@@ -94,7 +99,8 @@ const EventItem = ({ event }) => (
       </View>
     </View>
   </View>
-);
+  );
+};
 
 export default function MyEvents() {
   return (
