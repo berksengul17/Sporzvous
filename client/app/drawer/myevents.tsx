@@ -55,25 +55,33 @@ const eventData = [
   },
   // Add more events here
 ];
-function EventStatus(event) {
-  const status = event.status;
-  if (
-    status == "finished"
-  ) {    return <Entypo name="check" size={24} color="black" style={styles.check} />;  }  
-  return <MaterialCommunityIcons name="timer-sand-complete" size={24} color="black" backgroundColor="#CCAA0E" style={styles.sandwatch} />;}
+function EventStatus({ status }) {
+  if (status === "finished") {
+    return <Entypo name="check" size={24} color="black" style={styles.check} />;
+  }
+  return <MaterialCommunityIcons name="timer-sand-complete" size={24} color="black" style={styles.sandwatch} />;
+}
 
 const Status = ({ event }) => {
   return (
     EventStatus(event)
   )
 }
+
 const EventItem = ({ event }) => {
   const navigation = useNavigation();
 
+  const navigateByCondition = () => {
+    if (event.status === 'finished') {
+      navigation.navigate('ratePlayersFinished', { event });
+    } else {
+      navigation.navigate('ratePlayersUnfinished', { event });
+    }
+  };
   return (
 
   <View style={styles.eventContainer}>
-    <TouchableOpacity onPress={() => navigation.navigate('ratePlayersFinished', { event })} style={styles.eventRow}>
+    <TouchableOpacity onPress={navigateByCondition} style={styles.eventRow}>
       <View style={styles.labelView}>
         <Text style={styles.eventName}>{event.name}</Text>
       </View>

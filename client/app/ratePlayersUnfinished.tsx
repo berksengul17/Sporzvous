@@ -5,6 +5,7 @@ import { Entypo } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CustomButton from "@/components/CustomButton";
+import { MaterialIcons } from '@expo/vector-icons';
 
 const eventData = [
   {
@@ -26,22 +27,6 @@ const eventTeamsA = [
     id: "1",
     playerName: "caganozsir",
   },
-  {
-    id: "2",
-    playerName: "emrecan",
-  },
-  {
-    id: "3",
-    playerName: "emre",
-  },
-  {
-    id: "4",
-    playerName: "bekir",
-  },
-  {
-    id: "5",
-    playerName: "kivanc",
-  }
 ]
 
 const eventTeamsB = [
@@ -49,22 +34,6 @@ const eventTeamsB = [
     id: "1",
     playerName: "caganozsir",
   },
-  {
-    id: "2",
-    playerName: "emrecan",
-  },
-  {
-    id: "3",
-    playerName: "emre",
-  },
-  {
-    id: "4",
-    playerName: "bekir",
-  },
-  {
-    id: "5",
-    playerName: "kivanc",
-  }
 ]
 
 
@@ -112,7 +81,7 @@ const TeamInformation = ({ team }) => {
           <Text>{team.playerName}</Text>
         </View>
         <TouchableOpacity style={styles.ratePlayer}>
-          <AntDesign name="staro" size={24} color="black" />
+            <MaterialIcons name="delete-outline" size={29} color="#FF3647" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.ratePlayer}>
           <FontAwesome5 name="user-alt" size={24} color="black" />
@@ -149,7 +118,7 @@ const Page = () => {
       </View>
       <View style={styles.buttonContainer}>
           <CustomButton
-            title="Next          "
+            title="Leave          "
             onPress={() => router.replace("drawer/myevents")}
           />
         </View>
@@ -249,6 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 2,
     padding: 4,   
+    
   },
   player_a: {
     flex:1,
@@ -267,7 +237,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   ratePlayer: {
-    marginHorizontal: 4
+    marginHorizontal: 4,
+    alignSelf: 'center'
   },
   buttonContainer: {
     flexDirection: "row",
