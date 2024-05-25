@@ -1,6 +1,6 @@
 package com.sporzvous.backend.Event;
 
-import UserEvent.UserEvent;
+import com.sporzvous.backend.UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
@@ -46,7 +46,7 @@ public class Event {
     private Integer maxParticipants;
 
     @OneToMany(mappedBy = "event")
-    private Set<UserEvent> userEvent = new HashSet<UserEvent>();
+    private List<UserEvent> eventParticipants;
 
     public Event(String title, String sport, String locationCity,
                  String locationDistrict, Integer participants,

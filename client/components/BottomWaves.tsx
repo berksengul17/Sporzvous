@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const BottomWaves = () => {
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100, // Adjust the height based on your image's aspect ratio
+    height: 100,
     justifyContent: "flex-end",
     alignItems: "center",
   },

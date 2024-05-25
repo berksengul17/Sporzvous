@@ -30,6 +30,7 @@ public class User {
     private String password;
     private String fullName;
     private String username;
+    private String country;
     @Lob
     private byte[] image;
     private int age;
@@ -77,7 +78,7 @@ public class User {
     private Set<FriendRequest> receivedRequests = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<UserEvent> userEvent = new HashSet<UserEvent>();
+    private List<UserEvent> eventsParticipated;
 
 
 
@@ -87,7 +88,7 @@ public class User {
         this.username = username;
     }
 
-    public User(Long userId, String email, String fullName, String username, byte[] image, int age, String gender,
+    public User(Long userId, String email, String fullName, String username, String country, byte[] image, int age, String gender,
                 String favoriteSport, int eventCount, int isVerified, UserStatus status, List<Event> events,
                 List<Feedback> feedbacks, List<Rating> ratings, List<User> friends, List<Team> teams,
                 Set<FriendRequest> sentRequests, Set<FriendRequest> receivedRequests) {
@@ -95,6 +96,7 @@ public class User {
         this.email = email;
         this.fullName = fullName;
         this.username = username;
+        this.country = country;
         this.image = image;
         this.age = age;
         this.gender = gender;

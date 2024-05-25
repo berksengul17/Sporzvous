@@ -31,7 +31,7 @@ public class UserController {
             User newUser = userService.signUp(userInfo);
             String token = UUID.randomUUID().toString();
             userService.createTokenForUser(newUser, token);
-            mailSenderService.sendVerificationEmail(request, token, newUser);
+//            mailSenderService.sendVerificationEmail(request, token, newUser);
             return ResponseEntity.ok(newUser.getUsername() + " signed up successfully. Verify your email address to login.");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

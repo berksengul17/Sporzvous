@@ -1,4 +1,4 @@
-package UserEvent;
+package com.sporzvous.backend.UserEvent;
 
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;

@@ -1,6 +1,6 @@
 package com.sporzvous.backend.User;
 
-import UserEvent.UserEventService;
+import com.sporzvous.backend.UserEvent.UserEventService;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.Event.EventService;
@@ -44,7 +44,7 @@ public class UserService {
 
         if (user.isPresent() && user.get().getPassword().equals(userCredentials.getPassword())) {
             User userInfo = user.get();
-            return new User(userInfo.getUserId(), userInfo.getEmail(), userInfo.getUsername(), userInfo.getFullName(), userInfo.getImage(),
+            return new User(userInfo.getUserId(), userInfo.getEmail(), userInfo.getFullName(), userInfo.getUsername(), userInfo.getCountry(), userInfo.getImage(),
                     userInfo.getAge(), userInfo.getGender(), userInfo.getFavoriteSport(), userInfo.getEventCount(), userInfo.getIsVerified(),
                     userInfo.getStatus(), userInfo.getEvents(), userInfo.getFeedbacks(), userInfo.getRatings(), userInfo.getFriends(),
                     userInfo.getTeams(), userInfo.getSentRequests(), userInfo.getReceivedRequests());
@@ -81,6 +81,10 @@ public class UserService {
 
         if (profileUpdateDto.getUsername() != null) {
             user.setUsername(profileUpdateDto.getUsername());
+        }
+
+        if (profileUpdateDto.getFullName() != null) {
+            user.setFullName(profileUpdateDto.getFullName());
         }
 
         if (profileUpdateDto.getAge() != null) {

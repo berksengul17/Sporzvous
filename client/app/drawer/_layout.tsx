@@ -4,10 +4,10 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
-import { Alert, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomDrawerContent = (props: any) => {
@@ -60,6 +60,7 @@ const Layout = () => {
       screenOptions={{
         headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
         headerTintColor: "#FF5C00",
+        headerTitleAlign: "center",
         drawerHideStatusBarOnOpen: true,
         drawerActiveBackgroundColor: "#4E3833",
         drawerActiveTintColor: "#fff",
@@ -76,6 +77,17 @@ const Layout = () => {
           drawerLabel: "Homepage",
           drawerIcon: ({ size, color }) => (
             <Ionicons name="home" size={size} color={color} />
+          ),
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: "10%" }}>
+              <Ionicons
+                onPress={() => router.push("drawer/(home)/(profile)")}
+                name="person-circle"
+                size={48}
+                color="black"
+              />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -100,7 +112,7 @@ const Layout = () => {
         }}
       />
       <Drawer.Screen
-        name="myevents"
+        name="(myevents)"
         options={{
           headerTitle: "My Events",
           drawerLabel: "My Events",

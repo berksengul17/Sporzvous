@@ -1,26 +1,40 @@
 import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
+import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Keyboard,
   StyleSheet,
-  Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import CountryPicker from "react-native-country-picker-modal";
 
-const Page = () => {
+const Register = () => {
+  const { signUp } = useUserContext();
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [countryCode, setCountryCode] = useState("TR");
   const [country, setCountry] = useState({
     name: { common: "Turkey" },
     cca2: "TR",
   });
   const [showCountryPicker, setShowCountryPicker] = useState(false);
+
+  const onSignUp = async () => {
+    await signUp(
+      { username, email, password, country: country.name.common },
+      (response) => {
+        console.log("response", response.data);
+        router.replace("/");
+      }
+    );
+  };
 
   const onSelect = (country) => {
     setCountryCode(country.cca2);
@@ -31,22 +45,26 @@ const Page = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <AuthHeader />
-        </View>
+        <AuthHeader />
         <View style={styles.formContainer}>
           <TextInput
             style={styles.input}
+            value={username}
+            onChangeText={setUsername}
             placeholder="Username"
             placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={styles.input}
+            value={email}
+            onChangeText={setEmail}
             placeholder="E-mail"
             placeholderTextColor={"#6F6F6F"}
           />
           <TextInput
             style={styles.input}
+            value={password}
+            onChangeText={setPassword}
             placeholder="Password"
             placeholderTextColor={"#6F6F6F"}
             secureTextEntry
@@ -57,14 +75,7 @@ const Page = () => {
             placeholderTextColor={"#6F6F6F"}
             secureTextEntry
           />
-          <View style={styles.pickerContainer}>
-            <TouchableOpacity onPress={() => setShowCountryPicker(true)}>
-              <View style={styles.pickerButton}>
-                <Text style={styles.pickerButtonText}>
-                  {country ? country.name.common : "Select Nationality"}
-                </Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.input}>
             <CountryPicker
               {...{
                 countryCode,
@@ -82,15 +93,18 @@ const Page = () => {
           </View>
           <View style={styles.buttons}>
             <CustomButton
-              onPress={() => router.replace("/")}
+              onPress={() => router.back()}
               title="Back"
-              backgroundColor="#6F6F6F"
-              width={90}
+              containerStyle={{
+                width: 90,
+                backgroundColor: "#6F6F6F",
+                borderColor: "#6F6F6F",
+              }}
             />
             <CustomButton
-              onPress={() => router.replace("/")}
+              onPress={onSignUp}
               title="Sign up"
-              backgroundColor="#FF5C00"
+              containerStyle={{ backgroundColor: "#FF5C00" }}
             />
           </View>
         </View>
@@ -100,7 +114,7 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
@@ -109,26 +123,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
-  header: {
-    height: "25%",
-    marginTop: 35,
-  },
   formContainer: {
     marginTop: 20,
     width: "100%",
     alignItems: "center",
   },
   input: {
-    width: "90%",
+    width: "70%",
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
-  },
-  pickerContainer: {
-    width: "90%",
+    justifyContent: "center",
   },
   pickerButton: {
     height: 40,
@@ -149,8 +157,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "65%",
     marginTop: 20,
+    gap: 10,
   },
 });
