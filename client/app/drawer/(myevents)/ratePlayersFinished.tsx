@@ -77,7 +77,15 @@ const eventTeamsB = [
 const EventInformation = ({ eventData }) => {
   return (
     <View style={styles.eventInfoContainer}>
-      <Text style={styles.header}>{eventData.name}</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backIconContainer}
+        >
+          <AntDesign name="back" size={30} color={"#FF5C00"} />
+        </TouchableOpacity>
+        <Text style={styles.header}>{eventData.name}</Text>
+      </View>
       <View style={styles.detailsContainer}>
         <View style={styles.label}>
           <Text style={styles.details}>{eventData.date}</Text>
@@ -170,8 +178,22 @@ const styles = StyleSheet.create({
   eventInfoContainer: {
     padding: 20,
     alignItems: "center",
-
-    marginTop: 10,
+    width: "100%", // Ensure this container fills the width
+  },
+  headerContainer: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "center", // This centers the children
+    alignItems: "center", // Aligns children vertically in the center
+    position: "relative", // Allows absolute positioning of the back icon
+    borderBottomWidth: 2,
+    borderBottomColor: "lightgrey",
+  },
+  backIconContainer: {
+    position: "absolute", // Position it over the relative container
+    justifyContent: "center", // This centers the children
+    left: 0, // Move it 10 pixels from the left
+    top: 0, // Align it to the top
   },
   header: {
     fontSize: 22,
@@ -183,6 +205,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "95%",
+    marginTop: 10,
     marginBottom: 5,
   },
   details: {

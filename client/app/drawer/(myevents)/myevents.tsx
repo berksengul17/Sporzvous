@@ -4,7 +4,7 @@ import {
   Ionicons,
   Octicons,
 } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -55,6 +55,7 @@ const eventData = [
   },
   // Add more events here
 ];
+
 function EventStatus({ status }) {
   if (status === "finished") {
     return <Entypo name="check" size={24} color="black" style={styles.check} />;
@@ -74,13 +75,11 @@ const Status = ({ event }) => {
 };
 
 const EventItem = ({ event }) => {
-  const navigation = useNavigation();
-
   const navigateByCondition = () => {
     if (event.status === "finished") {
-      router.replace("drawer/(myevents)/ratePlayersFinished", { event });
+      router.push("drawer/(myevents)/ratePlayersFinished", { event });
     } else {
-      navigation.navigate("ratePlayersUnfinished", { event });
+      router.push("drawer/(myevents)/ratePlayersUnfinished", { event });
     }
   };
   return (
@@ -120,6 +119,16 @@ const EventItem = ({ event }) => {
 };
 
 export default function MyEvents() {
+  const [events, setEvents] = useState(eventData);
+  const [searchText, setSearchText] = useState("");
+
+  const filteredEvents = events.filter(
+    (event) =>
+      event.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      event.host.toLowerCase().includes(searchText.toLowerCase()) ||
+      event.sport.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -129,6 +138,8 @@ export default function MyEvents() {
             style={styles.searchText}
             placeholder="Search"
             placeholderTextColor={"#6F6F6F"}
+            value={searchText}
+            onChangeText={setSearchText}
           />
         </View>
         <TouchableOpacity>
@@ -141,7 +152,7 @@ export default function MyEvents() {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={eventData}
+        data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
         keyExtractor={(item) => item.id}
       />
