@@ -19,45 +19,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
+import { useEventContext } from "@/context/EventProvider";
 
-const eventData = [
-  {
-    id: "1",
-    name: "Esenyurt Hailsaha",
-    sport: "Football",
-    host: "Çağan Özsir",
-    date: "20.04.2024",
-    status: "finished",
-  },
-  {
-    id: "2",
-    name: "Tennis",
-    sport: "Tennis",
-    host: "Emre Erol",
-    date: "05.05.2024",
-    status: "onGoing",
-  },
-  {
-    id: "3",
-    name: "Berk’s Tennis",
-    sport: "Tennis",
-    host: "Berk Şengül",
-    date: "07.05.2024",
-    status: "onGoing",
-  },
-  {
-    id: "4",
-    name: "Bornova Futbol",
-    sport: "Football",
-    host: "Emre Erol",
-    date: "12.05.2024",
-    status: "finished",
-  },
-  // Add more events here
-];
-
-function EventStatus({ status }) {
-  if (status === "finished") {
+function EventStatus({ isEventOver }) {
+  if (isEventOver === 1) {
     return <Entypo name="check" size={24} color="black" style={styles.check} />;
   }
   return (
@@ -76,7 +41,7 @@ const Status = ({ event }) => {
 
 const EventItem = ({ event }) => {
   const navigateByCondition = () => {
-    if (event.status === "finished") {
+    if (event.isEventOver === 1) {
       router.push("drawer/(myevents)/ratePlayersFinished", { event });
     } else {
       router.push("drawer/(myevents)/ratePlayersUnfinished", { event });
@@ -86,7 +51,7 @@ const EventItem = ({ event }) => {
     <View style={styles.eventContainer}>
       <TouchableOpacity onPress={navigateByCondition} style={styles.eventRow}>
         <View style={styles.labelView}>
-          <Text style={styles.eventName}>{event.name}</Text>
+          <Text style={styles.eventName}>{event.title}</Text>
         </View>
         <View style={styles.labelView}>
           <Text style={styles.eventSport}>{event.sport}</Text>
@@ -95,10 +60,10 @@ const EventItem = ({ event }) => {
       </TouchableOpacity>
       <View style={styles.eventRow}>
         <View style={styles.labelView}>
-          <Text style={styles.eventHost}>{event.host}</Text>
+          <Text style={styles.eventHost}>{event.organizer.fullName}</Text>
         </View>
         <View style={styles.labelView}>
-          <Text style={styles.eventDate}>{event.date}</Text>
+          <Text style={styles.eventDate}>{event.eventDate}</Text>
         </View>
         <View style={styles.buttonView}>
           <TouchableOpacity>
@@ -119,13 +84,15 @@ const EventItem = ({ event }) => {
 };
 
 export default function MyEvents() {
-  const [events, setEvents] = useState(eventData);
+  const { events, addEvent } = useEventContext(); // Use events from context
   const [searchText, setSearchText] = useState("");
 
   const filteredEvents = events.filter(
     (event) =>
-      event.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      event.host.toLowerCase().includes(searchText.toLowerCase()) ||
+      event.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      event.organizer.fullName
+        .toLowerCase()
+        .includes(searchText.toLowerCase()) ||
       event.sport.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -154,7 +121,7 @@ export default function MyEvents() {
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
       <View style={styles.wave}>
         <Image source={require("../../../assets/images/Waves.png")} />

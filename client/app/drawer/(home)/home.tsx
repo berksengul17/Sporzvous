@@ -1,7 +1,8 @@
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
+import { useEventContext } from "@/context/EventProvider";
 
 import {
   FlatList,
@@ -13,50 +14,14 @@ import {
   View,
 } from "react-native";
 
-const eventData = [
-  {
-    id: "1",
-    title: "Esenyurt Hailsaha",
-    sport: "Football",
-    host: "Çağan Özsir",
-    playernum: 2,
-    eventcapacity: 10,
-  },
-  {
-    id: "2",
-    title: "Tennis",
-    sport: "Tennis",
-    host: "Emre Erol",
-    playernum: 3,
-    eventcapacity: 20,
-  },
-  {
-    id: "3",
-    title: "Berk’s Tennis",
-    sport: "Tennis",
-    host: "Berk Şengül",
-    playernum: 2,
-    eventcapacity: 30,
-  },
-  {
-    id: "4",
-    title: "Bornova Futbol",
-    sport: "Football",
-    host: "Emre Erol",
-    playernum: 5,
-    eventcapacity: 40,
-  },
-];
-
 const EventItem = ({ event }) => {
-  const navigation = useNavigation();
   return (
     <TouchableOpacity
       style={styles.eventContainer}
       onPress={() => router.push("drawer/(home)/join_event")}
     >
       <View style={styles.eventhostrow}>
-        <Text>{event.host}</Text>
+        <Text>{event.organizer.fullName}</Text>
       </View>
       <View style={styles.eventtitlerow}>
         <Text numberOfLines={1}>{event.title}</Text>
@@ -66,7 +31,7 @@ const EventItem = ({ event }) => {
       </View>
       <View style={styles.eventcapacityrow}>
         <Text numberOfLines={1}>
-          {event.playernum}/{event.eventcapacity}
+          {event.participants}/{event.maxParticipants}
         </Text>
       </View>
     </TouchableOpacity>
@@ -74,6 +39,19 @@ const EventItem = ({ event }) => {
 };
 
 export default function HomeScreen() {
+  const { events, addEvent } = useEventContext(); // Use events from context
+  const [searchText, setSearchText] = useState("");
+
+  const filteredEvents = events.filter(
+    (event) =>
+      event.isEventOver === 0 && // Add this line to check if the event is not over
+      (event.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        event.organizer.fullName
+          .toLowerCase()
+          .includes(searchText.toLowerCase()) ||
+        event.sport.toLowerCase().includes(searchText.toLowerCase()))
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -83,6 +61,8 @@ export default function HomeScreen() {
             style={styles.searchText}
             placeholder="Search"
             placeholderTextColor={"#6F6F6F"}
+            value={searchText}
+            onChangeText={setSearchText}
           />
         </View>
         <TouchableOpacity
@@ -102,9 +82,9 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={eventData}
+        data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
       <View style={styles.wave}>
         <Image source={require("../../../assets/images/Waves.png")} />
@@ -121,17 +101,20 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-    marginVertical: 15,
+    paddingVertical: 15,
   },
   searchBar: {
-    flex: 1,
-    padding: 8,
     flexDirection: "row",
+    padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
+    marginHorizontal: 10,
     borderRadius: 10,
+    flex: 1,
+  },
+  searchText: {
+    marginLeft: 10,
+    flex: 1,
   },
   filterButton: {
     justifyContent: "center",

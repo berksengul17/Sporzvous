@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import React, { createContext, useContext, useState } from "react";
 
-type User = {
+export type User = {
   id: string;
   image: string;
   username: string;

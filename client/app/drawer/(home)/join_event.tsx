@@ -10,7 +10,6 @@ import {
   Alert,
 } from "react-native";
 import { Rating } from "react-native-ratings";
-import { useNavigation } from "@react-navigation/native";
 import CustomButton from "@/components/CustomButton";
 import { router } from "expo-router";
 
@@ -26,8 +25,6 @@ const eventData = {
 };
 
 const JoinEventPage = () => {
-  const navigation = useNavigation();
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.eventInformationContainer}>
@@ -36,9 +33,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Organizer</Text>
           </View>
           <View style={styles.valueView}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("OrganizerProfile")}
-            >
+            <TouchableOpacity onPress={() => router.push("OrganizerProfile")}>
               <Text style={styles.value}>{eventData.organizerName}</Text>
             </TouchableOpacity>
           </View>
