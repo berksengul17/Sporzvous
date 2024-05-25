@@ -11,9 +11,7 @@ import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter
@@ -48,7 +46,7 @@ public class Event {
     private Integer maxParticipants;
 
     @OneToMany(mappedBy = "event")
-    private UserEvent userEvent;
+    private Set<UserEvent> userEvent = new HashSet<UserEvent>();
 
     public Event(String title, String sport, String locationCity,
                  String locationDistrict, Integer participants,

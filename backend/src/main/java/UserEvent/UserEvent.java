@@ -6,21 +6,24 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-@Entity
+import java.io.Serializable;
 
+@Entity
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-public class UserEvent {
+
+public class UserEvent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long UserEventId;
     @ManyToOne
+    @MapsId("user_id")
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
+    @MapsId("event_id")
     @JoinColumn(name = "event_id")
     private Event event;
 

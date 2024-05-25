@@ -77,7 +77,7 @@ public class User {
     private Set<FriendRequest> receivedRequests = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private UserEvent userEvent;
+    private Set<UserEvent> userEvent = new HashSet<UserEvent>();
 
 
 
