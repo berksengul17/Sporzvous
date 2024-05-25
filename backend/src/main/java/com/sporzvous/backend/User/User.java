@@ -1,7 +1,7 @@
 package com.sporzvous.backend.User;
 
 
-import com.sporzvous.backend.UserEvent.UserEvent;
+import UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
