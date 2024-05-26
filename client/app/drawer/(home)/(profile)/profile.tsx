@@ -136,7 +136,7 @@ const Profile = () => {
             {/* Only used for picker */}
             <Picker
               ref={genderPickerRef}
-              style={{ display: "none" }}
+              style={{ display: "none", height: 100, width: 100 }}
               selectedValue={gender}
               onValueChange={(genderItem) => setGender(genderItem)}
             >
@@ -164,7 +164,7 @@ const Profile = () => {
             {/* Only used for picker */}
             <Picker
               ref={favoriteSportPickerRef}
-              style={{ display: "none" }}
+              style={{ display: "none", height: 100, width: 100 }}
               selectedValue={favoriteSport}
               onValueChange={(sportItem) => setFavoriteSport(sportItem)}
             >
@@ -192,7 +192,7 @@ const Profile = () => {
             {/* Only used for picker */}
             <Picker
               ref={userSkillsByOthersPickerRef}
-              style={{ display: "none" }}
+              style={{ display: "none", height: 100, width: 100 }}
               selectedValue={userSkillsByOthers}
               onValueChange={(skillItem) => setUserSkillsByOthers(skillItem)}
             >
@@ -216,7 +216,7 @@ const Profile = () => {
             {/* Only used for picker */}
             <Picker
               ref={userSkillPickerRef}
-              style={{ display: "none" }}
+              style={{ display: "none", height: 100, width: 100 }}
               selectedValue={userSkill}
               onValueChange={(skillItem) => setUserSkill(skillItem)}
             >
@@ -240,7 +240,7 @@ const Profile = () => {
             {/* Only used for picker */}
             <Picker
               ref={overallSkillPickerRef}
-              style={{ display: "none" }}
+              style={{ display: "none", height: 100, width: 100 }}
               selectedValue={overallSkill}
               onValueChange={(skillItem) => setOverallSkill(skillItem)}
             >
