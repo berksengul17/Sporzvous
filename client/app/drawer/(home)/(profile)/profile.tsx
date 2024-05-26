@@ -2,13 +2,13 @@ import Button from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { useUserContext } from "@/context/UserProvider";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select"; // Import the Picker
+
 import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Keyboard,
   Platform,
-  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
@@ -29,16 +29,10 @@ const Profile = () => {
     user.favoriteSport
   );
 
-  const [userSkill, setUserSkill] = useState<string>("Basketball");
-  const [userSkillsByOthers, setUserSkillsByOthers] =
-    useState<string>("Basketball");
-  const [overallSkill, setOverallSkill] = useState<string>("Basketball");
-
-  const genderPickerRef = useRef<Picker<string>>(null);
-  const favoriteSportPickerRef = useRef<Picker<string>>(null);
-  const userSkillPickerRef = useRef<Picker<string>>(null);
-  const userSkillsByOthersPickerRef = useRef<Picker<string>>(null);
-  const overallSkillPickerRef = useRef<Picker<string>>(null);
+  const [userSkillByOthersField, setUserSkillByOthersField] =
+    useState<string>("");
+  const [userSkillField, setUserSkillField] = useState<string>("");
+  const [overallField, setOverallField] = useState<string>("");
 
   //TODO rating state ekle
 
@@ -118,59 +112,47 @@ const Profile = () => {
           </View>
           <View style={styles.userInfo}>
             <CustomText text="Gender" customStyle={styles.label} />
-            <Pressable
-              style={{ flex: 1 }}
-              onPress={() => {
-                if (isProfileEditable) {
-                  genderPickerRef.current?.focus();
-                }
-              }}
-            >
-              <TextInput
-                value={gender}
-                onChangeText={setGender}
-                editable={false}
-                style={inputStyle}
+            <View style={{ flex: 1 }}>
+              <RNPickerSelect
+                onValueChange={(newGender) => setGender(newGender)}
+                items={[
+                  { label: "Male", value: "male" },
+                  { label: "Female", value: "female" },
+                ]}
+                useNativeAndroidPickerStyle={false}
+                style={{
+                  inputIOS: inputStyle,
+                  inputAndroid: inputStyle,
+                }}
+                disabled={!isProfileEditable}
+                placeholder={{
+                  label: "Select your gender...",
+                  value: null,
+                }}
               />
-            </Pressable>
-            {/* Only used for picker */}
-            <Picker
-              ref={genderPickerRef}
-              style={{ display: "none", height: 100, width: 100 }}
-              selectedValue={gender}
-              onValueChange={(genderItem) => setGender(genderItem)}
-            >
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Female" value="Female" />
-            </Picker>
+            </View>
           </View>
           <View style={styles.userInfo}>
             <CustomText text="Favorite Sport" customStyle={styles.label} />
-            <Pressable
-              style={{ flex: 1 }}
-              onPress={() => {
-                if (isProfileEditable) {
-                  favoriteSportPickerRef.current?.focus();
-                }
-              }}
-            >
-              <TextInput
-                value={favoriteSport}
-                onChangeText={setFavoriteSport}
-                editable={false}
-                style={inputStyle}
+            <View style={{ flex: 1 }}>
+              <RNPickerSelect
+                onValueChange={(newSport) => setFavoriteSport(newSport)}
+                items={[
+                  { label: "Basketball", value: "basketball" },
+                  { label: "Football", value: "football" },
+                ]}
+                useNativeAndroidPickerStyle={false}
+                style={{
+                  inputIOS: inputStyle,
+                  inputAndroid: inputStyle,
+                }}
+                disabled={!isProfileEditable}
+                placeholder={{
+                  label: "Select your favorite sport...",
+                  value: null,
+                }}
               />
-            </Pressable>
-            {/* Only used for picker */}
-            <Picker
-              ref={favoriteSportPickerRef}
-              style={{ display: "none", height: 100, width: 100 }}
-              selectedValue={favoriteSport}
-              onValueChange={(sportItem) => setFavoriteSport(sportItem)}
-            >
-              <Picker.Item label="Basketball" value="Basketball" />
-              <Picker.Item label="Football" value="Football" />
-            </Picker>
+            </View>
           </View>
         </View>
         <View style={{ padding: 10, rowGap: 10 }}>
@@ -179,26 +161,25 @@ const Profile = () => {
               text="User skills by others"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <Pressable
-              onPress={() => {
-                userSkillsByOthersPickerRef.current?.focus();
-              }}
-            >
-              <CustomText
-                text={userSkillsByOthers}
-                customStyle={styles.field}
+            <View>
+              <RNPickerSelect
+                onValueChange={(field) => setUserSkillByOthersField(field)}
+                items={[
+                  { label: "Basketball", value: "basketball" },
+                  { label: "Football", value: "football" },
+                ]}
+                useNativeAndroidPickerStyle={false}
+                style={{
+                  inputIOS: styles.input,
+                  inputAndroid: styles.input,
+                  placeholder: { color: styles.input.color },
+                }}
+                placeholder={{
+                  label: "Choose",
+                  value: null,
+                }}
               />
-            </Pressable>
-            {/* Only used for picker */}
-            <Picker
-              ref={userSkillsByOthersPickerRef}
-              style={{ display: "none", height: 100, width: 100 }}
-              selectedValue={userSkillsByOthers}
-              onValueChange={(skillItem) => setUserSkillsByOthers(skillItem)}
-            >
-              <Picker.Item label="Basketball" value="Basketball" />
-              <Picker.Item label="Football" value="Football" />
-            </Picker>
+            </View>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
@@ -206,23 +187,25 @@ const Profile = () => {
               text="User skills"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <Pressable
-              onPress={() => {
-                userSkillPickerRef.current?.focus();
-              }}
-            >
-              <CustomText text={userSkill} customStyle={styles.field} />
-            </Pressable>
-            {/* Only used for picker */}
-            <Picker
-              ref={userSkillPickerRef}
-              style={{ display: "none", height: 100, width: 100 }}
-              selectedValue={userSkill}
-              onValueChange={(skillItem) => setUserSkill(skillItem)}
-            >
-              <Picker.Item label="Basketball" value="Basketball" />
-              <Picker.Item label="Football" value="Football" />
-            </Picker>
+            <View>
+              <RNPickerSelect
+                onValueChange={(field) => setUserSkillField(field)}
+                items={[
+                  { label: "Basketball", value: "basketball" },
+                  { label: "Football", value: "football" },
+                ]}
+                useNativeAndroidPickerStyle={false}
+                style={{
+                  inputIOS: styles.input,
+                  inputAndroid: styles.input,
+                  placeholder: { color: styles.input.color },
+                }}
+                placeholder={{
+                  label: "Choose",
+                  value: null,
+                }}
+              />
+            </View>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
@@ -230,23 +213,25 @@ const Profile = () => {
               text="Overall"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <Pressable
-              onPress={() => {
-                overallSkillPickerRef.current?.focus();
-              }}
-            >
-              <CustomText text={overallSkill} customStyle={styles.field} />
-            </Pressable>
-            {/* Only used for picker */}
-            <Picker
-              ref={overallSkillPickerRef}
-              style={{ display: "none", height: 100, width: 100 }}
-              selectedValue={overallSkill}
-              onValueChange={(skillItem) => setOverallSkill(skillItem)}
-            >
-              <Picker.Item label="Basketball" value="Basketball" />
-              <Picker.Item label="Football" value="Football" />
-            </Picker>
+            <View>
+              <RNPickerSelect
+                onValueChange={(field) => setOverallField(field)}
+                items={[
+                  { label: "Basketball", value: "basketball" },
+                  { label: "Football", value: "football" },
+                ]}
+                useNativeAndroidPickerStyle={false}
+                style={{
+                  inputIOS: styles.input,
+                  inputAndroid: styles.input,
+                  placeholder: { color: styles.input.color },
+                }}
+                placeholder={{
+                  label: "Choose",
+                  value: null,
+                }}
+              />
+            </View>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
