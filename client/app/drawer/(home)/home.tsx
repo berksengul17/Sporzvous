@@ -1,5 +1,5 @@
 import { Event, useEventContext } from "@/context/EventProvider";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 
@@ -24,17 +24,13 @@ const EventItem = ({ event }: { event: Event }) => {
         })
       }
     >
-      <View style={styles.eventhostrow}>
-        <Text>{event.organizer.fullName}</Text>
+      <View style={styles.eventInfo}>
+        <Text style={styles.username}>{event.organizer.fullName}</Text>
+        <Text numberOfLines={1} style={styles.eventName}>{event.title}</Text>
       </View>
-      <View style={styles.eventtitlerow}>
-        <Text numberOfLines={1}>{event.title}</Text>
-      </View>
-      <View style={styles.eventsportrow}>
-        <Text>{event.sport}</Text>
-      </View>
-      <View style={styles.eventcapacityrow}>
-        <Text numberOfLines={1}>
+      <View style={styles.eventInfo}>
+        <Text style={styles.sport}>{event.sport}</Text>
+        <Text style={styles.capacity}>
           {event.participants}/{event.maxParticipants}
         </Text>
       </View>
@@ -43,18 +39,12 @@ const EventItem = ({ event }: { event: Event }) => {
 };
 
 export default function HomeScreen() {
-  const { events, fetchAllEvents, addEvent } = useEventContext(); // Use events from context
+  const { events } = useEventContext(); // Use events from context
   const [searchText, setSearchText] = useState("");
-
-  useEffect(() => {
-    console.log("FETCHING EVENTS");
-
-    fetchAllEvents();
-  }, []);
 
   const filteredEvents = events.filter(
     (event) =>
-      event.isEventOver === 0 && // Add this line to check if the event is not over
+      event.isEventOver === 0 &&
       (event.title.toLowerCase().includes(searchText.toLowerCase()) ||
         event.organizer.fullName
           .toLowerCase()
@@ -64,17 +54,15 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#6F6F6F" />
-          <TextInput
-            style={styles.searchText}
-            placeholder="Search"
-            placeholderTextColor={"#6F6F6F"}
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-        </View>
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#6F6F6F" />
+        <TextInput
+          style={styles.searchText}
+          placeholder="Search"
+          placeholderTextColor="#6F6F6F"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
         <TouchableOpacity
           onPress={() =>
             router.push({
@@ -84,26 +72,22 @@ export default function HomeScreen() {
           }
           style={styles.filterButton}
         >
-          <AntDesign name="filter" size={40} color="#FF5C00" />
+          <Ionicons name="filter" size={24} color="orange" />
         </TouchableOpacity>
       </View>
-      <View style={styles.titleview}>
-        <Text style={styles.title}>Upcoming Events</Text>
-        <TouchableOpacity
-          onPress={() => router.push("drawer/(home)/createEventModal")}
-          style={styles.addButton}
-        >
-          <AntDesign name="plussquare" size={40} color="#FF5C00" />
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.heading}>Upcoming Events</Text>
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
         keyExtractor={(item) => item.eventId.toString()}
       />
-      <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
+      <TouchableOpacity
+        onPress={() => router.push("drawer/(home)/createEventModal")}
+        style={styles.addButton}
+      >
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
+      
     </View>
   );
 }
@@ -115,62 +99,53 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 15,
+    padding: 16,
+    backgroundColor: "white",
   },
-  searchBar: {
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "orange",
+  },
+  profileIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  searchContainer: {
     flexDirection: "row",
-    padding: 10,
-    backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
+    padding: 10,
+    margin: 10,
+    backgroundColor: "#F0F0F0",
     borderRadius: 10,
-    flex: 1,
   },
   searchText: {
+    flex: 1,
     marginLeft: 10,
     color: "#6F6F6F",
-    flex: 1,
   },
   filterButton: {
     justifyContent: "center",
     marginLeft: 10,
   },
-  titleview: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "3%",
+  heading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "orange",
+    margin: 16,
   },
   eventContainer: {
-    marginVertical: 20,
-    marginHorizontal: 10,
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgrey",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#FF5C00",
-    alignSelf: "center",
-  },
-  addButton: {
-    position: "absolute",
-    right: 10,
-    alignSelf: "center",
-  },
-  eventhostrow: {
+  eventInfo: {
     flex: 1,
-  },
-  eventtitlerow: {
-    flex: 1,
-  },
-  eventsportrow: {
-    flex: 1,
-    alignItems: "center",
-  },
-  eventcapacityrow: {
-    alignItems: "flex-end",
   },
   username: {
     fontWeight: "bold",
@@ -179,12 +154,28 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
   },
   sport: {
-    fontStyle: "italic",
+    color: "orange",
+    alignSelf: 'flex-end'
   },
-  wave: {
-    position: "static",
-    bottom: 0,
-    width: "100%",
-    resizeMode: "cover",
+  capacity: {
+    color: "grey",
+    alignSelf: 'flex-end'
   },
+  addButton: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+    backgroundColor: "orange",
+    borderRadius: 50, // Make the button circular
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  
 });
+
