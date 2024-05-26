@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/event")
 @AllArgsConstructor
-
 public class EventController {
     private final EventService eventService;
 
@@ -25,12 +24,22 @@ public class EventController {
         }
     }
 
+    @GetMapping("/get-events")
+    public ResponseEntity<?> getEvents() {
+        try {
+            return ResponseEntity.ok(eventService.getEvents());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/filter")
     public ResponseEntity<?> filterEvents(@RequestParam(required = false) String sport,
                                           @RequestParam(required = false) String locationCity,
                                           @RequestParam(required = false) String locationDistrict,
                                           @RequestParam(required = false) LocalDate eventDate,
-                                          @RequestParam(required = false) int isEventOver,
+                                          @RequestParam(required = false) Integer isEventOver,
                                           @RequestParam(required = false) Long userId,
                                           @RequestParam(required = false, defaultValue = "0") double minRating) {
         try {

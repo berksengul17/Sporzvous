@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-
 public class EventService {
     private final EventRepository eventRepository;
     private final TeamService teamService;
@@ -80,5 +79,9 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         eventRepository.delete(event);
+    }
+
+    public List<Event> getEvents() {
+        return eventRepository.findAll().stream().filter(event -> event.getIsEventOver() == 0).toList();
     }
 }

@@ -1,17 +1,22 @@
 package com.sporzvous.backend.Event;
 
-import com.sporzvous.backend.UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
+import com.sporzvous.backend.UserEvent.UserEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -68,7 +73,7 @@ public class Event {
         this.organizer = organizer;
         this.users = users;
         this.maxParticipants = maxParticipants;
-        this.teams = new ArrayList<Team>();
+        this.teams = new ArrayList<>();
     }
 
     @PostConstruct

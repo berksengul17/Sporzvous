@@ -1,13 +1,13 @@
 package com.sporzvous.backend.User;
 
 
-import UserEvent.UserEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
 import com.sporzvous.backend.Team.Team;
+import com.sporzvous.backend.UserEvent.UserEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

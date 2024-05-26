@@ -1,9 +1,12 @@
-package UserEvent;
+package com.sporzvous.backend.UserEvent;
 
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 @Entity
@@ -18,11 +21,9 @@ public class UserEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userEventId;
     @ManyToOne
-    @MapsId("user_id")
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-    @MapsId("event_id")
     @JoinColumn(name = "event_id")
     private Event event;
 
