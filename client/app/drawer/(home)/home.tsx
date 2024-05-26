@@ -2,7 +2,7 @@ import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
-import { useEventContext } from "@/context/EventProvider";
+import { Event, useEventContext } from "@/context/EventProvider";
 
 import {
   FlatList,
@@ -14,11 +14,16 @@ import {
   View,
 } from "react-native";
 
-const EventItem = ({ event }) => {
+const EventItem = ({ event }: { event: Event }) => {
   return (
     <TouchableOpacity
       style={styles.eventContainer}
-      onPress={() => router.push("drawer/(home)/join_event")}
+      onPress={() =>
+        router.push({
+          pathname: "drawer/(home)/join_event",
+          params: { event: JSON.stringify(event) },
+        })
+      }
     >
       <View style={styles.eventhostrow}>
         <Text>{event.organizer.fullName}</Text>
@@ -114,6 +119,7 @@ const styles = StyleSheet.create({
   },
   searchText: {
     marginLeft: 10,
+    color: "#6F6F6F",
     flex: 1,
   },
   filterButton: {
@@ -125,11 +131,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: "3%",
-  },
-  searchText: {
-    marginLeft: 10,
-    color: "#6F6F6F",
-    flex: 1,
   },
   eventContainer: {
     marginVertical: 20,

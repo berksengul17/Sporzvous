@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import { User, UserProvider } from "@/context/UserProvider";
 
 // Define the type for an event
-type Event = {
+export type Event = {
   id: number;
   title: string;
   sport: string;

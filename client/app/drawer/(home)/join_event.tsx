@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { Rating } from "react-native-ratings";
 import CustomButton from "@/components/CustomButton";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { useRoute } from "@react-navigation/native";
 
 const eventData = {
   organizerName: "Çağan Özsır",
@@ -25,6 +26,14 @@ const eventData = {
 };
 
 const JoinEventPage = () => {
+  const route = useRoute();
+  const { event: eventJson } = route.params; // Destructure and retrieve the event JSON string
+
+  let event;
+  if (eventJson) {
+    event = JSON.parse(eventJson);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.eventInformationContainer}>
@@ -34,7 +43,7 @@ const JoinEventPage = () => {
           </View>
           <View style={styles.valueView}>
             <TouchableOpacity onPress={() => router.push("OrganizerProfile")}>
-              <Text style={styles.value}>{eventData.organizerName}</Text>
+              <Text style={styles.value}>{event.organizer.fullName}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -43,7 +52,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Sport</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.sport}</Text>
+            <Text style={styles.value}>{event.sport}</Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -51,7 +60,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Location</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.location}</Text>
+            <Text style={styles.value}>{event.locationDistrict}</Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -59,7 +68,9 @@ const JoinEventPage = () => {
             <Text style={styles.label}>People Count</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.peopleCount}</Text>
+            <Text style={styles.value}>
+              {event.participants}/{event.maxParticipants}
+            </Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -67,7 +78,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Team Count</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.teamCount}</Text>
+            <Text style={styles.value}>{event.teamNumber}</Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -75,7 +86,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Date</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.date}</Text>
+            <Text style={styles.value}>{event.eventDate}</Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -83,7 +94,7 @@ const JoinEventPage = () => {
             <Text style={styles.label}>Time</Text>
           </View>
           <View style={styles.valueView}>
-            <Text style={styles.value}>{eventData.time}</Text>
+            <Text style={styles.value}>{event.eventTime}</Text>
           </View>
         </View>
         <View style={styles.eventInformationRow}>
@@ -93,7 +104,7 @@ const JoinEventPage = () => {
           <View style={styles.ratingStars}>
             <Rating
               readonly
-              startingValue={eventData.skillLevel}
+              startingValue={event.skillRating}
               type="star"
               ratingCount={5}
               imageSize={30}
