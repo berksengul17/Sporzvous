@@ -167,7 +167,7 @@ const Page = () => {
                 participants: peopleCount,
                 maxParticipants: peopleCount,
                 teamNumber: teamCount,
-                eventDate: new Date("2024-05-12"),
+                eventDate: "2024-05-12",
                 eventTime: time,
                 skillRating: minSkillLevel,
                 locationIndex: "5",

@@ -3,6 +3,7 @@ package com.sporzvous.backend.Event;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.Team.TeamService;
 import com.sporzvous.backend.User.User;
+import com.sporzvous.backend.User.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,26 @@ import java.util.List;
 @AllArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
     private final TeamService teamService;
 
     public Event saveEvent(Event event) {
         return eventRepository.save(event);
+    }
+
+    public List<Event> getMyEvents(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        List<Event> allEvents = eventRepository.findAll();
+
+        return allEvents.stream()
+                .filter(event -> event.getUsers().contains(user) || event.getOrganizer().equals(user))
+                .toList();
+    }
+
+    public List<Event> getEvents() {
+        return eventRepository.findAll().stream().filter(event -> event.getIsEventOver() == 0).toList();
     }
 
     public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
@@ -81,7 +98,4 @@ public class EventService {
         eventRepository.delete(event);
     }
 
-    public List<Event> getEvents() {
-        return eventRepository.findAll().stream().filter(event -> event.getIsEventOver() == 0).toList();
-    }
 }

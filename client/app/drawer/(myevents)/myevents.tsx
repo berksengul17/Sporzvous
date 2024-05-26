@@ -1,27 +1,23 @@
+import { Event, useEventContext } from "@/context/EventProvider";
 import {
   AntDesign,
-  FontAwesome5,
+  Entypo,
+  Feather,
   Ionicons,
-  Octicons,
+  MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
-import { useEventContext } from "@/context/EventProvider";
 
-function EventStatus({ isEventOver }) {
+function EventStatus({ isEventOver }: { isEventOver: number }) {
   if (isEventOver === 1) {
     return <Entypo name="check" size={24} color="black" style={styles.check} />;
   }
@@ -35,11 +31,11 @@ function EventStatus({ isEventOver }) {
   );
 }
 
-const Status = ({ event }) => {
+const Status = ({ event }: { event: Event }) => {
   return EventStatus(event);
 };
 
-const EventItem = ({ event }) => {
+const EventItem = ({ event }: { event: Event }) => {
   const navigateByCondition = () => {
     if (event.isEventOver === 1) {
       router.push("drawer/(myevents)/ratePlayersFinished", { event });
@@ -84,10 +80,21 @@ const EventItem = ({ event }) => {
 };
 
 export default function MyEvents() {
-  const { events, addEvent } = useEventContext(); // Use events from context
+  const { fetchMyEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
+  const [myEvents, setMyEvents] = useState<Event[]>([]);
 
-  const filteredEvents = events.filter(
+  useEffect(() => {
+    console.log("fetching");
+
+    const getMyEvents = async () => {
+      setMyEvents(await fetchMyEvents());
+    };
+
+    getMyEvents();
+  }, []);
+
+  const filteredEvents = myEvents.filter(
     (event) =>
       event.title.toLowerCase().includes(searchText.toLowerCase()) ||
       event.organizer.fullName
@@ -121,18 +128,17 @@ export default function MyEvents() {
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
-        keyExtractor={(item) => item.eventId.toString()}
+        keyExtractor={(item) => item.eventId?.toString()}
       />
-      <View style={styles.wave}>
+      {/* <View style={styles.wave}>
         <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
+      </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "white",
   },
   header: {

@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type User = {
   userId: number;
@@ -57,6 +57,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     favoriteSport: "",
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("User updated:", user);
+  }, [user]);
 
   const signUp = async (
     {

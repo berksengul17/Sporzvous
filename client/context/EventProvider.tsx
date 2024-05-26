@@ -1,6 +1,6 @@
-import { User } from "@/context/UserProvider";
+import { User, useUserContext } from "@/context/UserProvider";
 import axios from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Define the type for an event
 export type Event = {
@@ -25,7 +25,8 @@ type CreateEvent = Omit<Event, "eventId">;
 // Define the type for the context
 type EventContextType = {
   events: Event[];
-  fetchEvents: () => Promise<void>;
+  fetchAllEvents: () => Promise<void>;
+  fetchMyEvents: () => Promise<Event[]>;
   addEvent: (event: CreateEvent) => void;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
@@ -38,6 +39,7 @@ const EventContext = createContext<EventContextType | null>(null);
 
 // EventProvider component
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useUserContext();
   const [events, setEvents] = useState<Event[]>([
     {
       eventId: 1,
@@ -167,7 +169,11 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     },
   ]);
 
-  const fetchEvents = async () => {
+  useEffect(() => {
+    console.log("events", events);
+  }, [events]);
+
+  const fetchAllEvents = async () => {
     try {
       const response = await axios.get(`${API_URL}/get-events`);
       setEvents(response.data);
@@ -176,10 +182,22 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const fetchMyEvents = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/get-my-events/${user.userId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const addEvent = async (event: CreateEvent) => {
     try {
       const response = await axios.post(`${API_URL}/create`, event);
-      setEvents((prevEvents) => [...prevEvents, response.data]);
+      // setEvents((prevEvents) => [...prevEvents, response.data]);
+      fetchAllEvents();
     } catch (error) {
       console.log(error);
     }
@@ -202,7 +220,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     events,
     setEvents,
-    fetchEvents,
+    fetchAllEvents,
+    fetchMyEvents,
     addEvent,
     updateEvent,
     removeEvent,

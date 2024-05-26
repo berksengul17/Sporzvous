@@ -43,11 +43,13 @@ const EventItem = ({ event }: { event: Event }) => {
 };
 
 export default function HomeScreen() {
-  const { events, fetchEvents, addEvent } = useEventContext(); // Use events from context
+  const { events, fetchAllEvents, addEvent } = useEventContext(); // Use events from context
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    fetchEvents();
+    console.log("FETCHING EVENTS");
+
+    fetchAllEvents();
   }, []);
 
   const filteredEvents = events.filter(

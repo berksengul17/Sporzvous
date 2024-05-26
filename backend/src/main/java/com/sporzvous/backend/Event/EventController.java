@@ -24,6 +24,16 @@ public class EventController {
         }
     }
 
+    @GetMapping("/get-my-events/{userId}")
+    public ResponseEntity<?> getMyEvents(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(eventService.getMyEvents(userId));
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/get-events")
     public ResponseEntity<?> getEvents() {
         try {
