@@ -1,11 +1,9 @@
-import { View, Text, Modal, Image, StyleSheet, FlatList } from "react-native";
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import React, { useState } from "react";
-import { User } from "@/context/UserProvider";
-import { FontAwesome5, Octicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "@/components/CustomText";
 
-const FriendRequestItem = ({ user /*: User*/ }) => {
+const FriendRequestItem = ({ user }) => {
   const handleAccept = () => alert("Accept clicked.");
   const handleReject = () => alert("Reject clicked.");
 
@@ -13,114 +11,118 @@ const FriendRequestItem = ({ user /*: User*/ }) => {
     <View style={styles.requestItem}>
       <TouchableOpacity
         style={styles.picAndName}
-        onPress={() => console.log("Profile clicked!")} //buraya router.push(commentor.profile) tarzı bi şey yazılcak sanırım
+        onPress={() => console.log("Profile clicked!")}
       >
-        <Image
-          source={{
-            uri: user.profilePicUrl,
-          }}
-          style={styles.profilePic}
-        />
-
-        <CustomText
-          customStyle={styles.name}
-          text={user.fullName}
-          isBold={true}
-        />
+        <Image source={user.profilePicUrl} style={styles.profilePic} />
+        <CustomText customStyle={styles.name} text={user.fullName} isBold={true} />
       </TouchableOpacity>
       <View style={styles.buttons}>
-        <TouchableOpacity onPress={handleAccept} style={styles.button}>
-          <FontAwesome5 name="check-circle" size={40} color="green" />
+        <TouchableOpacity onPress={handleAccept} style={[styles.button, styles.acceptButton]}>
+          <MaterialCommunityIcons name="check" size={24} color="white" style={styles.icon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleReject} style={styles.button}>
-          <Octicons name="x-circle" size={40} color="red" />
+        <TouchableOpacity onPress={handleReject} style={[styles.button, styles.rejectButton]}>
+          <MaterialCommunityIcons name="close" size={24} color="white" style={styles.icon} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const Page = () => {
+const FriendsRequestsScreen = () => {
   const [userList, setUserList] = useState([
     {
       id: 1,
       fullName: "Çağan Özsır",
-      profilePicUrl: "https://via.placeholder.com/48",
+      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
     },
     {
       id: 2,
       fullName: "Bekir Şengül",
-      profilePicUrl: "https://via.placeholder.com/48",
+      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
     },
     {
       id: 3,
       fullName: "Emre Erol",
-      profilePicUrl: "https://via.placeholder.com/48",
+      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
     },
   ]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={userList}
         renderItem={({ item }) => <FriendRequestItem user={item} />}
         keyExtractor={(item) => item.id.toString()}
+        style={styles.list}
       />
-      <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default Page;
+export default FriendsRequestsScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
   },
+  list: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   requestItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     padding: 15,
-    marginVertical: 8,
-    backgroundColor: "white",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#FF6347",
-    shadowColor: "#FF6347",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    marginHorizontal: 10,
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 4,
-    margin: 20,
+    elevation: 2,
+    marginVertical: 5,
   },
   picAndName: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
   },
   profilePic: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 15,
   },
   name: {
-    marginLeft: 10,
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
   },
   buttons: {
     flexDirection: "row",
     alignItems: "center",
   },
   button: {
-    marginLeft: 10,
+    paddingTop: 2,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 5,
+    width: 40,
+    height: 40,
   },
-  wave: {
-    position: "static",
-    bottom: 0,
-    width: "100%",
-    resizeMode: "cover",
+  acceptButton: {
+    backgroundColor: "#FF5C00", // Orange
+    shadowColor: "#FF5C00",
+  },
+  rejectButton: {
+    backgroundColor: "#6F6F6F", // Grey
+    shadowColor: "#6F6F6F",
+  },
+  icon: {
+    textAlign: "center",
   },
 });
