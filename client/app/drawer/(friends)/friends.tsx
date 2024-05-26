@@ -1,22 +1,10 @@
+import { FontAwesome5, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View, TextInput, SafeAreaView } from "react-native";
+import Modal from "react-native-modal";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import {
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import Modal from "react-native-modal";
 
 const friendsData = [
   {
@@ -42,20 +30,10 @@ const friendsData = [
 
 const FriendItem = ({ friend }) => (
   <View style={styles.friendContainer}>
-    <Image
-      source={{ uri: friend.imageUri.toString() }}
-      style={styles.profileImage}
-    />
+    <Image source={friend.imageUri} style={styles.profileImage} />
     <View style={styles.friendInfo}>
-      <CustomText
-        customStyle={styles.friendName}
-        text={friend.name}
-        isBold={true}
-      />
-      <CustomText
-        customStyle={styles.friendLastSeen}
-        text={`Last seen: ${friend.lastSeen}`}
-      />
+      <CustomText customStyle={styles.friendName} text={friend.name} isBold={true} />
+      <CustomText customStyle={styles.friendLastSeen} text={`Last seen: ${friend.lastSeen}`} />
     </View>
     <TouchableOpacity style={styles.iconButton}>
       <AntDesign name="message1" size={24} color="#FF5C00" />
@@ -63,21 +41,20 @@ const FriendItem = ({ friend }) => (
   </View>
 );
 
-export default function HomeScreen() {
+export default function FriendsScreen() {
   const [searchText, setSearchText] = useState("");
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const filteredFriends = friendsData.filter((friend) =>
     friend.name.toLowerCase().includes(searchText.toLowerCase())
   );
-
-  const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.popUpContainer}>
         <Modal
           backdropColor="#6F6F6F"
@@ -85,13 +62,7 @@ export default function HomeScreen() {
           animationOut={"fadeOut"}
           isVisible={isModalVisible}
           onBackdropPress={() => setModalVisible(false)}
-          style={{
-            marginTop: "60%",
-            marginBottom: "100%",
-            marginLeft: "12%",
-            marginRight: "12%",
-            backgroundColor: "white",
-          }}
+          style={styles.modal}
         >
           <View style={{ flex: 1 }}>
             <Text style={styles.text}>Add Friend</Text>
@@ -99,7 +70,7 @@ export default function HomeScreen() {
               style={styles.input}
               placeholder="Search"
               placeholderTextColor={"#6F6F6F"}
-            ></TextInput>
+            />
             <View style={styles.buttons}>
               <CustomButton
                 title="Cancel"
@@ -148,13 +119,10 @@ export default function HomeScreen() {
       <FlatList
         data={filteredFriends}
         renderItem={({ item }) => <FriendItem friend={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         style={styles.list}
       />
-      <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -167,18 +135,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgrey",
+    paddingHorizontal: 10,
   },
   searchBar: {
     flexDirection: "row",
     padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 25,
     flex: 1,
   },
   searchText: {
     marginLeft: 10,
+    color: "#6F6F6F",
     flex: 1,
   },
   list: {
@@ -187,31 +159,32 @@ const styles = StyleSheet.create({
   },
   friendContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     padding: 15,
-    marginVertical: 8,
-    backgroundColor: "white",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#FF6347",
-    shadowColor: "#FF6347",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    marginHorizontal: 10,
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 4,
-    margin: 20,
+    elevation: 2,
+    marginVertical: 5,
   },
   profileImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 15,
   },
   friendInfo: {
     flex: 1,
   },
   friendName: {
-    fontSize: 16,
+    fontWeight: "bold",
+    fontSize: 18,
   },
   friendLastSeen: {
     color: "#6F6F6F",
@@ -221,24 +194,23 @@ const styles = StyleSheet.create({
     padding: 8,
     marginLeft: 10,
   },
-  wave: {
-    position: "static",
-    bottom: 0,
-    width: "100%",
-    resizeMode: "cover",
-  },
   popUpContainer: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "pink",
-    width: "25%",
-    flexDirection: "column",
+  },
+  modal: {
+    marginTop: "60%",
+    marginBottom: "100%",
+    marginLeft: "12%",
+    marginRight: "12%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
   },
   text: {
     fontSize: 28,
     marginBottom: 20,
     textAlign: "center",
-    marginTop: 20,
     fontWeight: "bold",
     color: "#FF5C00",
   },
@@ -246,7 +218,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
     borderRadius: 10,
   },
   buttons: {

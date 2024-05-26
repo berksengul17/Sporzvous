@@ -1,11 +1,10 @@
 import { Event, useEventContext } from "@/context/EventProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TextInput,
@@ -26,7 +25,9 @@ const EventItem = ({ event }: { event: Event }) => {
     >
       <View style={styles.eventInfo}>
         <Text style={styles.username}>{event.organizer.fullName}</Text>
-        <Text numberOfLines={1} style={styles.eventName}>{event.title}</Text>
+        <Text numberOfLines={1} style={styles.eventName}>
+          {event.title}
+        </Text>
       </View>
       <View style={styles.eventInfo}>
         <Text style={styles.sport}>{event.sport}</Text>
@@ -72,7 +73,7 @@ export default function HomeScreen() {
           }
           style={styles.filterButton}
         >
-          <Ionicons name="filter" size={24} color="orange" />
+          <Ionicons name="filter" size={24} color="#FF5C00" />
         </TouchableOpacity>
       </View>
       <Text style={styles.heading}>Upcoming Events</Text>
@@ -87,7 +88,6 @@ export default function HomeScreen() {
       >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
-      
     </View>
   );
 }
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "orange",
+    color: "#FF5C00",
   },
   profileIcon: {
     width: 32,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "orange",
+    color: "#FF5C00",
     margin: 16,
   },
   eventContainer: {
@@ -154,18 +154,18 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
   },
   sport: {
-    color: "orange",
-    alignSelf: 'flex-end'
+    color: "#FF5C00",
+    alignSelf: "flex-end",
   },
   capacity: {
     color: "grey",
-    alignSelf: 'flex-end'
+    alignSelf: "flex-end",
   },
   addButton: {
     position: "absolute",
     bottom: 16,
     right: 16,
-    backgroundColor: "orange",
+    backgroundColor: "#FF5C00",
     borderRadius: 50, // Make the button circular
     padding: 16,
     alignItems: "center",
@@ -176,6 +176,4 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
-  
 });
-

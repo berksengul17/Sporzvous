@@ -1,7 +1,6 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import React, { useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View, TextInput, SafeAreaView } from "react-native";
 
 const friendsData = [
   {
@@ -30,29 +29,27 @@ const friendsData = [
 
 const FriendItem = ({ friend }) => (
   <View style={styles.friendContainer}>
-    <Image
-      source={{ uri: friend.imageUri.toString() }}
-      style={styles.profileImage}
-    />
+    <Image source={friend.imageUri} style={styles.profileImage} />
     <View style={styles.friendInfo}>
       <Text style={styles.friendName}>{friend.name}</Text>
       <View style={{ flexDirection: "row" }}>
-        <FontAwesome5
-          name="check-double"
-          size={14}
-          color="#FF5C00"
-          style={{ padding: 5 }}
-        />
+        <FontAwesome5 name="check-double" size={14} color="#FF5C00" style={{ padding: 5 }} />
         <Text style={styles.friendLastSeen}>{friend.lastMessage}</Text>
       </View>
     </View>
-    <Text>{friend.lastSeenDay}</Text>
+    <Text style={styles.lastSeenDay}>{friend.lastSeenDay}</Text>
   </View>
 );
 
 export default function InboxScreen() {
+  const [searchText, setSearchText] = useState("");
+
+  const filteredFriends = friendsData.filter(friend =>
+    friend.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={20} color="#6F6F6F" />
@@ -60,19 +57,18 @@ export default function InboxScreen() {
             style={styles.searchText}
             placeholder="Search"
             placeholderTextColor={"#6F6F6F"}
+            value={searchText}
+            onChangeText={setSearchText}
           />
         </View>
       </View>
       <FlatList
-        data={friendsData}
+        data={filteredFriends}
         renderItem={({ item }) => <FriendItem friend={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         style={styles.list}
       />
-      <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -85,14 +81,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgrey",
+    paddingHorizontal: 10,
   },
   searchBar: {
     flexDirection: "row",
     padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
-    borderRadius: 10,
+    borderRadius: 25,
     flex: 1,
   },
   searchText: {
@@ -106,38 +105,39 @@ const styles = StyleSheet.create({
   },
   friendContainer: {
     flexDirection: "row",
-    padding: 10,
+    padding: 15,
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: "#eee",
     marginHorizontal: 10,
-    backgroundColor: "#FFF", // Change this as necessary
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+    marginVertical: 5,
   },
   profileImage: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    marginRight: 10,
+    marginRight: 15,
   },
   friendInfo: {
     flex: 1,
   },
   friendName: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
   },
   friendLastSeen: {
     color: "#6F6F6F",
     fontSize: 14,
   },
-  iconButton: {
-    padding: 8,
-    marginLeft: 10,
-  },
-  wave: {
-    position: "static",
-    bottom: 0,
-    width: "100%",
-    resizeMode: "cover",
+  lastSeenDay: {
+    color: "#FF5C00",
+    fontSize: 14,
   },
 });

@@ -32,7 +32,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
             predicates.add(cb.equal(event.get("locationDistrict"), locationDistrict));
         }
         if (eventDate != null) {
-            predicates.add(cb.equal(event.get("eventDate"), eventDate));
+            predicates.add(cb.greaterThanOrEqualTo(event.get("eventDate"), eventDate));
         }
         predicates.add(cb.equal(event.get("isEventOver"), isEventOver));
         if (minRating > 0) {

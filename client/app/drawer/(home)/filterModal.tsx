@@ -1,17 +1,21 @@
-import React, { useState, useMemo } from "react";
+import CustomText from "@/components/CustomText";
+import { useEventContext } from "@/context/EventProvider";
+import React, { useState } from "react";
 import {
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  Button,
+  View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
-import CustomText from "@/components/CustomText";
 import RNPickerSelect from "react-native-picker-select";
 
+const sportsTypes = ["All", "Football", "Basketball", "Volleyball", "Tennis"];
+const eventLocations = [
+  { label: "All", value: "All" },
+  { label: "Bornova", value: "Bornova" },
+  { label: "Urla", value: "Urla" },
+];
 const dateOptions = ["All", "Today", "This Week", "This Month"];
 const ratingOptions = [
   { label: "All", minRating: 0 },
@@ -22,152 +26,120 @@ const ratingOptions = [
 ];
 
 const Page = () => {
-  const route = useRoute();
-  const { filteredEvents: filteredEventsJson } = route.params; // Destructure and retrieve the event JSON string
-
-  let filteredEvents;
-  if (filteredEventsJson) {
-    filteredEvents = JSON.parse(filteredEventsJson);
-  }
-
-  const sportsTypes = useMemo(() => {
-    if (filteredEvents) {
-      const types = new Set(
-        filteredEvents.map((filteredEvents) => filteredEvents.sport)
-      );
-      return ["All", ...types];
-    }
-    return ["All"]; // Fallback to default if sortedComments is not available
-  }, [filteredEvents]);
-
-  const eventLocations = useMemo(() => {
-    if (filteredEvents) {
-      const locations = new Set(
-        filteredEvents.map((event) => event.locationDistrict)
-      );
-      return Array.from(locations).map(
-        (location) =>
-          ({
-            label: location,
-            value: location,
-          } as PickerItem)
-      );
-    }
-    return [];
-  }, [filteredEvents]);
+  const { filterEvents } = useEventContext();
 
   const [selectedSport, setSelectedSport] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedDate, setSelectedDate] = useState("All");
   const [selectedRating, setSelectedRating] = useState(0);
 
-  const applyFilters = () => ({
-    sport: selectedSport,
-    date: selectedDate,
-    rating: selectedRating,
-    location: selectedLocation,
-  });
+  const applyFilters = () => {
+    filterEvents(selectedSport, selectedLocation, selectedDate, selectedRating)
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          setSelectedSport("All");
-          setSelectedDate("All");
-          setSelectedRating(0);
-        }}
-      >
-        <CustomText customStyle={styles.clearText} text="Clear Filters" />
-      </TouchableOpacity>
+    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedSport("All");
+            setSelectedDate("All");
+            setSelectedRating(0);
+          }}
+        >
+          <CustomText customStyle={styles.clearText} text="Clear Filters" />
+        </TouchableOpacity>
+        <View style={styles.titleWrapper}>
+          <CustomText customStyle={styles.sectionTitle} text="Sport" />
+        </View>
+        <View style={styles.buttonContainer}>
+          {sportsTypes.map((sport) => (
+            <TouchableOpacity
+              key={sport}
+              style={[
+                styles.button,
+                selectedSport === sport && styles.buttonSelected,
+              ]}
+              onPress={() => setSelectedSport(sport)}
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  selectedSport === sport && styles.buttonTextSelected,
+                ]}
+              >
+                {sport}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.titleWrapper}>
+          <CustomText customStyle={styles.sectionTitle} text="Location" />
+        </View>
+        <RNPickerSelect
+          onValueChange={(value) => setSelectedLocation(value)}
+          items={eventLocations}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
+          placeholder={{ label: "Choose Location", value: null }}
+          value={selectedLocation}
+        />
+        <View style={[styles.titleWrapper, { marginTop: 20 }]}>
+          <CustomText customStyle={styles.sectionTitle} text="Date" />
+        </View>
+        <View style={styles.buttonContainer}>
+          {dateOptions.map((date) => (
+            <TouchableOpacity
+              key={date}
+              style={[
+                styles.button,
+                selectedDate === date && styles.buttonSelected,
+              ]}
+              onPress={() => setSelectedDate(date)}
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  selectedDate === date && styles.buttonTextSelected,
+                ]}
+              >
+                {date}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <View style={styles.titleWrapper}>
-        <CustomText customStyle={styles.sectionTitle} text="Sport" />
-      </View>
-      <View style={styles.buttonContainer}>
-        {sportsTypes.map((sport) => (
-          <TouchableOpacity
-            key={sport}
-            style={[
-              styles.button,
-              selectedSport === sport && styles.buttonSelected,
-            ]}
-            onPress={() => setSelectedSport(sport)}
-          >
-            <Text
+        <View style={styles.titleWrapper}>
+          <CustomText customStyle={styles.sectionTitle} text="Rating" />
+        </View>
+        <View style={styles.buttonContainer}>
+          {ratingOptions.map((option) => (
+            <TouchableOpacity
+              key={option.label}
               style={[
-                styles.buttonText,
-                selectedSport === sport && styles.buttonTextSelected,
+                styles.button,
+                selectedRating === option.minRating && styles.buttonSelected,
               ]}
+              onPress={() => setSelectedRating(option.minRating)}
             >
-              {sport}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.buttonText,
+                  selectedRating === option.minRating &&
+                    styles.buttonTextSelected,
+                ]}
+              >
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
+          <Text style={styles.applyButtonText}>Apply</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.titleWrapper}>
-        <CustomText customStyle={styles.sectionTitle} text="Location" />
-      </View>
-      <RNPickerSelect
-        onValueChange={(value) => setSelectedLocation(value)}
-        items={eventLocations}
-        style={pickerSelectStyles}
-        useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
-        placeholder={{ label: "Choose Location", value: null }}
-        value={selectedLocation}
-      />
-      <View style={styles.titleWrapper}>
-        <CustomText customStyle={styles.sectionTitle} text="Date" />
-      </View>
-      <View style={styles.buttonContainer}>
-        {dateOptions.map((date) => (
-          <TouchableOpacity
-            key={date}
-            style={[
-              styles.button,
-              selectedDate === date && styles.buttonSelected,
-            ]}
-            onPress={() => setSelectedDate(date)}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                selectedDate === date && styles.buttonTextSelected,
-              ]}
-            >
-              {date}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View style={styles.titleWrapper}>
-        <CustomText customStyle={styles.sectionTitle} text="Rating" />
-      </View>
-      <View style={styles.buttonContainer}>
-        {ratingOptions.map((option) => (
-          <TouchableOpacity
-            key={option.label}
-            style={[
-              styles.button,
-              selectedRating === option.minRating && styles.buttonSelected,
-            ]}
-            onPress={() => setSelectedRating(option.minRating)}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                selectedRating === option.minRating &&
-                  styles.buttonTextSelected,
-              ]}
-            >
-              {option.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
-        <Text style={styles.applyButtonText}>Apply</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -175,8 +147,8 @@ const Page = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "white",
+    margin: 20,
   },
   clearText: {
     color: "#FF5C00",
@@ -190,6 +162,7 @@ const styles = StyleSheet.create({
   titleWrapper: {
     borderBottomWidth: 1,
     borderBottomColor: "#47315a",
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -207,8 +180,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonSelected: {
-    backgroundColor: "#FF6347",
-    borderColor: "#FF6347",
+    backgroundColor: "#FF5C00",
+    borderColor: "#FF5C00",
   },
   buttonText: {
     fontSize: 14,

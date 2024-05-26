@@ -49,7 +49,7 @@ public class EventController {
                                           @RequestParam(required = false) String locationCity,
                                           @RequestParam(required = false) String locationDistrict,
                                           @RequestParam(required = false) LocalDate eventDate,
-                                          @RequestParam(required = false) Integer isEventOver,
+                                          @RequestParam(required = false, defaultValue = "0") Integer isEventOver,
                                           @RequestParam(required = false) Long userId,
                                           @RequestParam(required = false, defaultValue = "0") double minRating) {
         try {

@@ -30,6 +30,12 @@ type EventContextType = {
   addEvent: (event: CreateEvent) => void;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
+  filterEvents: (
+    sport: string,
+    location: string,
+    date: string,
+    rating: number
+  ) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/event";
@@ -170,8 +176,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   ]);
 
   useEffect(() => {
-    console.log("events", events);
-  }, [events]);
+    fetchAllEvents();
+  }, [user]);
 
   const fetchAllEvents = async () => {
     try {
@@ -217,6 +223,50 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
+  const filterEvents = async (
+    sport: string,
+    location: string,
+    date: string,
+    rating: number
+  ) => {
+    try {
+      const today = new Date();
+
+      let dateFilter;
+      switch (date) {
+        case "All":
+          dateFilter = null;
+          break;
+        case "Today":
+          dateFilter = today.toISOString().split("T")[0];
+          break;
+        case "This Week":
+          const lastWeek = new Date();
+          lastWeek.setDate(today.getDate() - 7);
+          dateFilter = lastWeek.toISOString().split("T")[0];
+          break;
+        case "This Month":
+          const lastMonth = new Date();
+          lastMonth.setMonth(today.getMonth() - 1);
+          dateFilter = lastMonth.toISOString().split("T")[0];
+          break;
+      }
+
+      const filteredEvents = await axios.get(`${API_URL}/filter`, {
+        params: {
+          sport: sport === "All" ? null : sport,
+          locationDistrict: location === "All" ? null : location,
+          eventDate: dateFilter,
+          minRating: rating,
+        },
+      });
+      console.log("filtered events", filteredEvents.data);
+      setEvents(filteredEvents.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const value = {
     events,
     setEvents,
@@ -225,6 +275,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     addEvent,
     updateEvent,
     removeEvent,
+    filterEvents,
   };
 
   return (
