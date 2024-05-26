@@ -1,48 +1,41 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View, TextInput, SafeAreaView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import axios from 'axios';
 
-const friendsData = [
-  {
-    id: "1",
-    name: "Emre Erol",
-    lastMessage: "Last Message",
-    imageUri: require("../../assets/images/friendpp.jpg"),
-    lastSeenDay: "Monday",
-  },
-  {
-    id: "2",
-    name: "Jane Doe",
-    lastMessage: "Geliyorum",
-    imageUri: require("../../assets/images/friendpp.jpg"),
-    lastSeenDay: "Tuesday",
-  },
-  {
-    id: "3",
-    name: "John Smith",
-    lastMessage: "Last",
-    imageUri: require("../../assets/images/friendpp.jpg"),
-    lastSeenDay: "Wednesday",
-  },
-  // add more friends here
-];
-
-const FriendItem = ({ friend }) => (
-  <View style={styles.friendContainer}>
-    <Image source={friend.imageUri} style={styles.profileImage} />
-    <View style={styles.friendInfo}>
-      <Text style={styles.friendName}>{friend.name}</Text>
-      <View style={{ flexDirection: "row" }}>
-        <FontAwesome5 name="check-double" size={14} color="#FF5C00" style={{ padding: 5 }} />
-        <Text style={styles.friendLastSeen}>{friend.lastMessage}</Text>
-      </View>
-    </View>
-    <Text style={styles.lastSeenDay}>{friend.lastSeenDay}</Text>
-  </View>
-);
-
-export default function InboxScreen() {
+const InboxScreen = () => {
+  const [friendsData, setFriendsData] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    fetchInboxData();
+  }, []);
+
+  const fetchInboxData = async () => {
+    try {
+      const response = await axios.get('http://YOUR_BACKEND_API_URL/api/messages/inbox', {
+        params: { userId: 'CURRENT_USER_ID' } // Replace with actual user ID
+      });
+      setFriendsData(response.data);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to fetch inbox data.");
+    }
+  };
+
+  const FriendItem = ({ friend }) => (
+    <View style={styles.friendContainer}>
+      <Image source={{ uri: friend.imageUri }} style={styles.profileImage} />
+      <View style={styles.friendInfo}>
+        <Text style={styles.friendName}>{friend.name}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <FontAwesome5 name="check-double" size={14} color="#FF5C00" style={{ padding: 5 }} />
+          <Text style={styles.friendLastSeen}>{friend.lastMessage}</Text>
+        </View>
+      </View>
+      <Text>{friend.lastSeenDay}</Text>
+    </View>
+  );
 
   const filteredFriends = friendsData.filter(friend =>
     friend.name.toLowerCase().includes(searchText.toLowerCase())
@@ -70,7 +63,9 @@ export default function InboxScreen() {
       />
     </SafeAreaView>
   );
-}
+};
+
+export default InboxScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,7 +105,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     marginHorizontal: 10,
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFF", 
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -136,8 +131,8 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
     fontSize: 14,
   },
-  lastSeenDay: {
-    color: "#FF5C00",
-    fontSize: 14,
+  iconButton: {
+    padding: 8,
+    marginLeft: 10,
   },
 });
