@@ -1,8 +1,7 @@
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
 import { Event, useEventContext } from "@/context/EventProvider";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
 
 import {
   FlatList,
@@ -44,8 +43,12 @@ const EventItem = ({ event }: { event: Event }) => {
 };
 
 export default function HomeScreen() {
-  const { events, addEvent } = useEventContext(); // Use events from context
+  const { events, fetchEvents, addEvent } = useEventContext(); // Use events from context
   const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const filteredEvents = events.filter(
     (event) =>
@@ -89,7 +92,7 @@ export default function HomeScreen() {
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.eventId.toString()}
       />
       <View style={styles.wave}>
         <Image source={require("../../../assets/images/Waves.png")} />

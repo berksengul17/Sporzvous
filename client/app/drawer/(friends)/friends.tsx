@@ -42,7 +42,10 @@ const friendsData = [
 
 const FriendItem = ({ friend }) => (
   <View style={styles.friendContainer}>
-    <Image source={{ uri: friend.imageUri }} style={styles.profileImage} />
+    <Image
+      source={{ uri: friend.imageUri.toString() }}
+      style={styles.profileImage}
+    />
     <View style={styles.friendInfo}>
       <CustomText
         customStyle={styles.friendName}

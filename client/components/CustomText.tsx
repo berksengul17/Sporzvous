@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: Platform.select({
       android: "OpenSans_400Regular",
-      ios: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
     }),
   },
   bold: {

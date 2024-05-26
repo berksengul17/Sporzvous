@@ -2,17 +2,29 @@ import axios, { AxiosResponse } from "axios";
 import React, { createContext, useContext, useState } from "react";
 
 export type User = {
-  id: string;
-  image: string;
+  userId: number;
+  image?: string;
+  email: string;
   username: string;
   fullName: string;
-  age: string;
+  age: number;
+  gender: string;
+  favoriteSport: string;
+};
+
+export type UpdateUser = {
+  username: string;
+  fullName: string;
+  image?: string;
+  age: number;
   gender: string;
   favoriteSport: string;
 };
 
 type UserProps = {
   user: User;
+  isProfileEditable: boolean;
+  setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
   signUp: (
     {
       username,
@@ -26,7 +38,7 @@ type UserProps = {
     { email, password }: { email: string; password: string },
     successCallback: (response: AxiosResponse) => void
   ) => Promise<void>;
-  updateProfile: (newUserInfo: User) => Promise<void>;
+  updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -35,14 +47,16 @@ const UserContext = createContext<UserProps | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>({
-    id: "",
+    userId: 0,
     image: "",
+    email: "",
     username: "",
     fullName: "",
-    age: "",
+    age: 0,
     gender: "",
     favoriteSport: "",
   });
+  const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
 
   const signUp = async (
     {
@@ -92,15 +106,24 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         password,
       });
 
-      const { userId, image, username, fullName, age, gender, favoriteSport } =
-        response.data;
-
-      setUser({
-        id: userId,
+      const {
+        userId,
         image,
+        email: userEmail,
         username,
         fullName,
-        age: age.toString(),
+        age,
+        gender,
+        favoriteSport,
+      } = response.data;
+
+      setUser({
+        userId,
+        image,
+        email: userEmail,
+        username,
+        fullName,
+        age,
         gender,
         favoriteSport,
       });
@@ -127,18 +150,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const updateProfile = async (newUserInfo: User) => {
+  const updateProfile = async (newUserInfo: UpdateUser) => {
     try {
       console.log("newUserInfo", newUserInfo);
 
-      await axios.put(`${API_URL}/${user.id}/edit-profile`, {
+      await axios.put(`${API_URL}/${user.userId}/edit-profile`, {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
         age: newUserInfo.age,
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
       });
-      setUser(newUserInfo);
+      setUser((prevUser) => ({ ...prevUser, ...newUserInfo }));
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -160,7 +183,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const value = { user, setUser, login, signUp, updateProfile };
+  const value = {
+    user,
+    setUser,
+    isProfileEditable,
+    setProfileEditable,
+    login,
+    signUp,
+    updateProfile,
+  };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

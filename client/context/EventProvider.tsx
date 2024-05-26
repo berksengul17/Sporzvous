@@ -1,9 +1,10 @@
+import { User } from "@/context/UserProvider";
+import axios from "axios";
 import React, { createContext, useContext, useState } from "react";
-import { User, UserProvider } from "@/context/UserProvider";
 
 // Define the type for an event
 export type Event = {
-  id: number;
+  eventId: number;
   title: string;
   sport: string;
   locationCity: string;
@@ -11,7 +12,7 @@ export type Event = {
   participants: number;
   maxParticipants: number;
   teamNumber: number;
-  eventDate: string;
+  eventDate: Date;
   eventTime: string;
   skillRating: number;
   locationIndex: string;
@@ -19,13 +20,18 @@ export type Event = {
   organizer: User;
 };
 
+type CreateEvent = Omit<Event, "eventId">;
+
 // Define the type for the context
 type EventContextType = {
   events: Event[];
-  addEvent: (event: Event) => void;
+  fetchEvents: () => Promise<void>;
+  addEvent: (event: CreateEvent) => void;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
 };
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/event";
 
 // Create the context
 const EventContext = createContext<EventContextType | null>(null);
@@ -34,7 +40,7 @@ const EventContext = createContext<EventContextType | null>(null);
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const [events, setEvents] = useState<Event[]>([
     {
-      id: 1,
+      eventId: 1,
       title: "Sert Tenis",
       sport: "Tennis",
       locationCity: "İzmir",
@@ -42,23 +48,24 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 2,
       maxParticipants: 2,
       teamNumber: 2,
-      eventDate: "2024-06-12",
+      eventDate: new Date("2024-06-12"),
       eventTime: "07:00",
       skillRating: 3,
       locationIndex: "1",
       isEventOver: 1,
       organizer: {
-        id: "1",
+        userId: 1,
         image: "profile1.jpg",
+        email: "email1@test.com",
         username: "serttenisçi",
         fullName: "Emrecan Çuhadar",
-        age: "29",
+        age: 29,
         gender: "Male",
         favoriteSport: "Table Tennis",
       },
     },
     {
-      id: 2,
+      eventId: 2,
       title: "Çağanın halısaha",
       sport: "Football",
       locationCity: "İzmir",
@@ -66,23 +73,25 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 14,
       maxParticipants: 14,
       teamNumber: 2,
-      eventDate: "2024-06-15",
+      eventDate: new Date("2024-06-15"),
       eventTime: "16:00",
       skillRating: 4,
       locationIndex: "2",
       isEventOver: 1,
       organizer: {
-        id: "2",
+        userId: 2,
         image: "profile2.jpg",
+        email: "email2@test.com",
+
         username: "caanozsir",
         fullName: "Çağan Özsır",
-        age: "34",
+        age: 34,
         gender: "Male",
         favoriteSport: "Football",
       },
     },
     {
-      id: 3,
+      eventId: 3,
       title: "halısaha",
       sport: "Football",
       locationCity: "İzmir",
@@ -90,23 +99,24 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 10,
       maxParticipants: 12,
       teamNumber: 1,
-      eventDate: "2024-06-18",
+      eventDate: new Date("2024-06-18"),
       eventTime: "21:00",
       skillRating: 2,
       locationIndex: "3",
       isEventOver: 0,
       organizer: {
-        id: "3",
+        userId: 3,
         image: "profile3.jpg",
+        email: "email3@test.com",
         username: "Phytox",
         fullName: "Berk Şengül",
-        age: "26",
+        age: 26,
         gender: "Male",
         favoriteSport: "Football",
       },
     },
     {
-      id: 4,
+      eventId: 4,
       title: "Football Match",
       sport: "Football",
       locationCity: "London",
@@ -114,23 +124,24 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 14,
       maxParticipants: 22,
       teamNumber: 2,
-      eventDate: "2024-06-20",
+      eventDate: new Date("2024-06-20"),
       eventTime: "14:00",
       skillRating: 5,
       locationIndex: "4",
       isEventOver: 0,
       organizer: {
-        id: "4",
+        userId: 4,
         image: "profile4.jpg",
+        email: "email4@test.com",
         username: "soccer_fan",
         fullName: "Samantha Reed",
-        age: "32",
+        age: 32,
         gender: "Female",
         favoriteSport: "Football",
       },
     },
     {
-      id: 5,
+      eventId: 5,
       title: "İyte Basket",
       sport: "Basketball",
       locationCity: "İzmir",
@@ -138,40 +149,64 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 6,
       maxParticipants: 8,
       teamNumber: 2,
-      eventDate: "2024-06-22",
+      eventDate: new Date("2024-06-22"),
       eventTime: "18:00",
       skillRating: 3,
       locationIndex: "5",
       isEventOver: 0,
       organizer: {
-        id: "5",
+        userId: 5,
         image: "profile5.jpg",
+        email: "email5@test.com",
         username: "NightRaiden",
         fullName: "Emre Erol",
-        age: "28",
+        age: 28,
         gender: "Male",
         favoriteSport: "Football",
       },
     },
   ]);
 
-  const addEvent = (event: Event) => {
-    setEvents((prevEvents) => [...prevEvents, event]);
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/get-events`);
+      setEvents(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addEvent = async (event: CreateEvent) => {
+    try {
+      const response = await axios.post(`${API_URL}/create`, event);
+      setEvents((prevEvents) => [...prevEvents, response.data]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updateEvent = (id: number, updatedEvent: Event) => {
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.id === id ? { ...event, ...updatedEvent } : event
+        event.eventId === id ? { ...event, ...updatedEvent } : event
       )
     );
   };
 
   const removeEvent = (id: number) => {
-    setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
+    setEvents((prevEvents) =>
+      prevEvents.filter((event) => event.eventId !== id)
+    );
   };
 
-  const value = { events, setEvents, addEvent, updateEvent, removeEvent };
+  const value = {
+    events,
+    setEvents,
+    fetchEvents,
+    addEvent,
+    updateEvent,
+    removeEvent,
+  };
 
   return (
     <EventContext.Provider value={value}>{children}</EventContext.Provider>

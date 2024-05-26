@@ -2,30 +2,53 @@ import Button from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { useUserContext } from "@/context/UserProvider";
+import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
+  Keyboard,
+  Platform,
+  Pressable,
   StyleSheet,
   TextInput,
-  View,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 // TODO isEditable propu yollanıcak, updateProfile fonksiyonun nasıl çağrılacak
-const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
-  const { user, updateProfile } = useUserContext();
+const Profile = () => {
+  const { user, isProfileEditable, setProfileEditable, updateProfile } =
+    useUserContext();
 
-  const [username, setUsername] = useState(user.username);
-  const [fullName, setFullName] = useState(user.fullName);
-  const [age, setAge] = useState(user.age);
-  const [gender, setGender] = useState(user.gender);
-  const [favoriteSport, setFavoriteSport] = useState(user.favoriteSport);
+  const [username, setUsername] = useState<string>(user.username);
+  const [fullName, setFullName] = useState<string>(user.fullName);
+  const [age, setAge] = useState<string>(user.age.toString());
+  const [gender, setGender] = useState<string>(user.gender);
+  const [favoriteSport, setFavoriteSport] = useState<string>(
+    user.favoriteSport
+  );
+
+  const [userSkill, setUserSkill] = useState<string>("Basketball");
+  const [userSkillsByOthers, setUserSkillsByOthers] =
+    useState<string>("Basketball");
+  const [overallSkill, setOverallSkill] = useState<string>("Basketball");
+
+  const genderPickerRef = useRef<Picker<string>>(null);
+  const favoriteSportPickerRef = useRef<Picker<string>>(null);
+  const userSkillPickerRef = useRef<Picker<string>>(null);
+  const userSkillsByOthersPickerRef = useRef<Picker<string>>(null);
+  const overallSkillPickerRef = useRef<Picker<string>>(null);
+
   //TODO rating state ekle
+
+  const inputStyle = isProfileEditable
+    ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
+    : styles.input;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ backgroundColor: "#fff", height: "100%" }}>
+      <ScrollView style={{ backgroundColor: "#fff", height: "100%" }}>
         <View style={styles.header}>
           <CustomText
             text=""
@@ -71,8 +94,8 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
             <TextInput
               value={username}
               onChangeText={setUsername}
-              editable={isEditable}
-              style={styles.input}
+              editable={isProfileEditable}
+              style={inputStyle}
             />
           </View>
           <View style={styles.userInfo}>
@@ -80,8 +103,8 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
             <TextInput
               value={fullName}
               onChangeText={setFullName}
-              editable={isEditable}
-              style={styles.input}
+              editable={isProfileEditable}
+              style={inputStyle}
             />
           </View>
           <View style={styles.userInfo}>
@@ -89,27 +112,65 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
             <TextInput
               value={age}
               onChangeText={setAge}
-              editable={isEditable}
-              style={styles.input}
+              editable={isProfileEditable}
+              style={inputStyle}
             />
           </View>
           <View style={styles.userInfo}>
             <CustomText text="Gender" customStyle={styles.label} />
-            <TextInput
-              value={gender}
-              onChangeText={setGender}
-              editable={isEditable}
-              style={styles.input}
-            />
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => {
+                if (isProfileEditable) {
+                  genderPickerRef.current?.focus();
+                }
+              }}
+            >
+              <TextInput
+                value={gender}
+                onChangeText={setGender}
+                editable={false}
+                style={inputStyle}
+              />
+            </Pressable>
+            {/* Only used for picker */}
+            <Picker
+              ref={genderPickerRef}
+              style={{ display: "none" }}
+              selectedValue={gender}
+              onValueChange={(genderItem) => setGender(genderItem)}
+            >
+              <Picker.Item label="Male" value="Male" />
+              <Picker.Item label="Female" value="Female" />
+            </Picker>
           </View>
           <View style={styles.userInfo}>
             <CustomText text="Favorite Sport" customStyle={styles.label} />
-            <TextInput
-              value={favoriteSport}
-              onChangeText={setFavoriteSport}
-              editable={isEditable}
-              style={styles.input}
-            />
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => {
+                if (isProfileEditable) {
+                  favoriteSportPickerRef.current?.focus();
+                }
+              }}
+            >
+              <TextInput
+                value={favoriteSport}
+                onChangeText={setFavoriteSport}
+                editable={false}
+                style={inputStyle}
+              />
+            </Pressable>
+            {/* Only used for picker */}
+            <Picker
+              ref={favoriteSportPickerRef}
+              style={{ display: "none" }}
+              selectedValue={favoriteSport}
+              onValueChange={(sportItem) => setFavoriteSport(sportItem)}
+            >
+              <Picker.Item label="Basketball" value="Basketball" />
+              <Picker.Item label="Football" value="Football" />
+            </Picker>
           </View>
         </View>
         <View style={{ padding: 10, rowGap: 10 }}>
@@ -118,7 +179,26 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
               text="User skills by others"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <CustomText text="Choose" customStyle={styles.field} />
+            <Pressable
+              onPress={() => {
+                userSkillsByOthersPickerRef.current?.focus();
+              }}
+            >
+              <CustomText
+                text={userSkillsByOthers}
+                customStyle={styles.field}
+              />
+            </Pressable>
+            {/* Only used for picker */}
+            <Picker
+              ref={userSkillsByOthersPickerRef}
+              style={{ display: "none" }}
+              selectedValue={userSkillsByOthers}
+              onValueChange={(skillItem) => setUserSkillsByOthers(skillItem)}
+            >
+              <Picker.Item label="Basketball" value="Basketball" />
+              <Picker.Item label="Football" value="Football" />
+            </Picker>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
@@ -126,7 +206,23 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
               text="User skills"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <CustomText text="Football" customStyle={styles.field} />
+            <Pressable
+              onPress={() => {
+                userSkillPickerRef.current?.focus();
+              }}
+            >
+              <CustomText text={userSkill} customStyle={styles.field} />
+            </Pressable>
+            {/* Only used for picker */}
+            <Picker
+              ref={userSkillPickerRef}
+              style={{ display: "none" }}
+              selectedValue={userSkill}
+              onValueChange={(skillItem) => setUserSkill(skillItem)}
+            >
+              <Picker.Item label="Basketball" value="Basketball" />
+              <Picker.Item label="Football" value="Football" />
+            </Picker>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
@@ -134,7 +230,23 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
               text="Overall"
               customStyle={{ ...styles.label, width: "20%" }}
             />
-            <CustomText text="Football" customStyle={styles.field} />
+            <Pressable
+              onPress={() => {
+                overallSkillPickerRef.current?.focus();
+              }}
+            >
+              <CustomText text={overallSkill} customStyle={styles.field} />
+            </Pressable>
+            {/* Only used for picker */}
+            <Picker
+              ref={overallSkillPickerRef}
+              style={{ display: "none" }}
+              selectedValue={overallSkill}
+              onValueChange={(skillItem) => setOverallSkill(skillItem)}
+            >
+              <Picker.Item label="Basketball" value="Basketball" />
+              <Picker.Item label="Football" value="Football" />
+            </Picker>
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
@@ -142,7 +254,26 @@ const Profile = ({ isEditable = true }: { isEditable: boolean }) => {
             <Rating />
           </View>
         </View>
-      </View>
+        {isProfileEditable && (
+          <Button
+            title="Save"
+            containerStyle={{
+              margin: 15,
+            }}
+            onPress={() => {
+              updateProfile({
+                username,
+                fullName,
+                image: user.image || "",
+                age: parseInt(age),
+                gender,
+                favoriteSport,
+              });
+              setProfileEditable(false);
+            }}
+          />
+        )}
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 };
@@ -178,6 +309,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     color: "#828282",
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
+    }),
   },
   ratingContainer: {
     flexDirection: "row",

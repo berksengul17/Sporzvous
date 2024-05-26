@@ -1,20 +1,34 @@
-import React from "react";
+import { useEventContext } from "@/context/EventProvider";
+import { useUserContext } from "@/context/UserProvider";
+import React, { useState } from "react";
 import {
   Alert,
   Button,
   Image,
+  Keyboard,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
-  View,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from "react-native";
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
 
 const Page = () => {
+  const { user } = useUserContext();
+  const { addEvent } = useEventContext();
+
+  const [title, setTitle] = useState<string>("Esenyurt Halısaha");
+  const [sport, setSport] = useState<string>("Football");
+  const [location, setLocation] = useState<string>("İstanbul");
+  const [peopleCount, setPeopleCount] = useState<number>(14);
+  const [teamCount, setTeamCount] = useState<number>(2);
+  const [date, setDate] = useState<string>("12/05/2024");
+  const [time, setTime] = useState<string>("16:00");
+  const [minSkillLevel, setMinSkillLevel] = useState<number>(2.5);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.createEventContainer}>
@@ -25,6 +39,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={title}
+                onChangeText={setTitle}
                 placeholder="Esenyurt Halısaha"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -37,6 +53,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={sport}
+                onChangeText={setSport}
                 placeholder="Football"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -49,6 +67,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={location}
+                onChangeText={setLocation}
                 placeholder="İstanbul"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -63,6 +83,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={peopleCount.toString()}
+                onChangeText={(text) => setPeopleCount(parseInt(text))}
                 placeholder="14"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -75,6 +97,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={teamCount.toString()}
+                onChangeText={(text) => setTeamCount(parseInt(text))}
                 placeholder="2"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -87,6 +111,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={date}
+                onChangeText={setDate}
                 placeholder="11.01.2021"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -99,6 +125,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
+                value={time}
+                onChangeText={setTime}
                 placeholder="14:00"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -130,7 +158,23 @@ const Page = () => {
           />
           <CustomButton
             title="Create"
-            onPress={() => Alert.alert("Button clicked")}
+            onPress={() =>
+              addEvent({
+                title,
+                sport,
+                locationCity: location,
+                locationDistrict: "Bornova",
+                participants: peopleCount,
+                maxParticipants: peopleCount,
+                teamNumber: teamCount,
+                eventDate: new Date("2024-05-12"),
+                eventTime: time,
+                skillRating: minSkillLevel,
+                locationIndex: "5",
+                isEventOver: 0,
+                organizer: user,
+              })
+            }
           />
         </View>
         <View style={styles.wave}>
