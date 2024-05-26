@@ -6,7 +6,7 @@ const BottomWaves = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container]}>
       <Image source={require("../assets/images/Waves.png")} />
     </View>
   );

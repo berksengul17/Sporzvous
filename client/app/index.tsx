@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 40,
   },
 
   formContainer: {
