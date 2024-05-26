@@ -74,7 +74,12 @@ export default function HomeScreen() {
           />
         </View>
         <TouchableOpacity
-          onPress={() => router.push("drawer/(home)/filterModal")}
+          onPress={() =>
+            router.push({
+              pathname: "drawer/(home)/filterModal",
+              params: { filteredEvents: JSON.stringify(filteredEvents) },
+            })
+          }
           style={styles.filterButton}
         >
           <AntDesign name="filter" size={40} color="#FF5C00" />

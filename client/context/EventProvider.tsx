@@ -12,7 +12,7 @@ export type Event = {
   participants: number;
   maxParticipants: number;
   teamNumber: number;
-  eventDate: Date;
+  eventDate: string;
   eventTime: string;
   skillRating: number;
   locationIndex: string;
@@ -48,7 +48,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 2,
       maxParticipants: 2,
       teamNumber: 2,
-      eventDate: new Date("2024-06-12"),
+      eventDate: "2024-06-12",
       eventTime: "07:00",
       skillRating: 3,
       locationIndex: "1",
@@ -73,7 +73,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 14,
       maxParticipants: 14,
       teamNumber: 2,
-      eventDate: new Date("2024-06-15"),
+      eventDate: "2024-06-15",
       eventTime: "16:00",
       skillRating: 4,
       locationIndex: "2",
@@ -99,7 +99,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 10,
       maxParticipants: 12,
       teamNumber: 1,
-      eventDate: new Date("2024-06-18"),
+      eventDate: "2024-06-18",
       eventTime: "21:00",
       skillRating: 2,
       locationIndex: "3",
@@ -124,7 +124,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 14,
       maxParticipants: 22,
       teamNumber: 2,
-      eventDate: new Date("2024-06-20"),
+      eventDate: "2024-06-20",
       eventTime: "14:00",
       skillRating: 5,
       locationIndex: "4",
@@ -149,7 +149,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       participants: 6,
       maxParticipants: 8,
       teamNumber: 2,
-      eventDate: new Date("2024-06-22"),
+      eventDate: "2024-06-22",
       eventTime: "18:00",
       skillRating: 3,
       locationIndex: "5",

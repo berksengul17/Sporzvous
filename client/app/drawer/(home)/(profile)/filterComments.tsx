@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Entypo, AntDesign } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import CustomText from "@/components/CustomText";
 
 // Constants for filter options
 const dateOptions = ["All", "Today", "This Week", "This Month"];
@@ -54,10 +55,12 @@ const FilterComments = () => {
           setSelectedRating(0);
         }}
       >
-        <Text style={styles.clearText}>Clear Filters</Text>
+        <CustomText customStyle={styles.clearText} text="Clear Filters" />
       </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>Sport</Text>
+      <View style={styles.titleWrapper}>
+        <CustomText customStyle={styles.sectionTitle} text="Sport" />
+      </View>
       <View style={styles.buttonContainer}>
         {sportsTypes.map((sport) => (
           <TouchableOpacity
@@ -80,7 +83,9 @@ const FilterComments = () => {
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Date</Text>
+      <View style={styles.titleWrapper}>
+        <CustomText customStyle={styles.sectionTitle} text="Date" />
+      </View>
       <View style={styles.buttonContainer}>
         {dateOptions.map((date) => (
           <TouchableOpacity
@@ -102,8 +107,9 @@ const FilterComments = () => {
           </TouchableOpacity>
         ))}
       </View>
-
-      <Text style={styles.sectionTitle}>Rating</Text>
+      <View style={styles.titleWrapper}>
+        <CustomText customStyle={styles.sectionTitle} text="Rating" />
+      </View>
       <View style={styles.buttonContainer}>
         {ratingOptions.map((option) => (
           <TouchableOpacity
@@ -149,10 +155,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
+  titleWrapper: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#47315a",
+  },
   buttonContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 20,
+    marginTop: 10,
   },
   button: {
     borderWidth: 1,

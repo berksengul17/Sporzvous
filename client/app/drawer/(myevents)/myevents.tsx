@@ -121,7 +121,7 @@ export default function MyEvents() {
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.eventId.toString()}
       />
       <View style={styles.wave}>
         <Image source={require("../../../assets/images/Waves.png")} />
