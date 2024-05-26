@@ -45,7 +45,7 @@ const _layout = () => {
         name="(profile)"
         options={{
           presentation: "modal",
-          headerTitle: "Sporzvous",
+          headerTitle: "Profile",
           headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo

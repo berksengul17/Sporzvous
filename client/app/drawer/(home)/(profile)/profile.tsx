@@ -60,10 +60,7 @@ const Profile = () => {
               customStyle={{ alignSelf: "flex-start", marginBottom: 10 }}
             />
             {/* <AntDesign name="checksquareo" size={40} color="black" /> */}
-            <CustomText
-              text=""
-              customStyle={{ borderWidth: 1, width: 40, height: 40 }}
-            />
+            <CustomText text="" customStyle={styles.headerRectangle} />
           </View>
           {/* TODO - add space between title and value */}
           <View
@@ -72,7 +69,7 @@ const Profile = () => {
             }}
           >
             <CustomText text="Event Count" customStyle={{ marginBottom: 10 }} />
-            <CustomText text="107" customStyle={styles.input} />
+            <CustomText text="107" customStyle={styles.headerRectangle} />
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Button
@@ -269,22 +266,46 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    padding: 10,
     margin: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    borderBottomWidth: 1,
+  },
+  headerRectangle: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "lightgray",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    color: "black",
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
+    }),
   },
   userInfoContainer: {
-    // TODO padding artabilir
     paddingHorizontal: 10,
     paddingVertical: 20,
-    rowGap: 10,
+    backgroundColor: "#fff",
   },
   userInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    paddingVertical: 15,
+    paddingHorizontal: 10,
   },
   label: {
     color: "#6F6F6F",
     width: "35%",
+    fontSize: 16,
   },
   input: {
     flex: 1,
@@ -303,6 +324,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingVertical: 10,
   },
   field: {
     color: "#828282",
