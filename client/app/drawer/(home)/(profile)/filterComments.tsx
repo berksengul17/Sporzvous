@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,34 @@ import {
   ScrollView,
 } from "react-native";
 import { Entypo, AntDesign } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
 
 // Constants for filter options
-const sportsTypes = ["All", "Football", "Basketball", "Tennis", "Volleyball"];
 const dateOptions = ["All", "Today", "This Week", "This Month"];
 const ratingOptions = [
   { label: "All", minRating: 0 },
   { label: "★ 4 and above", minRating: 4 },
   { label: "★ 3 and above", minRating: 3 },
+  { label: "★ 2 and above", minRating: 2 },
+  { label: "★ 1 and above", minRating: 1 },
 ];
 
 const FilterComments = () => {
+  const route = useRoute();
+  const { sortedComments: sortedCommentsJson } = route.params; // Destructure and retrieve the event JSON string
+
+  let sortedComments;
+  if (sortedCommentsJson) {
+    sortedComments = JSON.parse(sortedCommentsJson);
+  }
+  const sportsTypes = useMemo(() => {
+    if (sortedComments) {
+      const types = new Set(sortedComments.map((comment) => comment.type));
+      return ["All", ...types];
+    }
+    return ["All"]; // Fallback to default if sortedComments is not available
+  }, [sortedComments]);
+
   const [selectedSport, setSelectedSport] = useState("All");
   const [selectedDate, setSelectedDate] = useState("All");
   const [selectedRating, setSelectedRating] = useState(0);
@@ -51,7 +68,14 @@ const FilterComments = () => {
             ]}
             onPress={() => setSelectedSport(sport)}
           >
-            <Text style={styles.buttonText}>{sport}</Text>
+            <Text
+              style={[
+                styles.buttonText,
+                selectedSport === sport && styles.buttonTextSelected,
+              ]}
+            >
+              {sport}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -67,12 +91,19 @@ const FilterComments = () => {
             ]}
             onPress={() => setSelectedDate(date)}
           >
-            <Text style={styles.buttonText}>{date}</Text>
+            <Text
+              style={[
+                styles.buttonText,
+                selectedDate === date && styles.buttonTextSelected,
+              ]}
+            >
+              {date}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Score</Text>
+      <Text style={styles.sectionTitle}>Rating</Text>
       <View style={styles.buttonContainer}>
         {ratingOptions.map((option) => (
           <TouchableOpacity
@@ -83,7 +114,15 @@ const FilterComments = () => {
             ]}
             onPress={() => setSelectedRating(option.minRating)}
           >
-            <Text style={styles.buttonText}>{option.label}</Text>
+            <Text
+              style={[
+                styles.buttonText,
+                selectedRating === option.minRating &&
+                  styles.buttonTextSelected,
+              ]}
+            >
+              {option.label}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -132,13 +171,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
   },
+  buttonTextSelected: {
+    fontSize: 14,
+    color: "white",
+  },
   applyButton: {
     backgroundColor: "#FF5C00",
     padding: 15,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    width: "50%",
+    width: "50%", // Sets the button width to half of its container width
+    alignSelf: "center", // Centers the button horizontally within the ScrollView
+    marginTop: 20, // Optional: adds space above the button
   },
   applyButtonText: {
     color: "white",

@@ -1,14 +1,22 @@
 import React from "react";
 import { Platform, StyleSheet, Text, TextStyle } from "react-native";
 
+interface CustomTextProps {
+  text: string;
+  customStyle?: TextStyle;
+  isBold?: boolean; // New prop to indicate bold text
+}
+
 const CustomText = ({
   text,
   customStyle,
-}: {
-  text: string;
-  customStyle?: TextStyle;
-}) => {
-  return <Text style={[styles.text, customStyle]}>{text}</Text>;
+  isBold = false, // Default to false if not provided
+}: CustomTextProps) => {
+  return (
+    <Text style={[styles.text, isBold ? styles.bold : null, customStyle]}>
+      {text}
+    </Text>
+  );
 };
 
 export default CustomText;
@@ -18,6 +26,12 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({
       android: "OpenSans_400Regular",
       ios: "OpenSans_400Regular",
+    }),
+  },
+  bold: {
+    fontFamily: Platform.select({
+      android: "OpenSans_700Bold",
+      ios: "OpenSans_700Bold",
     }),
   },
 });

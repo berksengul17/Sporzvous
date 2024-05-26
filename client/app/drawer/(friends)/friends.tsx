@@ -1,4 +1,5 @@
 import CustomButton from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
 import {
   AntDesign,
   Ionicons,
@@ -43,19 +44,29 @@ const FriendItem = ({ friend }) => (
   <View style={styles.friendContainer}>
     <Image source={{ uri: friend.imageUri }} style={styles.profileImage} />
     <View style={styles.friendInfo}>
-      <Text style={styles.friendName}>{friend.name}</Text>
-      <Text style={styles.friendLastSeen}>Last seen: {friend.lastSeen}</Text>
+      <CustomText
+        customStyle={styles.friendName}
+        text={friend.name}
+        isBold={true}
+      />
+      <CustomText
+        customStyle={styles.friendLastSeen}
+        text={`Last seen: ${friend.lastSeen}`}
+      />
     </View>
     <TouchableOpacity style={styles.iconButton}>
       <AntDesign name="message1" size={24} color="#FF5C00" />
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.iconButton}>
-      <AntDesign name="adduser" size={24} color="#FF5C00" />
     </TouchableOpacity>
   </View>
 );
 
 export default function HomeScreen() {
+  const [searchText, setSearchText] = useState("");
+
+  const filteredFriends = friendsData.filter((friend) =>
+    friend.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -110,6 +121,8 @@ export default function HomeScreen() {
             style={styles.searchText}
             placeholder="Search"
             placeholderTextColor={"#6F6F6F"}
+            value={searchText}
+            onChangeText={setSearchText}
           />
         </View>
         <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
@@ -130,7 +143,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={friendsData}
+        data={filteredFriends}
         renderItem={({ item }) => <FriendItem friend={item} />}
         keyExtractor={(item) => item.id}
         style={styles.list}
@@ -163,7 +176,6 @@ const styles = StyleSheet.create({
   },
   searchText: {
     marginLeft: 10,
-    color: "#6F6F6F",
     flex: 1,
   },
   list: {
@@ -172,24 +184,30 @@ const styles = StyleSheet.create({
   },
   friendContainer: {
     flexDirection: "row",
-    padding: 10,
+    justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginHorizontal: 10,
-    backgroundColor: "#FFF", // Change this as necessary
+    padding: 15,
+    marginVertical: 8,
+    backgroundColor: "white",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#FF6347",
+    shadowColor: "#FF6347",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 4,
+    margin: 20,
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 10,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
   },
   friendInfo: {
     flex: 1,
   },
   friendName: {
-    fontWeight: "bold",
     fontSize: 16,
   },
   friendLastSeen: {

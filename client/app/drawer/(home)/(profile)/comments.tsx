@@ -203,7 +203,12 @@ const Page = () => {
         </ScrollView>
         <TouchableOpacity
           style={styles.filterIcon}
-          onPress={() => setModalVisible(true)}
+          onPress={() =>
+            router.push({
+              pathname: "drawer/(home)/(profile)/filterComments",
+              params: { sortedComments: JSON.stringify(sortedComments) },
+            })
+          }
         >
           <AntDesign name="filter" size={30} color="#FF5C00" />
         </TouchableOpacity>
@@ -213,33 +218,6 @@ const Page = () => {
         renderItem={({ item }) => <CommentItem comment={item} />}
         keyExtractor={(item) => item.id}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <CustomText
-              text={`Filter by Sport Type`}
-              customStyle={styles.modalText}
-            />
-            {sportTypes.map((type, index) => (
-              <Button
-                key={index}
-                title={`${type}`}
-                onPress={() => {
-                  setSelectedSport(type);
-                  setModalVisible(!modalVisible);
-                }}
-              />
-            ))}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

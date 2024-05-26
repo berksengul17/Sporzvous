@@ -2,6 +2,7 @@ import { UserProvider } from "@/context/UserProvider";
 import { EventProvider } from "@/context/EventProvider";
 import {
   OpenSans_400Regular,
+  OpenSans_700Bold,
   OpenSans_700Bold_Italic,
 } from "@expo-google-fonts/open-sans";
 import { useFonts } from "expo-font";
@@ -15,6 +16,7 @@ export default function RootLayout() {
   let [loaded, error] = useFonts({
     OpenSans_400Regular,
     OpenSans_700Bold_Italic,
+    OpenSans_700Bold,
     JejuHallasan: require("../assets/fonts/JejuHallasan-Regular.ttf"),
   });
 
