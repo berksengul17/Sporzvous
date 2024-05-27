@@ -1,5 +1,5 @@
-import { UserProvider } from "@/context/UserProvider";
 import { EventProvider } from "@/context/EventProvider";
+import { UserProvider } from "@/context/UserProvider";
 import {
   OpenSans_400Regular,
   OpenSans_700Bold,
@@ -38,7 +38,7 @@ export default function RootLayout() {
   return (
     <UserProvider>
       <EventProvider>
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
           <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
