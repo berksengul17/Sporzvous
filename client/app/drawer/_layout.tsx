@@ -10,6 +10,10 @@ import React from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+export const unstable_settings = {
+  initialRouteName: "(home)",
+};
+
 const CustomDrawerContent = (props: any) => {
   const router = useRouter();
   const { top, bottom } = useSafeAreaInsets();

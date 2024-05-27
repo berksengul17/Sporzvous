@@ -1,26 +1,33 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const sportsData = [
-  { id: '1', name: 'Basketball', icon: 'basketball' },
-  { id: '2', name: 'Football', icon: 'soccer' },
-  { id: '3', name: 'Volleyball', icon: 'volleyball' },
-  { id: '4', name: 'Tennis', icon: 'tennis' },
-  { id: '5', name: 'Baseball', icon: 'baseball' },
-  { id: '6', name: 'Badminton', icon: 'badminton' },
-  { id: '7', name: 'Handball', icon: 'handball' },
-  { id: '8', name: 'Ice Hockey', icon: 'hockey-puck' },
-  { id: '9', name: 'Paintball', icon: 'pistol' }, // Updated icon
+  { id: "1", name: "Basketball", icon: "basketball" },
+  { id: "2", name: "Football", icon: "soccer" },
+  { id: "3", name: "Volleyball", icon: "volleyball" },
+  { id: "4", name: "Tennis", icon: "tennis" },
+  { id: "5", name: "Baseball", icon: "baseball" },
+  { id: "6", name: "Badminton", icon: "badminton" },
+  { id: "7", name: "Handball", icon: "handball" },
+  { id: "8", name: "Ice Hockey", icon: "hockey-puck" },
+  { id: "9", name: "Paintball", icon: "pistol" }, // Updated icon
 ];
 
 const SportCard = ({ sport }) => {
   const router = useRouter();
 
   const handlePress = () => {
-    router.push({
-      pathname: 'drawer/(home)/home',
+    router.replace({
+      pathname: "drawer",
       params: { sport: sport.name },
     });
   };
@@ -51,27 +58,27 @@ export default function SportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingTop: 20,
   },
   list: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   row: {
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: "#F0F0F0",
     borderRadius: 10,
     padding: 20,
     margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 140, // Adjusted width for 2 cards per row
     height: 140, // Adjusted height for consistency
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -80,8 +87,8 @@ const styles = StyleSheet.create({
   cardText: {
     marginTop: 10,
     fontSize: 14, // Adjusted font size for better fit
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center', // Centered text
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center", // Centered text
   },
 });

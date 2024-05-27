@@ -3,6 +3,10 @@ import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import React from "react";
 
+export const unstable_settings = {
+  initialRouteName: "home",
+};
+
 const _layout = () => {
   const { isProfileEditable, setProfileEditable } = useUserContext();
 
@@ -12,7 +16,7 @@ const _layout = () => {
       <Stack.Screen
         name="createEventModal"
         options={{
-          presentation: "modal",
+          presentation: "fullScreenModal",
           headerTitle: "Create a new event",
           headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (

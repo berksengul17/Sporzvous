@@ -1,10 +1,24 @@
-import { FontAwesome5, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  FontAwesome5,
+  Ionicons,
+  AntDesign,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import React, { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View, TextInput, SafeAreaView } from "react-native";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  TextInput,
+  SafeAreaView,
+} from "react-native";
 import Modal from "react-native-modal";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 
 const friendsData = [
   {
@@ -32,8 +46,15 @@ const FriendItem = ({ friend }) => (
   <View style={styles.friendContainer}>
     <Image source={friend.imageUri} style={styles.profileImage} />
     <View style={styles.friendInfo}>
-      <CustomText customStyle={styles.friendName} text={friend.name} isBold={true} />
-      <CustomText customStyle={styles.friendLastSeen} text={`Last seen: ${friend.lastSeen}`} />
+      <CustomText
+        customStyle={styles.friendName}
+        text={friend.name}
+        isBold={true}
+      />
+      <CustomText
+        customStyle={styles.friendLastSeen}
+        text={`Last seen: ${friend.lastSeen}`}
+      />
     </View>
     <TouchableOpacity style={styles.iconButton}>
       <AntDesign name="message1" size={24} color="#FF5C00" />
@@ -99,7 +120,7 @@ export default function FriendsScreen() {
             onChangeText={setSearchText}
           />
         </View>
-        <TouchableOpacity style={{marginLeft: "1%" }}>
+        <TouchableOpacity style={{ marginLeft: "1%" }}>
           <MaterialCommunityIcons
             name="email-send"
             size={45}
@@ -107,7 +128,7 @@ export default function FriendsScreen() {
             onPress={() => router.push("/drawer/(friends)/friendRequests")}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{marginHorizontal: "1%" }}>
+        <TouchableOpacity style={{ marginHorizontal: "1%" }}>
           <AntDesign
             name="adduser"
             size={42}
