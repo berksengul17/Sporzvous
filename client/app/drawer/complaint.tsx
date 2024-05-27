@@ -1,62 +1,64 @@
 import React, { useState } from "react";
-import { Alert, Button, Image, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Alert, StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
 export default function ComplaintsHomePage() {
   const [category, setCategory] = useState("Category");
   const [title, setTitle] = useState("Title");
+  const [content, setContent] = useState("");
 
   return (
     <View style={styles.container}>
       <View style={styles.complaintsContainer}>
-        <Text style={{ fontSize: 24, margin: 20 }}>
-          Complaints and Feedbacks
-        </Text>
-        <View style={{ margin: 10 }}>
+          <Text  style={styles.headerText}>Complaints and Feedbacks</Text>
+        
+        <View style={styles.pickerContainer}>
           <RNPickerSelect
             onValueChange={(value) => setCategory(value)}
             items={[
-              { label: "Category 1", value: "tr" },
-              { label: "Category 2", value: "en" },
-              // Add more languages as needed
+              { label: "Category 1", value: "category1" },
+              { label: "Category 2", value: "category2" },
+              // Add more categories as needed
             ]}
             style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
-            placeholder={{ label: "Category", value: null }}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{ label: "Select Category", value: null }}
             value={category}
           />
         </View>
-        <View style={{ margin: 10 }}>
+        
+        <View style={styles.pickerContainer}>
           <RNPickerSelect
             onValueChange={(value) => setTitle(value)}
             items={[
-              { label: "Title 1", value: "tr" },
-              { label: "Title 2", value: "en" },
-              // Add more languages as needed
+              { label: "Title 1", value: "title1" },
+              { label: "Title 2", value: "title2" },
+              // Add more titles as needed
             ]}
             style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
-            placeholder={{ label: "Title", value: null }}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{ label: "Select Title", value: null }}
             value={title}
           />
         </View>
-        <View style={{ margin: 20, flexDirection: "row" }}>
+        
+        <View style={styles.contentBoxContainer}>
           <TextInput
             placeholder="Content"
-            placeholderTextColor={"#6F6F6F"}
+            placeholderTextColor="#6F6F6F"
             style={styles.contentBox}
             multiline={true}
+            value={content}
+            onChangeText={setContent}
           />
         </View>
-        <Button
+        
+        <TouchableOpacity
+          style={styles.submitButton}
           onPress={() => Alert.alert("Submit clicked!")}
-          title="Submit"
-          color="#FF5C00"
-        />
-      </View>
-      <View style={styles.wave}>
-        <Image source={require("../../assets/images/Waves.png")} />
+        >
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -69,31 +71,61 @@ const styles = StyleSheet.create({
   },
   complaintsContainer: {
     flex: 1,
-
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
+  headerText: {
+    fontSize: 23,
+    margin: 20,
+    color: "#FF5C00",
+    fontWeight: "bold",
+  
+  
+  },
+  pickerContainer: {
+    width: "100%",
+    marginVertical: 10,
+  },
+  contentBoxContainer: {
+    width: "100%",
+    marginVertical: 20,
   },
   contentBox: {
-    flexDirection: "row",
     padding: 10,
     height: 200,
-    width: "70%",
     backgroundColor: "#F0F0F0",
     textAlignVertical: "top",
-    marginHorizontal: 10,
     borderRadius: 10,
+    color: "black",
+  },
+  submitButton: {
+    backgroundColor: "#FF5C00",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    shadowColor: "#FF5C00",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   wave: {
-    position: "static",
+    position: "absolute",
     bottom: 0,
     width: "100%",
     resizeMode: "cover",
   },
 });
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
@@ -101,18 +133,20 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: "#6F6F6F",
-    borderRadius: 4,
+    borderRadius: 10,
     color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
+    backgroundColor: "#F0F0F0",
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: "purple",
-    borderRadius: 8,
+    borderColor: "#6F6F6F",
+    borderRadius: 10,
     color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
+    backgroundColor: "#F0F0F0",
   },
 });

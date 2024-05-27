@@ -99,7 +99,7 @@ export default function FriendsScreen() {
             onChangeText={setSearchText}
           />
         </View>
-        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
+        <TouchableOpacity style={{marginLeft: "1%" }}>
           <MaterialCommunityIcons
             name="email-send"
             size={45}
@@ -107,10 +107,10 @@ export default function FriendsScreen() {
             onPress={() => router.push("/drawer/(friends)/friendRequests")}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginTop: "2%", marginRight: "2%" }}>
+        <TouchableOpacity style={{marginHorizontal: "1%" }}>
           <AntDesign
             name="adduser"
-            size={45}
+            size={42}
             color="#FF5C00"
             onPress={toggleModal}
           />
