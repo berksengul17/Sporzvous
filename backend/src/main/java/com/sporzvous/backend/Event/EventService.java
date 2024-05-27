@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +20,23 @@ public class EventService {
     private final TeamService teamService;
 
     public Event saveEvent(Event event) {
+
+        if (Objects.equals(event.getTitle(), "")) {
+            throw new IllegalArgumentException("Title cannot be Empty");
+
+        }else if ((event.getTitle().length()) > 40) {
+            throw new IllegalArgumentException("Title cannot be longer than 40");
+
+        }else if (Objects.equals(event.getMaxParticipants(), 0) ) {
+            throw new IllegalArgumentException("Event with no participants cannot created");
+        }
+        else if (event.getEventDate() != null && event.getEventDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Deadline can't be before the current date.");
+            
+        }else if (event.getEventTime() != null && event.getEventTime().isBefore(LocalTime.now())) {
+            throw new IllegalArgumentException("Deadline can't be before the current date.");
+        }
+
         return eventRepository.save(event);
     }
 

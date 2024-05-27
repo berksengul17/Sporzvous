@@ -213,7 +213,7 @@ const Page = () => {
                 sport,
                 locationCity: locationCity,
                 locationDistrict: locationVillage,
-                participants: parseInt(peopleCount),
+                participants: 0,
                 maxParticipants: parseInt(peopleCount),
                 teamNumber: teamCount,
                 eventDate: date,
