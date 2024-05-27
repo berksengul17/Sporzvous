@@ -20,21 +20,24 @@ import { TextInput } from "react-native-gesture-handler";
 
 function EventStatus({ isEventOver }: { isEventOver: number }) {
   if (isEventOver === 1) {
-    return <Entypo name="check" size={24} color="black" style={styles.check} />;
+    return (
+      <View style={[styles.statusContainer, styles.completed]}>
+        <Entypo name="check" size={16} color="white" />
+        <Text style={styles.statusText}>Completed</Text>
+      </View>
+    );
   }
   return (
-    <MaterialCommunityIcons
-      name="timer-sand-complete"
-      size={24}
-      color="black"
-      style={styles.sandwatch}
-    />
+    <View style={[styles.statusContainer, styles.ongoing]}>
+      <MaterialCommunityIcons
+        name="timer-sand-complete"
+        size={16}
+        color="white"
+      />
+      <Text style={styles.statusText}>Ongoing</Text>
+    </View>
   );
 }
-
-const Status = ({ event }: { event: Event }) => {
-  return EventStatus(event);
-};
 
 const EventItem = ({ event }: { event: Event }) => {
   const navigateByCondition = () => {
@@ -44,6 +47,7 @@ const EventItem = ({ event }: { event: Event }) => {
       router.push("drawer/(myevents)/ratePlayersUnfinished", { event });
     }
   };
+
   return (
     <TouchableOpacity
       onPress={() =>
@@ -52,38 +56,24 @@ const EventItem = ({ event }: { event: Event }) => {
           params: { id: event.eventId },
         })
       }
+      style={styles.card}
     >
-      <View style={styles.eventContainer}>
-        <View style={styles.eventRow}>
-          <View style={styles.labelView}>
-            <Text style={styles.eventName}>{event.title}</Text>
-          </View>
-          <View style={styles.labelView}>
-            <Text style={styles.eventSport}>{event.sport}</Text>
-          </View>
-          <Status event={event} />
-        </View>
-        <View style={styles.eventRow}>
-          <View style={styles.labelView}>
-            <Text style={styles.eventHost}>{event.organizer.fullName}</Text>
-          </View>
-          <View style={styles.labelView}>
-            <Text style={styles.eventDate}>{event.eventDate}</Text>
-          </View>
-          <View style={styles.buttonView}>
-            <TouchableOpacity>
-              <Feather
-                name="upload"
-                size={24}
-                color="#FF5C00"
-                style={{ marginRight: "10%" }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <AntDesign name="delete" size={24} color="#FF5C00" />
-            </TouchableOpacity>
-          </View>
-        </View>
+      <View style={styles.cardHeader}>
+        <Text style={styles.eventName}>{event.title}</Text>
+        <EventStatus isEventOver={event.isEventOver} />
+      </View>
+      <View style={styles.cardContent}>
+        <Text style={styles.eventDetail}>Organizer: {event.organizer.fullName}</Text>
+        <Text style={styles.eventDetail}>Sport: {event.sport}</Text>
+        <Text style={styles.eventDetail}>Date: {event.eventDate}</Text>
+      </View>
+      <View style={styles.cardFooter}>
+        <TouchableOpacity onPress={navigateByCondition}>
+          <Feather name="upload" size={24} color="#FF5C00" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <AntDesign name="delete" size={24} color="#FF5C00" style={styles.icon} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -96,18 +86,11 @@ export default function MyEvents() {
   const [myEvents, setMyEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    console.log("fetching");
-
     const getMyEvents = async () => {
       setMyEvents(await fetchMyEvents());
     };
-
     getMyEvents();
   }, [user]);
-
-  useEffect(() => {
-    console.log("myevents", myEvents);
-  }, [myEvents]);
 
   const filteredEvents = myEvents.filter(
     (event) =>
@@ -126,7 +109,7 @@ export default function MyEvents() {
           <TextInput
             style={styles.searchText}
             placeholder="Search"
-            placeholderTextColor={"#6F6F6F"}
+            placeholderTextColor="#6F6F6F"
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -134,9 +117,9 @@ export default function MyEvents() {
         <TouchableOpacity>
           <AntDesign
             name="filter"
-            size={40}
+            size={30}
             color="#FF5C00"
-            style={{ margin: 4 }}
+            style={styles.filterIcon}
           />
         </TouchableOpacity>
       </View>
@@ -153,18 +136,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+    paddingHorizontal: 10,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   searchBar: {
     flexDirection: "row",
     padding: 10,
     backgroundColor: "#F0F0F0",
     alignItems: "center",
-    marginHorizontal: 10,
     borderRadius: 10,
     flex: 1,
   },
@@ -172,62 +155,60 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
   },
-  eventContainer: {
-    backgroundColor: "#f8f8f8",
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 10,
-    marginVertical: 5,
-    marginHorizontal: 10,
+  filterIcon: {
+    marginLeft: 10,
   },
-  eventRow: {
+  card: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   eventName: {
-    color: "#6F6F6F",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
   },
-  eventSport: {
-    color: "#6F6F6F",
-  },
-  eventHost: {
-    color: "#6F6F6F",
-  },
-  eventDate: {
-    color: "#6F6F6F",
-  },
-  sandwatch: {
-    borderWidth: 1,
-    backgroundColor: "#FAFF00",
-    borderColor: "#FAFF00",
-    borderRadius: 6,
-    overflow: "hidden",
-    padding: 2,
-  },
-  check: {
-    borderWidth: 1,
-    backgroundColor: "#00FF94",
-    borderColor: "#00FF94",
-    borderRadius: 6,
-    overflow: "hidden",
-    padding: 2,
-  },
-  labelView: {
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-  },
-  buttonView: {
-    justifyContent: "flex-end",
+  statusContainer: {
     flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
   },
-  wave: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    resizeMode: "cover",
+  ongoing: {
+    backgroundColor: "#F7E900",
+  },
+  completed: {
+    backgroundColor: "#32CD32",
+  },
+  statusText: {
+    color: "white",
+    marginLeft: 5,
+  },
+  cardContent: {
+    marginBottom: 10,
+  },
+  eventDetail: {
+    fontSize: 14,
+    color: "#666",
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  icon: {
+    marginHorizontal: 5,
   },
 });
