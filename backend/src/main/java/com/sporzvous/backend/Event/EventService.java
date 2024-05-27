@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -32,8 +33,12 @@ public class EventService {
                 .toList();
     }
 
-    public List<Event> getEvents() {
-        return eventRepository.findAll().stream().filter(event -> event.getIsEventOver() == 0).toList();
+    public List<Event> getEvents(Long userId) {
+        return eventRepository.findAll()
+                .stream()
+                .filter(event -> event.getIsEventOver() == 0 &&
+                        !Objects.equals(event.getOrganizer().getUserId(), userId))
+                .toList();
     }
 
     public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
@@ -98,4 +103,8 @@ public class EventService {
         eventRepository.delete(event);
     }
 
+    public Event getEvent(Long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    }
 }

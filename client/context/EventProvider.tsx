@@ -27,6 +27,7 @@ type EventContextType = {
   events: Event[];
   fetchAllEvents: () => Promise<void>;
   fetchMyEvents: () => Promise<Event[]>;
+  fetchEvent: (id: number) => Promise<Event>;
   addEvent: (event: CreateEvent) => void;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
@@ -181,7 +182,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchAllEvents = async () => {
     try {
-      const response = await axios.get(`${API_URL}/get-events`);
+      const response = await axios.get(`${API_URL}/get-events/${user.userId}`);
       setEvents(response.data);
     } catch (error) {
       console.log(error);
@@ -199,9 +200,18 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const fetchEvent = async (id: number) => {
+    try {
+      const response = await axios.get(`${API_URL}/get-event/${id}`);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const addEvent = async (event: CreateEvent) => {
     try {
-      const response = await axios.post(`${API_URL}/create`, event);
+      await axios.post(`${API_URL}/create`, event);
       // setEvents((prevEvents) => [...prevEvents, response.data]);
       fetchAllEvents();
     } catch (error) {
@@ -272,6 +282,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     setEvents,
     fetchAllEvents,
     fetchMyEvents,
+    fetchEvent,
     addEvent,
     updateEvent,
     removeEvent,

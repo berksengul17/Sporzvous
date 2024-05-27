@@ -1,19 +1,12 @@
-import { View, Text } from "react-native";
-import React from "react";
 import { Stack } from "expo-router";
+import React from "react";
 
 const Layout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="myevents" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="ratePlayersFinished"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="ratePlayersUnfinished"
-        options={{ headerShown: false }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="myevents" />
+      <Stack.Screen name="ratePlayersFinished" />
+      <Stack.Screen name="ratePlayersUnfinished" />
     </Stack>
   );
 };

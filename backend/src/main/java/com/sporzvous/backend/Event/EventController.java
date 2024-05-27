@@ -24,6 +24,16 @@ public class EventController {
         }
     }
 
+    @GetMapping("/get-event/{eventId}")
+    public ResponseEntity<?> getEvent(@PathVariable Long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.getEvent(eventId));
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/get-my-events/{userId}")
     public ResponseEntity<?> getMyEvents(@PathVariable Long userId) {
         try {
@@ -34,10 +44,10 @@ public class EventController {
         }
     }
 
-    @GetMapping("/get-events")
-    public ResponseEntity<?> getEvents() {
+    @GetMapping("/get-events/{userId}")
+    public ResponseEntity<?> getEvents(@PathVariable Long userId) {
         try {
-            return ResponseEntity.ok(eventService.getEvents());
+            return ResponseEntity.ok(eventService.getEvents(userId));
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());

@@ -1,15 +1,15 @@
 import CustomButton from "@/components/CustomButton";
+import { Event, useEventContext } from "@/context/EventProvider";
 import {
   AntDesign,
   Entypo,
   FontAwesome5,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -45,7 +45,7 @@ const eventTeamsB = [
   },
 ];
 
-const EventInformation = ({ eventData }) => {
+const EventInformation = ({ event }: { event: Event }) => {
   return (
     <View style={styles.eventInfoContainer}>
       <View style={styles.headerContainer}>
@@ -55,11 +55,11 @@ const EventInformation = ({ eventData }) => {
         >
           <AntDesign name="back" size={30} color={"#FF5C00"} />
         </TouchableOpacity>
-        <Text style={styles.header}>{eventData.name}</Text>
+        <Text style={styles.header}>{event.title}</Text>
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.label}>
-          <Text style={styles.details}>{eventData.date}</Text>
+          <Text style={styles.details}>{event.eventDate}</Text>
         </View>
         <TouchableOpacity style={styles.locationView}>
           <Text style={styles.location}>Location</Text>
@@ -68,21 +68,21 @@ const EventInformation = ({ eventData }) => {
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.label}>
-          <Text style={styles.details}>{eventData.host}</Text>
+          <Text style={styles.details}>{event.organizer.fullName}</Text>
         </View>
         <View style={styles.label}>
-          <Text style={styles.details}>{eventData.time}</Text>
+          <Text style={styles.details}>{event.eventTime}</Text>
         </View>
         <View style={styles.label}>
-          <Text style={styles.details}>{eventData.sport}</Text>
+          <Text style={styles.details}>{event.sport}</Text>
         </View>
       </View>
       <View style={styles.scoreContainer}>
-        <Text style={styles.teamScore}>{eventData.team_a} </Text>
-        <Text style={styles.teamScore}>{eventData.team_a_score}</Text>
+        <Text style={styles.teamScore}>{event.team_a} </Text>
+        <Text style={styles.teamScore}>{event.team_a_score}</Text>
         <Text style={styles.scoreDash}>-</Text>
-        <Text style={styles.teamScore}>{eventData.team_b_score}</Text>
-        <Text style={styles.teamScore}>{eventData.team_b}</Text>
+        <Text style={styles.teamScore}>{event.team_b_score}</Text>
+        <Text style={styles.teamScore}>{event.team_b}</Text>
       </View>
     </View>
   );
@@ -106,10 +106,22 @@ const TeamInformation = ({ team }) => {
   );
 };
 
-const Page = () => {
+const EventDetail = () => {
+  const { id } = useLocalSearchParams();
+  const { fetchEvent } = useEventContext();
+  const [event, setEvent] = useState<Event>();
+
+  useEffect(() => {
+    if (id) {
+      fetchEvent(Number(id))
+        .then((event) => setEvent(event))
+        .catch((error) => console.log(error));
+    }
+  }, [id]);
+
   return (
     <View style={styles.pageContainer}>
-      <EventInformation eventData={eventData[0]} />
+      {event && <EventInformation event={event} />}
       <View style={styles.playersTitleContainer}>
         <Text style={styles.playersTitle}>Players A</Text>
         <Text style={styles.playersTitle}>Players B</Text>
@@ -134,12 +146,11 @@ const Page = () => {
           onPress={() => router.replace("drawer/myevents")}
         />
       </View>
-      <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View>
     </View>
   );
 };
+
+export default EventDetail;
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -272,5 +283,3 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
 });
-
-export default Page;

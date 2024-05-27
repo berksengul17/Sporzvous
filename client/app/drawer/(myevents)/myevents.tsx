@@ -1,4 +1,5 @@
 import { Event, useEventContext } from "@/context/EventProvider";
+import { useUserContext } from "@/context/UserProvider";
 import {
   AntDesign,
   Entypo,
@@ -44,42 +45,52 @@ const EventItem = ({ event }: { event: Event }) => {
     }
   };
   return (
-    <View style={styles.eventContainer}>
-      <TouchableOpacity onPress={navigateByCondition} style={styles.eventRow}>
-        <View style={styles.labelView}>
-          <Text style={styles.eventName}>{event.title}</Text>
+    <TouchableOpacity
+      onPress={() =>
+        router.push({
+          pathname: "./eventDetail/[id]",
+          params: { id: event.eventId },
+        })
+      }
+    >
+      <View style={styles.eventContainer}>
+        <View style={styles.eventRow}>
+          <View style={styles.labelView}>
+            <Text style={styles.eventName}>{event.title}</Text>
+          </View>
+          <View style={styles.labelView}>
+            <Text style={styles.eventSport}>{event.sport}</Text>
+          </View>
+          <Status event={event} />
         </View>
-        <View style={styles.labelView}>
-          <Text style={styles.eventSport}>{event.sport}</Text>
-        </View>
-        <Status event={event} />
-      </TouchableOpacity>
-      <View style={styles.eventRow}>
-        <View style={styles.labelView}>
-          <Text style={styles.eventHost}>{event.organizer.fullName}</Text>
-        </View>
-        <View style={styles.labelView}>
-          <Text style={styles.eventDate}>{event.eventDate}</Text>
-        </View>
-        <View style={styles.buttonView}>
-          <TouchableOpacity>
-            <Feather
-              name="upload"
-              size={24}
-              color="#FF5C00"
-              style={{ marginRight: "10%" }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <AntDesign name="delete" size={24} color="#FF5C00" />
-          </TouchableOpacity>
+        <View style={styles.eventRow}>
+          <View style={styles.labelView}>
+            <Text style={styles.eventHost}>{event.organizer.fullName}</Text>
+          </View>
+          <View style={styles.labelView}>
+            <Text style={styles.eventDate}>{event.eventDate}</Text>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity>
+              <Feather
+                name="upload"
+                size={24}
+                color="#FF5C00"
+                style={{ marginRight: "10%" }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <AntDesign name="delete" size={24} color="#FF5C00" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 export default function MyEvents() {
+  const { user } = useUserContext();
   const { fetchMyEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const [myEvents, setMyEvents] = useState<Event[]>([]);
@@ -92,7 +103,11 @@ export default function MyEvents() {
     };
 
     getMyEvents();
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    console.log("myevents", myEvents);
+  }, [myEvents]);
 
   const filteredEvents = myEvents.filter(
     (event) =>
@@ -130,15 +145,13 @@ export default function MyEvents() {
         renderItem={({ item }) => <EventItem event={item} />}
         keyExtractor={(item) => item.eventId?.toString()}
       />
-      {/* <View style={styles.wave}>
-        <Image source={require("../../../assets/images/Waves.png")} />
-      </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: "white",
   },
   header: {
