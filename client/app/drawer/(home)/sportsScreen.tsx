@@ -5,8 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
   Dimensions,
+  Modal,
+  Pressable,
+  TextInput,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
@@ -64,6 +66,22 @@ const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
   );
 };
 
+const EditButtonCard = ({ isCustomizeMode, setIsCustomizeMode }) => {
+  return (
+    <TouchableOpacity
+      style={styles.editCard}
+      onPress={() => setIsCustomizeMode(!isCustomizeMode)}
+    >
+      <Ionicons
+        name={isCustomizeMode ? "checkmark" : "pencil"}
+        size={40}
+        color="black"
+      />
+      <Text style={styles.cardText}>{isCustomizeMode ? "Save" : "Edit"}</Text>
+    </TouchableOpacity>
+  );
+};
+
 export default function SportsScreen() {
   const [sportsData, setSportsData] = useState(initialSportsData);
   const [isCustomizeMode, setIsCustomizeMode] = useState(false);
@@ -88,10 +106,6 @@ export default function SportsScreen() {
     setSportsData(data);
   };
 
-  const handleSave = () => {
-    setIsCustomizeMode(false);
-  };
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
@@ -105,42 +119,37 @@ export default function SportsScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.bottomSports}>
-          <View style={styles.editButtonContainer}>
-            <TouchableOpacity
-              onPress={() => setIsCustomizeMode(!isCustomizeMode)}
-              style={styles.editButton}
-            >
-              <Text style={styles.editButtonText}>
-                {isCustomizeMode ? "Save" : "Edit"}
-              </Text>
-              <Ionicons
-                name={isCustomizeMode ? "checkmark" : "pencil"}
-                size={20}
-                color="#FF5C00"
-              />
-            </TouchableOpacity>
-          </View>
           <DraggableFlatList
-            data={sportsData.filter(
-              (sport) => isCustomizeMode || sport.visible
-            )}
-            renderItem={({ item, drag, isActive }: RenderItemParams<Item>) => (
-              <TouchableOpacity
-                style={[
-                  styles.cardContainer,
-                  { backgroundColor: isActive ? "#e0e0e0" : "#fff" },
-                ]}
-                onLongPress={drag}
-                disabled={!isCustomizeMode}
-              >
-                <SportCard
-                  sport={item}
-                  onDiscard={handleDiscardSport}
-                  onAddBack={handleAddBackSport}
-                  isCustomizeMode={isCustomizeMode}
-                />
-              </TouchableOpacity>
-            )}
+            data={[
+              ...sportsData.filter((sport) => isCustomizeMode || sport.visible),
+              { id: "edit", isEditButton: true },
+            ]}
+            renderItem={({ item, drag, isActive }: RenderItemParams<any>) =>
+              item.isEditButton ? (
+                <View style={styles.cardContainer}>
+                  <EditButtonCard
+                    isCustomizeMode={isCustomizeMode}
+                    setIsCustomizeMode={setIsCustomizeMode}
+                  />
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={[
+                    styles.cardContainer,
+                    { backgroundColor: isActive ? "#e0e0e0" : "#fff" },
+                  ]}
+                  onLongPress={drag}
+                  disabled={!isCustomizeMode}
+                >
+                  <SportCard
+                    sport={item}
+                    onDiscard={handleDiscardSport}
+                    onAddBack={handleAddBackSport}
+                    isCustomizeMode={isCustomizeMode}
+                  />
+                </TouchableOpacity>
+              )
+            }
             keyExtractor={(item) => item.id}
             onDragEnd={handleDragEnd}
             numColumns={2}
@@ -174,11 +183,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#ddd",
     position: "relative",
-  },
-  editButtonContainer: {
-    alignItems: "flex-end",
-    marginBottom: 10,
-    marginRight: 10,
   },
   list: {
     justifyContent: "center",
@@ -248,24 +252,18 @@ const styles = StyleSheet.create({
     color: "#FF5C00",
     fontWeight: "bold",
   },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
+  editCard: {
     backgroundColor: "#fff",
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
     justifyContent: "center",
+    width: "100%",
+    height: 130,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  editButtonText: {
-    fontSize: 16,
-    color: "#FF5C00",
-    fontWeight: "bold",
-    marginRight: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 4,
   },
 });
