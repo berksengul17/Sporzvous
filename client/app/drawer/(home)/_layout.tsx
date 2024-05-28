@@ -1,10 +1,11 @@
 import { useUserContext } from "@/context/UserProvider";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 
 export const unstable_settings = {
-  initialRouteName: "home",
+  initialRouteName: "join_event",
 };
 
 const _layout = () => {
@@ -12,7 +13,33 @@ const _layout = () => {
 
   return (
     <Stack>
-      <Stack.Screen name="home" options={{ headerShown: false }} />
+      <Stack.Screen name="sportsScreen" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="home"
+        options={{
+          presentation: "fullScreenModal",
+          headerTitle: "Upcoming Events",
+          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerLeft: () => (
+            <Entypo
+              name="cross"
+              onPress={() => router.back()}
+              size={30}
+              color={"#FF5C00"}
+            />
+          ),
+          headerRight: () => (
+            <TouchableOpacity>
+              <Ionicons
+                onPress={() => router.push("drawer/(home)/(profile)")}
+                name="person-circle"
+                size={48}
+                color="black"
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Stack.Screen
         name="createEventModal"
         options={{

@@ -42,7 +42,6 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
           <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
-          <Stack.Screen name="sportsScreen" options={{ headerShown: false }} />
           <Stack.Screen name="drawer" options={{ headerShown: false }} />
         </Stack>
       </EventProvider>
