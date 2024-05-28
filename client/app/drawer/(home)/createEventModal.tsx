@@ -53,7 +53,7 @@ const Page = () => {
     // Fetch cities from GeoNames API
     axios
       .get(
-        `http://api.geonames.org/searchJSON?username=emreerol0&country=TR&featureClass=P&maxRows=1000`
+        `http://api.geonames.org/searchJSON?username=emreerol0&country=TR&featureClass=P&maxRows=83`
       )
       .then((response) => {
         const cityList = response.data.geonames.map((city: any) => ({
@@ -61,6 +61,7 @@ const Page = () => {
           value: city.name,
         }));
         setCities(cityList);
+        setLocationVillage("");
       })
       .catch((error) => {
         console.error("Error fetching cities:", error);
@@ -71,7 +72,7 @@ const Page = () => {
     // Fetch villages based on selected city from GeoNames API
     axios
       .get(
-        `http://api.geonames.org/searchJSON?username=emreerol0&q=${city}&maxRows=1000&featureClass=P`
+        `http://api.geonames.org/searchJSON?username=emreerol0&q=${city}&maxRows=60&featureClass=P`
       )
       .then((response) => {
         const villageList = response.data.geonames.map((village: any) => ({
@@ -201,7 +202,6 @@ const Page = () => {
                   onValueChange={(city) => {
                     setLocationCity(city);
                     setSelectedCity(city);
-                    setLocationVillage("");
                     fetchVillages(city);
                   }}
                   items={cities}
