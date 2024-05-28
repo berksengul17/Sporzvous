@@ -27,13 +27,25 @@ public class EventService {
         }else if ((event.getTitle().length()) > 40) {
             throw new IllegalArgumentException("Title cannot be longer than 40");
 
-        }else if (Objects.equals(event.getMaxParticipants(), 0) ) {
+        }else if (Objects.equals(event.getSport(), "")) {
+            throw new IllegalArgumentException("Sport cannot be empty");
+
+        }else if (Objects.equals(event.getLocationCity(), "")) {
+            throw new IllegalArgumentException("LocationCity cannot be empty");
+
+        }else if (Objects.equals(event.getLocationDistrict(), "")) {
+            throw new IllegalArgumentException("LocationDistrict cannot be empty");
+
+        }else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null  ) {
             throw new IllegalArgumentException("Event with no participants cannot created");
-        }
-        else if (event.getEventDate() != null && event.getEventDate().isBefore(LocalDate.now())) {
+
+        }else if (event.getMaxParticipants() > 30)   {
+            throw new IllegalArgumentException("Event with this number of participants cannot created");
+
+        }else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Deadline can't be before the current date.");
             
-        }else if (event.getEventTime() != null && event.getEventTime().isBefore(LocalTime.now())) {
+        }else if (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now())) {
             throw new IllegalArgumentException("Deadline can't be before the current date.");
         }
 

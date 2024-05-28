@@ -182,12 +182,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user]);
 
   const fetchAllEvents = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/get-events/${user.userId}`);
-      setEvents(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await axios.get(`${API_URL}/get-events/${user.userId}`);
+    setEvents(response.data);
   };
 
   const fetchMyEvents = async () => {
@@ -213,16 +209,22 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const addEvent = async (event: CreateEvent) => {
     try {
       const response = await axios.post(`${API_URL}/create`, event);
-      // Optionally update events state if needed
-      // setEvents((prevEvents) => [...prevEvents, response.data]);
-      fetchAllEvents();
+      fetchAllEvents(); // Optionally update events state if needed
       setErrorAddEvent(""); // Clear any previous errors
     } catch (err) {
-      if (err) setErrorAddEvent((err as Error).message);
-      else {
-        console.error(errorAddEvent);
-        setErrorAddEvent("An unexpected error occurred. Please try again.");
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          errorMessage = err.response.data.error; // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
       }
+
+      setErrorAddEvent(errorMessage);
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
     }
   };
 

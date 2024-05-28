@@ -39,7 +39,7 @@ const Page = () => {
   const [sport, setSport] = useState<string>("");
   const [locationCity, setLocationCity] = useState<string>("");
   const [locationVillage, setLocationVillage] = useState<string>("");
-  const [maxParticipants, setMaxParticipants] = useState<string>("");
+  const [playerCapacity, setpPlayerCapacity] = useState<string>("");
   const teamCount = 2;
 
   const [minSkillLevel, setMinSkillLevel] = useState<number>(2.5);
@@ -79,13 +79,13 @@ const Page = () => {
 
   const handleAddEvent = async () => {
     try {
-      addEvent({
+      await addEvent({
         title,
         sport,
         locationCity,
         locationDistrict: locationVillage,
         participants: 0,
-        maxParticipants: parseInt(maxParticipants),
+        maxParticipants: parseInt(playerCapacity),
         teamNumber: teamCount,
         eventDate: date,
         eventTime: time,
@@ -96,14 +96,8 @@ const Page = () => {
       });
       setErrorAddEvent("");
       router.back(); // Navigate back to the previous screen
-      // Clear any previous errors
-    } catch (err) {
-      if (err) {
-        setErrorAddEvent((err as Error).message);
-      } else {
-        console.error(err);
-        setErrorAddEvent("An unexpected error occurred. Please try again.");
-      }
+    } catch (error) {
+      setErrorAddEvent((error as Error).message);
       setModalVisible(true); // Show modal on error
     }
   };
@@ -179,15 +173,13 @@ const Page = () => {
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>
-                People Count
-              </Text>
+              <Text style={styles.eventInformationTitleFonts}>Max Player</Text>
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
-                value={maxParticipants}
-                onChangeText={setMaxParticipants}
-                placeholder="People Count"
+                value={playerCapacity}
+                onChangeText={setpPlayerCapacity}
+                placeholder="Player Capacity"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
               />
