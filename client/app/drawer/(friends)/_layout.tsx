@@ -22,6 +22,7 @@ const Layout = () => {
           ),
         }}
       />
+      <Stack.Screen name="chatScreen" options={{ headerShown: false}} />
     </Stack>
   );
 };

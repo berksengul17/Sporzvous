@@ -18,7 +18,7 @@ import {
 import Modal from "react-native-modal";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 
 const friendsData = [
   {
@@ -42,24 +42,26 @@ const friendsData = [
   // add more friends here
 ];
 
-const FriendItem = ({ friend }) => (
-  <View style={styles.friendContainer}>
-    <Image source={friend.imageUri} style={styles.profileImage} />
-    <View style={styles.friendInfo}>
-      <CustomText
-        customStyle={styles.friendName}
-        text={friend.name}
-        isBold={true}
-      />
-      <CustomText
-        customStyle={styles.friendLastSeen}
-        text={`Last seen: ${friend.lastSeen}`}
-      />
+const FriendItem = ({ friend, onPress }) => (
+    <View style={styles.friendContainer}>
+      <Image source={friend.imageUri} style={styles.profileImage} />
+      <View style={styles.friendInfo}>
+        <CustomText
+          customStyle={styles.friendName}
+          text={friend.name}
+          isBold={true}
+        />
+        <CustomText
+          customStyle={styles.friendLastSeen}
+          text={`Last seen: ${friend.lastSeen}`}
+        />
+      </View>
+      <TouchableOpacity style={styles.iconButton}
+      onPress={() => onPress(friend.id)}
+      >
+        <AntDesign name="message1" size={24} color="#FF5C00" />
+      </TouchableOpacity>
     </View>
-    <TouchableOpacity style={styles.iconButton}>
-      <AntDesign name="message1" size={24} color="#FF5C00" />
-    </TouchableOpacity>
-  </View>
 );
 
 export default function FriendsScreen() {
@@ -72,6 +74,14 @@ export default function FriendsScreen() {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const handlePress = (receiverId) => {
+    const senderId = '1'; // Replace with the actual sender ID
+    router.push({
+      pathname: '/drawer/(friends)/chatScreen',
+      params: { receiverId, senderId },
+    });
   };
 
   return (
@@ -139,7 +149,7 @@ export default function FriendsScreen() {
       </View>
       <FlatList
         data={filteredFriends}
-        renderItem={({ item }) => <FriendItem friend={item} />}
+        renderItem={({ item }) => <FriendItem friend={item} onPress={handlePress} />}
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
       />
