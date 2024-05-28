@@ -1,15 +1,16 @@
 import { useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
-import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useRouter } from "expo-router";
-import RNPickerSelect from "react-native-picker-select"; // Import the Picker
-import CustomText from "@/components/CustomText";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
   Image,
   Keyboard,
   Modal,
+  Platform,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -18,11 +19,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import moment from "moment";
-import axios from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -166,29 +167,32 @@ const Page = () => {
             <View style={styles.eventInformationTitle}>
               <Text style={styles.eventInformationTitleFonts}>Sport</Text>
             </View>
-            <View style={styles.eventInformationInput}>
-              <View style={styles.userInfo}>
-                <View style={{ flex: 1 }}>
-                  <RNPickerSelect
-                    onValueChange={(sport) => setSport(sport)}
-                    items={[
-                      { label: "Basketball", value: "basketball" },
-                      { label: "Football", value: "football" },
-                      { label: "Volleyball", value: "volleyball" },
-                      { label: "Tennis", value: "tennis" },
-                      { label: "Baseball", value: "baseball" },
-                      { label: "Badminton", value: "badminton" },
-                      { label: "Handball", value: "handball" },
-                      { label: "Ice Hockey", value: "icehockey" },
-                      { label: "Paintball", value: "paintball" },
-                    ]}
-                    placeholder={{
-                      label: "Select a sport",
-                      value: null,
-                      color: "#9EA0A4", // You can change the color of the placeholder text here
-                    }}
-                  />
-                </View>
+            <View style={{ flex: 1 }}>
+              <View style={{ flex: 1 }}>
+                <RNPickerSelect
+                  useNativeAndroidPickerStyle={false}
+                  onValueChange={(sport) => setSport(sport)}
+                  items={[
+                    { label: "Basketball", value: "basketball" },
+                    { label: "Football", value: "football" },
+                    { label: "Volleyball", value: "volleyball" },
+                    { label: "Tennis", value: "tennis" },
+                    { label: "Baseball", value: "baseball" },
+                    { label: "Badminton", value: "badminton" },
+                    { label: "Handball", value: "handball" },
+                    { label: "Ice Hockey", value: "icehockey" },
+                    { label: "Paintball", value: "paintball" },
+                  ]}
+                  placeholder={{
+                    label: "Select a sport",
+                    value: null,
+                    color: "#9EA0A4",
+                  }}
+                  style={{
+                    inputAndroid: styles.pickerStyles,
+                    inputIOS: styles.pickerStyles,
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -196,9 +200,10 @@ const Page = () => {
             <View style={styles.eventInformationTitle}>
               <Text style={styles.eventInformationTitleFonts}>Location</Text>
             </View>
-            <View style={styles.eventInformationInput}>
-              <View style={styles.userLocationInfo}>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1 }}>
                 <RNPickerSelect
+                  useNativeAndroidPickerStyle={false}
                   onValueChange={(city) => {
                     setLocationCity(city);
                     setSelectedCity(city);
@@ -210,16 +215,25 @@ const Page = () => {
                     value: null,
                     color: "#9EA0A4",
                   }}
+                  style={{
+                    inputAndroid: styles.pickerStyles,
+                    inputIOS: styles.pickerStyles,
+                  }}
                 />
               </View>
-              <View style={styles.userLocationInfo}>
+              <View style={{ flex: 1 }}>
                 <RNPickerSelect
+                  useNativeAndroidPickerStyle={false}
                   onValueChange={setLocationVillage}
                   items={villages}
                   placeholder={{
                     label: "Village",
                     value: null,
                     color: "#9EA0A4",
+                  }}
+                  style={{
+                    inputAndroid: styles.pickerStyles,
+                    inputIOS: styles.pickerStyles,
                   }}
                   disabled={!selectedCity}
                 />
@@ -244,33 +258,36 @@ const Page = () => {
             <View style={styles.eventInformationTitle}>
               <Text style={styles.eventInformationTitleFonts}>Date</Text>
             </View>
-            <View style={styles.eventTimeInput}>
-              <Text style={styles.dateBox} onPress={showDatePicker}>
-                {date || "Choose Date"}
-              </Text>
+            <TouchableOpacity
+              onPress={showDatePicker}
+              style={styles.eventTimeInput}
+            >
+              <Text style={styles.dateBox}>{date || "Choose Date"}</Text>
+
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
                 onConfirm={handleConfirmDate}
                 onCancel={hideDatePicker}
               />
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
               <Text style={styles.eventInformationTitleFonts}>Time</Text>
             </View>
-            <View style={styles.eventTimeInput}>
-              <Text style={styles.dateBox} onPress={showTimePicker}>
-                {time || "Choose Time"}
-              </Text>
+            <TouchableOpacity
+              onPress={showTimePicker}
+              style={styles.eventTimeInput}
+            >
+              <Text style={styles.dateBox}>{time || "Choose Time"}</Text>
               <DateTimePickerModal
                 isVisible={isTimePickerVisible}
                 mode="time"
                 onConfirm={handleConfirmTime}
                 onCancel={hideTimePicker}
               />
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
@@ -379,10 +396,9 @@ const styles = StyleSheet.create({
   eventTimeInput: {
     borderRadius: 10,
     borderStyle: "solid",
-    flex: 0.5,
     backgroundColor: "#F0F0F0",
     marginRight: 40,
-    height: 45,
+    padding: 10, // Adjust padding for better spacing
     justifyContent: "center",
     alignItems: "center",
   },
@@ -420,10 +436,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   userInfo: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
     paddingVertical: 15,
     paddingHorizontal: 10,
@@ -437,6 +453,19 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
     paddingVertical: 15,
     margin: 5,
+  },
+
+  pickerStyles: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    color: "black",
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
+    }),
   },
 
   label: {
