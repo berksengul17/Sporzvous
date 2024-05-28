@@ -81,12 +81,6 @@ export default function HomeScreen() {
         renderItem={({ item }) => <EventItem event={item} />}
         keyExtractor={(item) => item.eventId.toString()}
       />
-      <TouchableOpacity
-        onPress={() => router.push("drawer/(home)/createEventModal")}
-        style={styles.addButton}
-      >
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
     </View>
   );
 }

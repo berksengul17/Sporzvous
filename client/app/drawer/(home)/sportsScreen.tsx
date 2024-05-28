@@ -95,65 +95,59 @@ export default function SportsScreen() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <View style={styles.topContent}>
-            <Text style={styles.headerText}>Join or host an event today!</Text>
+        <View style={styles.topContent}>
+          <Text style={styles.headerText}>Join or host an event today!</Text>
+          <TouchableOpacity
+            onPress={() => router.push("drawer/(home)/createEventModal")}
+            style={styles.addButton}
+          >
+            <Text style={styles.addButtonText}>Create Event</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.bottomSports}>
+          <View style={styles.editButtonContainer}>
             <TouchableOpacity
-              onPress={() => router.push("drawer/(home)/createEventModal")}
-              style={styles.addButton}
+              onPress={() => setIsCustomizeMode(!isCustomizeMode)}
+              style={styles.editButton}
             >
-              <Text style={styles.addButtonText}>Create Event</Text>
+              <Text style={styles.editButtonText}>
+                {isCustomizeMode ? "Save" : "Edit"}
+              </Text>
+              <Ionicons
+                name={isCustomizeMode ? "checkmark" : "pencil"}
+                size={20}
+                color="#FF5C00"
+              />
             </TouchableOpacity>
           </View>
-          <View style={styles.bottomSports}>
-            <View style={styles.editButtonContainer}>
+          <DraggableFlatList
+            data={sportsData.filter(
+              (sport) => isCustomizeMode || sport.visible
+            )}
+            renderItem={({ item, drag, isActive }: RenderItemParams<Item>) => (
               <TouchableOpacity
-                onPress={() => setIsCustomizeMode(!isCustomizeMode)}
-                style={styles.editButton}
+                style={[
+                  styles.cardContainer,
+                  { backgroundColor: isActive ? "#e0e0e0" : "#fff" },
+                ]}
+                onLongPress={drag}
+                disabled={!isCustomizeMode}
               >
-                <Text style={styles.editButtonText}>
-                  {isCustomizeMode ? "Save" : "Edit"}
-                </Text>
-                <Ionicons
-                  name={isCustomizeMode ? "checkmark" : "pencil"}
-                  size={20}
-                  color="#FF5C00"
+                <SportCard
+                  sport={item}
+                  onDiscard={handleDiscardSport}
+                  onAddBack={handleAddBackSport}
+                  isCustomizeMode={isCustomizeMode}
                 />
               </TouchableOpacity>
-            </View>
-            <DraggableFlatList
-              data={sportsData.filter(
-                (sport) => isCustomizeMode || sport.visible
-              )}
-              renderItem={({
-                item,
-                drag,
-                isActive,
-              }: RenderItemParams<Item>) => (
-                <TouchableOpacity
-                  style={[
-                    styles.cardContainer,
-                    { backgroundColor: isActive ? "#e0e0e0" : "#fff" },
-                  ]}
-                  onLongPress={drag}
-                  disabled={!isCustomizeMode}
-                >
-                  <SportCard
-                    sport={item}
-                    onDiscard={handleDiscardSport}
-                    onAddBack={handleAddBackSport}
-                    isCustomizeMode={isCustomizeMode}
-                  />
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.id}
-              onDragEnd={handleDragEnd}
-              numColumns={2}
-              contentContainerStyle={styles.list}
-              columnWrapperStyle={styles.row}
-            />
-          </View>
-        </ScrollView>
+            )}
+            keyExtractor={(item) => item.id}
+            onDragEnd={handleDragEnd}
+            numColumns={2}
+            contentContainerStyle={styles.list}
+            columnWrapperStyle={styles.row}
+          />
+        </View>
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -165,11 +159,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f7f7f7",
   },
   topContent: {
-    height: Dimensions.get("window").height / 4,
+    height: Dimensions.get("window").height / 6,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FF5C00",
-    borderRadius: 30,
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 100,
     padding: 20,
   },
   bottomSports: {

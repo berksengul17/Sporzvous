@@ -6,11 +6,13 @@ import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  ImageBackground,
   Keyboard,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
+  Text,
 } from "react-native";
 
 const LoginPage = () => {
@@ -30,70 +32,108 @@ const LoginPage = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <AuthHeader />
-        <View style={styles.formContainer}>
-          <TextInput
-            style={[styles.input, { marginBottom: 15 }]}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Username"
-            placeholderTextColor={"#6F6F6F"}
-          />
-          <TextInput
-            style={[styles.input, { marginBottom: 24 }]}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Password"
-            placeholderTextColor={"#6F6F6F"}
-            secureTextEntry
-          />
-          <CustomButton
-            onPress={onLogin}
-            title="Login"
-            containerStyle={{ width: 100 }}
-          />
-          <CustomText
-            text="Reset Password"
-            customStyle={{ color: "#FF5C00", marginVertical: 16 }}
-          />
-          <CustomButton
-            onPress={() => router.navigate("/register")}
-            title="Sign up for free"
-            containerStyle={{
-              backgroundColor: "#6F6F6F",
-              borderColor: "#6F6F6F",
-            }}
-          />
+      <ImageBackground
+        source={require("../assets/images/sporzvouswp.png")}
+        style={styles.background}
+        imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
+      >
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.formContainer}>
+              <AuthHeader />
+              <TextInput
+                style={[styles.input, { marginBottom: 15 }]}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Username"
+                placeholderTextColor={"#6F6F6F"}
+              />
+              <TextInput
+                style={[styles.input, { marginBottom: 24 }]}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                placeholderTextColor={"#6F6F6F"}
+                secureTextEntry
+              />
+              <CustomButton
+                onPress={onLogin}
+                title="Login"
+                containerStyle={styles.loginButton}
+              />
+              <CustomText
+                text="Reset Password"
+                customStyle={styles.resetText}
+              />
+              <CustomButton
+                onPress={() => router.navigate("/register")}
+                title="Sign up for free"
+                containerStyle={styles.signUpButton}
+              />
+            </View>
+          </View>
         </View>
-        <BottomWaves />
-      </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: "cover",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.3)", // Subtle darker overlay to improve text visibility
+    alignItems: "center",
+    justifyContent: "center",
+  },
   container: {
     flex: 1,
+    width: "90%", // Add padding from left and right
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 40,
+    justifyContent: "center",
+    paddingHorizontal: 20, // Optional: add inner padding if needed
   },
-
   formContainer: {
-    marginTop: 50,
     width: "100%",
     alignItems: "center",
-    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Slight background color for form container
+    borderRadius: 10,
+    padding: 20,
   },
   input: {
-    width: "70%",
-    height: 40,
+    width: "100%",
+    height: 50,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     marginVertical: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for input fields
+    fontSize: 16,
+  },
+  loginButton: {
+    width: "100%",
+    backgroundColor: "#FF5C00",
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  resetText: {
+    color: "#FF5C00",
+    marginVertical: 16,
+  },
+  signUpButton: {
+    width: "100%",
+    backgroundColor: "#6F6F6F",
+    borderColor: "#6F6F6F",
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
   },
 });
 

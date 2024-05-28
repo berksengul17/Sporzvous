@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
-const sportsTypes = ["All", "Football", "Basketball", "Volleyball", "Tennis"];
 const eventLocations = [
   { label: "All", value: "All" },
   { label: "Bornova", value: "Bornova" },
@@ -51,30 +50,6 @@ const Page = () => {
         >
           <CustomText customStyle={styles.clearText} text="Clear Filters" />
         </TouchableOpacity>
-        <View style={styles.titleWrapper}>
-          <CustomText customStyle={styles.sectionTitle} text="Sport" />
-        </View>
-        <View style={styles.buttonContainer}>
-          {sportsTypes.map((sport) => (
-            <TouchableOpacity
-              key={sport}
-              style={[
-                styles.button,
-                selectedSport === sport && styles.buttonSelected,
-              ]}
-              onPress={() => setSelectedSport(sport)}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  selectedSport === sport && styles.buttonTextSelected,
-                ]}
-              >
-                {sport}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
         <View style={styles.titleWrapper}>
           <CustomText customStyle={styles.sectionTitle} text="Location" />
         </View>
