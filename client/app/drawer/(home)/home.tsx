@@ -1,5 +1,6 @@
 import { Event, useEventContext } from "@/context/EventProvider";
 import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useState } from "react";
 
@@ -42,19 +43,22 @@ const EventItem = ({ event }: { event: Event }) => {
 export default function HomeScreen() {
   const { events } = useEventContext(); // Use events from context
   const [searchText, setSearchText] = useState("");
+  const route = useRoute();
+  const { sport } = route.params;
 
   const filteredEvents = events.filter(
     (event) =>
       event.isEventOver === 0 &&
+      event.sport.toLowerCase() === sport.toLowerCase() &&
       (event.title.toLowerCase().includes(searchText.toLowerCase()) ||
         event.organizer.fullName
           .toLowerCase()
-          .includes(searchText.toLowerCase()) ||
-        event.sport.toLowerCase().includes(searchText.toLowerCase()))
+          .includes(searchText.toLowerCase()))
   );
 
   return (
     <View style={styles.container}>
+      <Text style={styles.heading}>Upcoming {sport} Events</Text>
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#6F6F6F" />
         <TextInput
@@ -137,6 +141,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FF5C00",
     margin: 16,
+    textAlign: "center",
   },
   eventContainer: {
     flexDirection: "row",
