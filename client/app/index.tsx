@@ -1,5 +1,4 @@
 import AuthHeader from "@/components/AuthHeader";
-import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
@@ -12,6 +11,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
+  TouchableOpacity,
 } from "react-native";
 
 const LoginPage = () => {
@@ -61,10 +61,12 @@ const LoginPage = () => {
                   title="Login"
                   containerStyle={styles.loginButton}
                 />
-                <CustomText
-                  text="Reset Password"
-                  customStyle={styles.resetText}
-                />
+                <TouchableOpacity onPress={() => router.navigate("/forgotpw")}>
+                  <CustomText
+                    text="Reset Password"
+                    customStyle={styles.resetText}
+                  />
+                </TouchableOpacity>
                 <CustomButton
                   onPress={() => router.navigate("/register")}
                   title="Sign up for free"
