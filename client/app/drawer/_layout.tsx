@@ -66,11 +66,11 @@ const Layout = () => {
         headerTintColor: "#FF5C00",
         headerTitleAlign: "center",
         drawerHideStatusBarOnOpen: true,
-        drawerActiveBackgroundColor: "#4E3833",
-        drawerActiveTintColor: "#fff",
+        drawerActiveBackgroundColor: "#fff",
+        drawerActiveTintColor: "#FF5C00",
         drawerLabelStyle: { marginLeft: -20 },
         drawerStyle: {
-          backgroundColor: "#FF5C00",
+          backgroundColor: "#fff",
         },
       }}
     >
