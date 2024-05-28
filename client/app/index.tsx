@@ -12,7 +12,6 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
-  Text,
 } from "react-native";
 
 const LoginPage = () => {
@@ -32,53 +31,58 @@ const LoginPage = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground
-        source={require("../assets/images/sporzvouswp.png")}
-        style={styles.background}
-        imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
-      >
-        <View style={styles.overlay}>
-          <View style={styles.container}>
-            <View style={styles.formContainer}>
-              <AuthHeader />
-              <TextInput
-                style={[styles.input, { marginBottom: 15 }]}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Username"
-                placeholderTextColor={"#6F6F6F"}
-              />
-              <TextInput
-                style={[styles.input, { marginBottom: 24 }]}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                placeholderTextColor={"#6F6F6F"}
-                secureTextEntry
-              />
-              <CustomButton
-                onPress={onLogin}
-                title="Login"
-                containerStyle={styles.loginButton}
-              />
-              <CustomText
-                text="Reset Password"
-                customStyle={styles.resetText}
-              />
-              <CustomButton
-                onPress={() => router.navigate("/register")}
-                title="Sign up for free"
-                containerStyle={styles.signUpButton}
-              />
+      <View style={styles.wrapper}>
+        <ImageBackground
+          source={require("../assets/images/sporzvouswp.png")}
+          style={styles.background}
+          imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
+        >
+          <View style={styles.overlay}>
+            <View style={styles.container}>
+              <View style={styles.formContainer}>
+                <AuthHeader />
+                <TextInput
+                  style={[styles.input, { marginBottom: 15 }]}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Username"
+                  placeholderTextColor={"#6F6F6F"}
+                />
+                <TextInput
+                  style={[styles.input, { marginBottom: 24 }]}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Password"
+                  placeholderTextColor={"#6F6F6F"}
+                  secureTextEntry
+                />
+                <CustomButton
+                  onPress={onLogin}
+                  title="Login"
+                  containerStyle={styles.loginButton}
+                />
+                <CustomText
+                  text="Reset Password"
+                  customStyle={styles.resetText}
+                />
+                <CustomButton
+                  onPress={() => router.navigate("/register")}
+                  title="Sign up for free"
+                  containerStyle={styles.signUpButton}
+                />
+              </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   background: {
     flex: 1,
     resizeMode: "cover",
