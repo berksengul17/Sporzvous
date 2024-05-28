@@ -1,6 +1,6 @@
 import { useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import CustomText from "@/components/CustomText";
@@ -22,6 +22,7 @@ import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
+import axios from "axios";
 
 const Page = () => {
   const router = useRouter();
@@ -39,10 +40,50 @@ const Page = () => {
   const [sport, setSport] = useState<string>("");
   const [locationCity, setLocationCity] = useState<string>("");
   const [locationVillage, setLocationVillage] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
   const [playerCapacity, setpPlayerCapacity] = useState<string>("");
   const teamCount = 2;
 
   const [minSkillLevel, setMinSkillLevel] = useState<number>(2.5);
+
+  const [cities, setCities] = useState([]);
+  const [villages, setVillages] = useState([]);
+
+  useEffect(() => {
+    // Fetch cities from GeoNames API
+    axios
+      .get(
+        `http://api.geonames.org/searchJSON?username=emreerol0&country=TR&featureClass=P&maxRows=1000`
+      )
+      .then((response) => {
+        const cityList = response.data.geonames.map((city: any) => ({
+          label: city.name,
+          value: city.name,
+        }));
+        setCities(cityList);
+      })
+      .catch((error) => {
+        console.error("Error fetching cities:", error);
+      });
+  }, []);
+
+  const fetchVillages = (city: string) => {
+    // Fetch villages based on selected city from GeoNames API
+    axios
+      .get(
+        `http://api.geonames.org/searchJSON?username=emreerol0&q=${city}&maxRows=1000&featureClass=P`
+      )
+      .then((response) => {
+        const villageList = response.data.geonames.map((village: any) => ({
+          label: village.name,
+          value: village.name,
+        }));
+        setVillages(villageList);
+      })
+      .catch((error) => {
+        console.error("Error fetching villages:", error);
+      });
+  };
 
   const showTimePicker = () => {
     setTimePickerVisible(true);
@@ -155,20 +196,34 @@ const Page = () => {
               <Text style={styles.eventInformationTitleFonts}>Location</Text>
             </View>
             <View style={styles.eventInformationInput}>
-              <TextInput
-                value={locationCity}
-                onChangeText={setLocationCity}
-                placeholder="Location"
-                placeholderTextColor={"#6F6F6F"}
-                style={styles.inputBox}
-              />
-              <TextInput
-                value={locationVillage}
-                onChangeText={setLocationVillage}
-                placeholder="Location"
-                placeholderTextColor={"#6F6F6F"}
-                style={styles.inputBox}
-              />
+              <View style={styles.userLocationInfo}>
+                <RNPickerSelect
+                  onValueChange={(city) => {
+                    setLocationCity(city);
+                    setSelectedCity(city);
+                    setLocationVillage("");
+                    fetchVillages(city);
+                  }}
+                  items={cities}
+                  placeholder={{
+                    label: "City",
+                    value: null,
+                    color: "#9EA0A4",
+                  }}
+                />
+              </View>
+              <View style={styles.userLocationInfo}>
+                <RNPickerSelect
+                  onValueChange={setLocationVillage}
+                  items={villages}
+                  placeholder={{
+                    label: "Village",
+                    value: null,
+                    color: "#9EA0A4",
+                  }}
+                  disabled={!selectedCity}
+                />
+              </View>
             </View>
           </View>
           <View style={styles.eventInformationRow}>
@@ -372,6 +427,16 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
     paddingVertical: 15,
     paddingHorizontal: 10,
+  },
+
+  userLocationInfo: {
+    flexDirection: "row",
+    flex: 1,
+    justifyContent: "space-around",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    paddingVertical: 15,
+    margin: 5,
   },
 
   label: {
