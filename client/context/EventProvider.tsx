@@ -47,6 +47,7 @@ const EventContext = createContext<EventContextType | null>(null);
 // EventProvider component
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
+  const [errorAddEvent, setErrorAddEvent] = useState("");
   const [events, setEvents] = useState<Event[]>([
     {
       eventId: 1,
@@ -211,11 +212,17 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addEvent = async (event: CreateEvent) => {
     try {
-      await axios.post(`${API_URL}/create`, event);
+      const response = await axios.post(`${API_URL}/create`, event);
+      // Optionally update events state if needed
       // setEvents((prevEvents) => [...prevEvents, response.data]);
       fetchAllEvents();
-    } catch (error) {
-      console.log(error);
+      setErrorAddEvent(""); // Clear any previous errors
+    } catch (err) {
+      if (err) setErrorAddEvent((err as Error).message);
+      else {
+        console.error(errorAddEvent);
+        setErrorAddEvent("An unexpected error occurred. Please try again.");
+      }
     }
   };
 

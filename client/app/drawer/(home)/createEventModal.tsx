@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import CustomText from "@/components/CustomText";
-
 import {
   Alert,
   Button,
   Image,
   Keyboard,
+  Modal,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -26,16 +27,20 @@ const Page = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { addEvent } = useEventContext();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorAddEvent, setErrorAddEvent] = useState("");
+
   const [time, setTime] = useState("");
+  const [date, setDate] = useState<string>("");
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+
   const [title, setTitle] = useState<string>("");
   const [sport, setSport] = useState<string>("");
   const [locationCity, setLocationCity] = useState<string>("");
   const [locationVillage, setLocationVillage] = useState<string>("");
-  const [peopleCount, setPeopleCount] = useState<string>("");
+  const [maxParticipants, setMaxParticipants] = useState<string>("");
   const teamCount = 2;
-  const [date, setDate] = useState<string>("");
 
   const [minSkillLevel, setMinSkillLevel] = useState<number>(2.5);
 
@@ -72,6 +77,37 @@ const Page = () => {
     setMinSkillLevel(rating);
   };
 
+  const handleAddEvent = async () => {
+    try {
+      addEvent({
+        title,
+        sport,
+        locationCity,
+        locationDistrict: locationVillage,
+        participants: 0,
+        maxParticipants: parseInt(maxParticipants),
+        teamNumber: teamCount,
+        eventDate: date,
+        eventTime: time,
+        skillRating: minSkillLevel,
+        locationIndex: "5",
+        isEventOver: 0,
+        organizer: user,
+      });
+      setErrorAddEvent("");
+      router.back(); // Navigate back to the previous screen
+      // Clear any previous errors
+    } catch (err) {
+      if (err) {
+        setErrorAddEvent((err as Error).message);
+      } else {
+        console.error(err);
+        setErrorAddEvent("An unexpected error occurred. Please try again.");
+      }
+      setModalVisible(true); // Show modal on error
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.createEventContainer}>
@@ -102,6 +138,13 @@ const Page = () => {
                     items={[
                       { label: "Basketball", value: "basketball" },
                       { label: "Football", value: "football" },
+                      { label: "Volleyball", value: "volleyball" },
+                      { label: "Tennis", value: "tennis" },
+                      { label: "Baseball", value: "baseball" },
+                      { label: "Badminton", value: "badminton" },
+                      { label: "Handball", value: "handball" },
+                      { label: "Ice Hockey", value: "icehockey" },
+                      { label: "Paintball", value: "paintball" },
                     ]}
                     placeholder={{
                       label: "Select a sport",
@@ -142,8 +185,8 @@ const Page = () => {
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
-                value={peopleCount}
-                onChangeText={setPeopleCount}
+                value={maxParticipants}
+                onChangeText={setMaxParticipants}
                 placeholder="People Count"
                 placeholderTextColor={"#6F6F6F"}
                 style={styles.inputBox}
@@ -205,31 +248,33 @@ const Page = () => {
             onPress={() => Alert.alert("Button clicked")}
             color="green"
           />
-          <CustomButton
-            title="Create"
-            onPress={() => {
-              addEvent({
-                title,
-                sport,
-                locationCity: locationCity,
-                locationDistrict: locationVillage,
-                participants: 0,
-                maxParticipants: parseInt(peopleCount),
-                teamNumber: teamCount,
-                eventDate: date,
-                eventTime: time,
-                skillRating: minSkillLevel,
-                locationIndex: "5",
-                isEventOver: 0,
-                organizer: user,
-              });
-              router.back(); // Navigate back to the previous screen
-            }}
-          />
+          <CustomButton title="Create" onPress={handleAddEvent} />
         </View>
         <View style={styles.wave}>
           <Image source={require("../../../assets/images/Waves.png")} />
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{errorAddEvent}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
@@ -316,6 +361,7 @@ const styles = StyleSheet.create({
   eventInformationTitleFonts: {
     fontSize: 20,
     width: "90%",
+    fontWeight: "600",
   },
   ratingStars: {
     padding: 7,
@@ -340,5 +386,50 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
     width: "35%",
     fontSize: 16,
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });
