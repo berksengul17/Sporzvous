@@ -130,6 +130,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       successCallback(response);
     } catch (error: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error)) {
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -137,15 +138,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+          ) {
+            errorMessage = error.response.data.error;
+          } else if (error instanceof Error) {
+            // Handle other types of errors (non-Axios errors)
+            errorMessage = error.response?.data;
+          }
         }
+        throw new Error(errorMessage); // Throw the error so it can be caught in the component
       }
     }
   };

@@ -5,9 +5,13 @@ import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   ImageBackground,
   Keyboard,
+  Modal,
+  Pressable,
   StyleSheet,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -19,14 +23,22 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorLogin, setErrorLogin] = useState("");
 
   const onLogin = async () => {
-    console.log(email, password);
+    try {
+      console.log(email, password);
 
-    await login({ email, password }, (response) => {
-      console.log("response", response.data);
-      router.replace("drawer/(home)/sportsScreen");
-    });
+      await login({ email, password }, (response) => {
+        console.log("response", response.data);
+        router.replace("drawer/(home)/sportsScreen");
+      });
+      setErrorLogin("");
+    } catch (error) {
+      setErrorLogin((error as Error).message);
+      setModalVisible(true); // Show modal on error
+    }
   };
 
   return (
@@ -76,6 +88,27 @@ const LoginPage = () => {
             </View>
           </View>
         </ImageBackground>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{errorLogin}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -140,6 +173,50 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: "center",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });
 

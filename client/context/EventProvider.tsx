@@ -210,7 +210,6 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await axios.post(`${API_URL}/create`, event);
       fetchAllEvents(); // Optionally update events state if needed
-      setErrorAddEvent(""); // Clear any previous errors
     } catch (err) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -222,8 +221,6 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
           errorMessage = err.response?.data;
         }
       }
-
-      setErrorAddEvent(errorMessage);
       throw new Error(errorMessage); // Throw the error so it can be caught in the component
     }
   };
