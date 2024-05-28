@@ -46,7 +46,7 @@ public class UserController {
             return ResponseEntity.ok(loggedInUser);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Email or password is wrong");
+                    .body("Email or password is wrong or empty");
         }
     }
 
