@@ -18,7 +18,7 @@ const _layout = () => {
         name="home"
         options={{
           presentation: "fullScreenModal",
-          headerTitle: "Upcoming Events",
+          headerTitle: "Sporzvous",
           headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
           headerLeft: () => (
             <Entypo
