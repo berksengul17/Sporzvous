@@ -24,7 +24,7 @@ const LoginPage = () => {
 
     await login({ email, password }, (response) => {
       console.log("response", response.data);
-      router.replace("sportsScreen");
+      router.replace("drawer/(home)/sportsScreen");
     });
   };
 

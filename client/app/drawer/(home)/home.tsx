@@ -76,12 +76,6 @@ export default function HomeScreen() {
           <Ionicons name="filter" size={24} color="#FF5C00" />
         </TouchableOpacity>
       </View>
-      <View style={styles.header}>
-        <Text style={styles.heading}>Upcoming Events</Text>
-        <TouchableOpacity onPress={() => router.replace("/sportsScreen")}>
-          <Text style={styles.selectSportText}>Select Sport</Text>
-        </TouchableOpacity>
-      </View>
       <FlatList
         data={filteredEvents}
         renderItem={({ item }) => <EventItem event={item} />}
@@ -133,6 +127,7 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: "#F0F0F0",
     borderRadius: 10,
+    marginTop: 15,
   },
   searchText: {
     flex: 1,
