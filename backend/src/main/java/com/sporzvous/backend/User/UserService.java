@@ -30,11 +30,14 @@ public class UserService {
             throw new IllegalArgumentException("Email is already taken");
         } else if (userRepository.findByUsername(user.getUsername()) != null){
             throw new IllegalArgumentException("Username is already taken");
-        } else if (!isValidEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Invalid email address");
         } else if (user.getUsername().length() > 30 || user.getUsername().length() < 2) {
             throw new IllegalArgumentException("User name should be between 2 and 30 characters");
+        } else if (!isValidEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Invalid email address");
+        } else if (!isValidPassword(user.getPassword())) {
+            throw new IllegalArgumentException("Password must start with an uppercase letter, include a number and a symbol, and be between 8 and 16 characters long");
         }
+
 
         return userRepository.save(user);
     }
@@ -142,5 +145,27 @@ public class UserService {
         return Pattern.compile("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
                 .matcher(emailAddress)
                 .matches();
+    }
+
+    private boolean isValidPassword(String password) {
+        if (password == null || password.length() < 8 || password.length() > 16) {
+            return false;
+        }
+
+        if (!Character.isUpperCase(password.charAt(0))) {
+            return false;
+        }
+
+        boolean hasNumber = false;
+        boolean hasSymbol = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) {
+                hasNumber = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                hasSymbol = true;
+            }
+        }
+
+        return hasNumber && hasSymbol;
     }
 }

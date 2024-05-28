@@ -5,7 +5,11 @@ import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   Keyboard,
+  Modal,
+  Pressable,
+  Text,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
@@ -15,6 +19,8 @@ import CountryPicker from "react-native-country-picker-modal";
 
 const Register = () => {
   const { signUp } = useUserContext();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [errorRegister, setErrorRegister] = useState("");
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -27,13 +33,19 @@ const Register = () => {
   const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   const onSignUp = async () => {
-    await signUp(
-      { username, email, password, country: country.name.common },
-      (response) => {
-        console.log("response", response.data);
-        router.replace("/");
-      }
-    );
+    try {
+      await signUp(
+        { username, email, password, country: country.name.common },
+        (response) => {
+          console.log("response", response.data);
+          router.replace("/");
+        }
+      );
+      setErrorRegister("");
+    } catch (error) {
+      setErrorRegister((error as Error).message);
+      setModalVisible(true);
+    }
   };
 
   const onSelect = (country) => {
@@ -108,7 +120,27 @@ const Register = () => {
             />
           </View>
         </View>
-        <BottomWaves />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{errorRegister}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -159,5 +191,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
     gap: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });

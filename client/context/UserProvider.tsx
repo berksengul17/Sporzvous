@@ -57,6 +57,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     favoriteSport: "",
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
+  const [errorRegister, setErrorRegister] = useState("");
 
   const signUp = async (
     {
@@ -75,24 +76,23 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         country,
       });
       successCallback(response);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
+    } catch (err: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+          errorMessage = err.response.data.error;
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
         }
       }
+      setErrorRegister(errorMessage);
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
     }
   };
 
