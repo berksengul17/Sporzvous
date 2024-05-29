@@ -5,8 +5,7 @@ const Layout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="myevents" />
-      <Stack.Screen name="ratePlayersFinished" />
-      <Stack.Screen name="ratePlayersUnfinished" />
+      <Stack.Screen name="mainEventScreen"/>
     </Stack>
   );
 };
