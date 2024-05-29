@@ -18,6 +18,8 @@ export type Event = {
   locationIndex: string;
   isEventOver: number;
   organizer: User;
+  latitude: number;
+  longitude: number;
 };
 
 type CreateEvent = Omit<Event, "eventId">;
@@ -48,134 +50,7 @@ const EventContext = createContext<EventContextType | null>(null);
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
   const [errorAddEvent, setErrorAddEvent] = useState("");
-  const [events, setEvents] = useState<Event[]>([
-    {
-      eventId: 1,
-      title: "Sert Tenis",
-      sport: "Tennis",
-      locationCity: "İzmir",
-      locationDistrict: "Urla",
-      participants: 2,
-      maxParticipants: 2,
-      teamNumber: 2,
-      eventDate: "2024-06-12",
-      eventTime: "07:00",
-      skillRating: 3,
-      locationIndex: "1",
-      isEventOver: 1,
-      organizer: {
-        userId: 1,
-        image: "profile1.jpg",
-        email: "email1@test.com",
-        username: "serttenisçi",
-        fullName: "Emrecan Çuhadar",
-        age: 29,
-        gender: "Male",
-        favoriteSport: "Table Tennis",
-      },
-    },
-    {
-      eventId: 2,
-      title: "Çağanın halısaha",
-      sport: "Football",
-      locationCity: "İzmir",
-      locationDistrict: "Bornova",
-      participants: 14,
-      maxParticipants: 14,
-      teamNumber: 2,
-      eventDate: "2024-06-15",
-      eventTime: "16:00",
-      skillRating: 4,
-      locationIndex: "2",
-      isEventOver: 1,
-      organizer: {
-        userId: 2,
-        image: "profile2.jpg",
-        email: "email2@test.com",
-
-        username: "caanozsir",
-        fullName: "Çağan Özsır",
-        age: 34,
-        gender: "Male",
-        favoriteSport: "Football",
-      },
-    },
-    {
-      eventId: 3,
-      title: "halısaha",
-      sport: "Football",
-      locationCity: "İzmir",
-      locationDistrict: "Urla",
-      participants: 10,
-      maxParticipants: 12,
-      teamNumber: 1,
-      eventDate: "2024-06-18",
-      eventTime: "21:00",
-      skillRating: 2,
-      locationIndex: "3",
-      isEventOver: 0,
-      organizer: {
-        userId: 3,
-        image: "profile3.jpg",
-        email: "email3@test.com",
-        username: "Phytox",
-        fullName: "Berk Şengül",
-        age: 26,
-        gender: "Male",
-        favoriteSport: "Football",
-      },
-    },
-    {
-      eventId: 4,
-      title: "Football Match",
-      sport: "Football",
-      locationCity: "London",
-      locationDistrict: "Hyde Park",
-      participants: 14,
-      maxParticipants: 22,
-      teamNumber: 2,
-      eventDate: "2024-06-20",
-      eventTime: "14:00",
-      skillRating: 5,
-      locationIndex: "4",
-      isEventOver: 0,
-      organizer: {
-        userId: 4,
-        image: "profile4.jpg",
-        email: "email4@test.com",
-        username: "soccer_fan",
-        fullName: "Samantha Reed",
-        age: 32,
-        gender: "Female",
-        favoriteSport: "Football",
-      },
-    },
-    {
-      eventId: 5,
-      title: "İyte Basket",
-      sport: "Basketball",
-      locationCity: "İzmir",
-      locationDistrict: "Urla",
-      participants: 6,
-      maxParticipants: 8,
-      teamNumber: 2,
-      eventDate: "2024-06-22",
-      eventTime: "18:00",
-      skillRating: 3,
-      locationIndex: "5",
-      isEventOver: 0,
-      organizer: {
-        userId: 5,
-        image: "profile5.jpg",
-        email: "email5@test.com",
-        username: "NightRaiden",
-        fullName: "Emre Erol",
-        age: 28,
-        gender: "Male",
-        favoriteSport: "Football",
-      },
-    },
-  ]);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     fetchAllEvents();

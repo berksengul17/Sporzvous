@@ -139,6 +139,8 @@ const Page = () => {
         locationIndex: "5",
         isEventOver: 0,
         organizer: user,
+        latitude: selectedLocation?.latitude, // Include latitude
+        longitude: selectedLocation?.longitude, // Include longitude
       });
       setErrorAddEvent("");
       router.back(); // Navigate back to the previous screen
@@ -187,15 +189,15 @@ const Page = () => {
                   useNativeAndroidPickerStyle={false}
                   onValueChange={(sport) => setSport(sport)}
                   items={[
-                    { label: "Basketball", value: "basketball" },
-                    { label: "Football", value: "football" },
-                    { label: "Volleyball", value: "volleyball" },
-                    { label: "Tennis", value: "tennis" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Badminton", value: "badminton" },
-                    { label: "Handball", value: "handball" },
-                    { label: "Ice Hockey", value: "icehockey" },
-                    { label: "Paintball", value: "paintball" },
+                    { label: "Basketball", value: "Basketball" },
+                    { label: "Football", value: "Football" },
+                    { label: "Volleyball", value: "Volleyball" },
+                    { label: "Tennis", value: "Tennis" },
+                    { label: "Baseball", value: "Baseball" },
+                    { label: "Badminton", value: "Badminton" },
+                    { label: "Handball", value: "Handball" },
+                    { label: "Ice Hockey", value: "Ice Hockey" },
+                    { label: "Paintball", value: "Paintball" },
                   ]}
                   placeholder={{
                     label: "Select a sport",
