@@ -109,9 +109,6 @@ const Register = () => {
                     visible={showCountryPicker}
                     onClose={() => setShowCountryPicker(false)}
                   />
-                  <Text style={styles.pickerButtonText}>
-                    {country.name.common}
-                  </Text>
                 </View>
                 <View style={styles.buttons}>
                   <CustomButton
