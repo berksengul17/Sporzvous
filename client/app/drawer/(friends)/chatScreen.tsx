@@ -1,5 +1,7 @@
 import { useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
+import { Client } from "@stomp/stompjs";
+import axios from "axios";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,13 +15,12 @@ import {
   View,
 } from "react-native";
 import SockJS from "sockjs-client";
-import { Client, over } from "stompjs";
 
 export type ChatMessage = {
   id: string;
   content: string;
-  senderId: string;
-  receiverId: string;
+  senderId: number;
+  receiverId: number;
   timestamp: string;
   status: "JOIN" | "MESSAGE" | "LEAVE";
 };
@@ -34,25 +35,48 @@ const ChatScreen: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
-    let Sock = new SockJS("http://localhost:8080/ws");
-    stompClient = over(Sock);
-    stompClient.connect({}, onConnected, (error: any) => console.log(error));
+    const socket = new SockJS(`${process.env.EXPO_PUBLIC_API_URL}/ws`);
+    stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: onConnected,
+      onStompError: (frame) => {
+        console.error(frame.headers["message"]);
+      },
+    });
+    stompClient.activate();
+
+    // Fetch messages from the backend
+    axios
+      .get(
+        `${process.env.EXPO_PUBLIC_API_URL}/messages?senderId=${user.userId}&receiverId=${receiverId}`
+      )
+      .then((response) => {
+        setMessages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching messages:", error);
+      });
+
+    return () => {
+      stompClient?.deactivate();
+    };
   }, []);
 
   const onConnected = () => {
-    stompClient?.subscribe(
-      "/user/" + user.username + "/private",
-      onPrivateMessage
-    );
+    stompClient?.subscribe(`/user/${user.userId}/private`, onPrivateMessage);
     userJoin();
   };
 
   const userJoin = () => {
     let chatMessage = {
-      senderName: user.username,
+      senderId: user.userId,
       status: "JOIN",
     };
-    stompClient?.send("/app/message", {}, JSON.stringify(chatMessage));
+    stompClient?.publish({
+      destination: "/app/private-message",
+      body: JSON.stringify(chatMessage),
+    });
   };
 
   const onSend = () => {
@@ -61,43 +85,24 @@ const ChatScreen: React.FC = () => {
         id: (messages.length + 1).toString(),
         content: newMessage,
         senderId: user.userId,
-        receiverId: receiverId as string,
+        receiverId: parseInt(receiverId as string),
         timestamp: new Date().toISOString(),
         status: "MESSAGE",
       };
 
+      stompClient?.publish({
+        destination: "/app/private-message",
+        body: JSON.stringify(newMsg),
+      });
+
       setNewMessage("");
-      setMessages((prevMessages: ChatMessage[]) => [...prevMessages, newMsg]);
+      setMessages((prevMessages) => [...prevMessages, newMsg]);
     }
   };
 
-  const onMessageReceived = (payload: { body: string }) => {
-    var payloadData = JSON.parse(payload.body);
-    switch (payloadData.status) {
-      case "JOIN":
-        if (!messages.get(payloadData.senderName)) {
-          messages.set(payloadData.senderName, []);
-          setMessages(new Map(messages));
-        }
-        break;
-      case "MESSAGE":
-        messages.push(payloadData);
-        break;
-    }
-  };
-
-  const onPrivateMessage = (payload: { body: string }) => {
-    console.log(payload);
-    var payloadData = JSON.parse(payload.body);
-    if (!messages.get(payloadData.senderName)) {
-      messages.get(payloadData.senderName).push(payloadData);
-      setMessages(new Map(messages));
-    } else {
-      let list = [];
-      list.push(payloadData);
-      messages.set(payloadData.senderName, list);
-      setMessages(new Map(messages));
-    }
+  const onPrivateMessage = (message: any) => {
+    const payloadData = JSON.parse(message.body);
+    setMessages((prevMessages) => [...prevMessages, payloadData]);
   };
 
   const formatTime = (timestamp: string) => {

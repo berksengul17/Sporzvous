@@ -62,7 +62,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserById = async (userId: number): Promise<User> => {
     try {
-      const response = await axios.get(`${API_URL}/get/${userId}`)
+      const response = await axios.get(`${API_URL}/get/${userId}`);
       return response.data;
     } catch (err: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
@@ -79,7 +79,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           errorMessage = err.response?.data;
         }
       }
-  }
+
+      throw Error(errorMessage);
+    }
+  };
 
   const signUp = async (
     {

@@ -21,6 +21,7 @@
     "@react-native-picker/picker": "^2.7.6",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.0.2",
+    "@stomp/stompjs": "^7.0.0",
     "axios": "^1.6.8",
     "expo": "~51.0.2",
     "expo-constants": "~16.0.1",
