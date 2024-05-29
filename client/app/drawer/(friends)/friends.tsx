@@ -1,24 +1,23 @@
+import CustomButton from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
 import {
-  FontAwesome5,
-  Ionicons,
   AntDesign,
+  Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
   Image,
+  SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  TextInput,
-  SafeAreaView,
 } from "react-native";
 import Modal from "react-native-modal";
-import CustomButton from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import { router } from "expo-router";
 
 const friendsData = [
   {
@@ -43,25 +42,26 @@ const friendsData = [
 ];
 
 const FriendItem = ({ friend, onPress }) => (
-    <View style={styles.friendContainer}>
-      <Image source={friend.imageUri} style={styles.profileImage} />
-      <View style={styles.friendInfo}>
-        <CustomText
-          customStyle={styles.friendName}
-          text={friend.name}
-          isBold={true}
-        />
-        <CustomText
-          customStyle={styles.friendLastSeen}
-          text={`Last seen: ${friend.lastSeen}`}
-        />
-      </View>
-      <TouchableOpacity style={styles.iconButton}
-      onPress={() => onPress(friend.id)}
-      >
-        <AntDesign name="message1" size={24} color="#FF5C00" />
-      </TouchableOpacity>
+  <View style={styles.friendContainer}>
+    <Image source={friend.imageUri} style={styles.profileImage} />
+    <View style={styles.friendInfo}>
+      <CustomText
+        customStyle={styles.friendName}
+        text={friend.name}
+        isBold={true}
+      />
+      <CustomText
+        customStyle={styles.friendLastSeen}
+        text={`Last seen: ${friend.lastSeen}`}
+      />
     </View>
+    <TouchableOpacity
+      style={styles.iconButton}
+      onPress={() => onPress(friend.id)}
+    >
+      <AntDesign name="message1" size={24} color="#FF5C00" />
+    </TouchableOpacity>
+  </View>
 );
 
 export default function FriendsScreen() {
@@ -76,11 +76,10 @@ export default function FriendsScreen() {
     setModalVisible(!isModalVisible);
   };
 
-  const handlePress = (receiverId) => {
-    const senderId = '1'; // Replace with the actual sender ID
+  const handlePress = (receiverId: number) => {
     router.push({
-      pathname: '/drawer/(friends)/chatScreen',
-      params: { receiverId, senderId },
+      pathname: "/drawer/(friends)/chatScreen",
+      params: { receiverId },
     });
   };
 
@@ -106,14 +105,13 @@ export default function FriendsScreen() {
               <CustomButton
                 title="Cancel"
                 onPress={toggleModal}
-                width={80}
-                backgroundColor="white"
-                color="#FF5C00"
+                containerStyle={{ width: 80, backgroundColor: "#fff" }}
+                textStyle={{ color: "#fff" }}
               />
               <CustomButton
                 title="Send Request"
                 onPress={toggleModal}
-                width={130}
+                containerStyle={{ width: 130 }}
               />
             </View>
           </View>
@@ -149,7 +147,9 @@ export default function FriendsScreen() {
       </View>
       <FlatList
         data={filteredFriends}
-        renderItem={({ item }) => <FriendItem friend={item} onPress={handlePress} />}
+        renderItem={({ item }) => (
+          <FriendItem friend={item} onPress={handlePress} />
+        )}
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
       />

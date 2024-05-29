@@ -26,5 +26,6 @@ public class Message {
     private String content;
     private LocalDateTime timestamp;
     private boolean readStatus;
+    private MessageStatus status;
 
 }

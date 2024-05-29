@@ -25,6 +25,17 @@ public class UserController {
     private final RatingService ratingService;
     private final MailSenderService mailSenderService;
 
+    @GetMapping("/get/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            User user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @PostMapping("/signUp")
     public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
@@ -46,7 +57,7 @@ public class UserController {
             return ResponseEntity.ok(loggedInUser);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Email or password is wrong");
+                    .body("Email or password is wrong or empty");
         }
     }
 

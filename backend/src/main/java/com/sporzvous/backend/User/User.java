@@ -112,4 +112,19 @@ public class User {
         this.sentRequests = sentRequests;
         this.receivedRequests = receivedRequests;
     }
+
+    public User(Long userId, String email, String password, String fullName,
+                String username, String country, int age, String gender,
+                String favoriteSport, int eventCount) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.username = username;
+        this.country = country;
+        this.age = age;
+        this.gender = gender;
+        this.favoriteSport = favoriteSport;
+        this.eventCount = eventCount;
+    }
 }

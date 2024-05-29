@@ -23,6 +23,11 @@ public class UserService {
     private final EventRepository eventRepository;
     private final UserEventService userEventService;
 
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
+    }
+
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
 

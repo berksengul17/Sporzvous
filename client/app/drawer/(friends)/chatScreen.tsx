@@ -1,67 +1,130 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { useUserContext } from "@/context/UserProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { Client } from "@stomp/stompjs";
+import axios from "axios";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import SockJS from "sockjs-client";
 
-const dummyMessages = [
-  {
-    id: '1',
-    content: 'Hello!',
-    sender: 'User1',
-    receiver: 'User2',
-    timestamp: '2024-05-28T12:34:56',
-  },
-  {
-    id: '2',
-    content: 'Hi there!',
-    sender: 'User2',
-    receiver: 'User1',
-    timestamp: '2024-05-28T12:35:00',
-  },
-  // Add more dummy messages if needed
-];
+export type ChatMessage = {
+  id: string;
+  content: string;
+  senderId: number;
+  receiverId: number;
+  timestamp: string;
+  status: "JOIN" | "MESSAGE" | "LEAVE";
+};
 
-const ChatScreen = () => {
-  const { receiverId, senderId, receiverName, receiverImage } = useLocalSearchParams();
+let stompClient: Client | null = null;
+
+const ChatScreen: React.FC = () => {
+  const { receiverId } = useLocalSearchParams();
+  const { user } = useUserContext();
   const navigation = useNavigation();
-  const [messages, setMessages] = useState(dummyMessages);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  const sendMessage = () => {
+  useEffect(() => {
+    const socket = new SockJS(`${process.env.EXPO_PUBLIC_API_URL}/ws`);
+    stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: onConnected,
+      onStompError: (frame) => {
+        console.error(frame.headers["message"]);
+      },
+    });
+    stompClient.activate();
+
+    // Fetch messages from the backend
+    axios
+      .get(
+        `${process.env.EXPO_PUBLIC_API_URL}/messages?senderId=${user.userId}&receiverId=${receiverId}`
+      )
+      .then((response) => {
+        setMessages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching messages:", error);
+      });
+
+    return () => {
+      stompClient?.deactivate();
+    };
+  }, []);
+
+  const onConnected = () => {
+    stompClient?.subscribe(`/user/${user.userId}/private`, onPrivateMessage);
+    userJoin();
+  };
+
+  const userJoin = () => {
+    let chatMessage = {
+      senderId: user.userId,
+      status: "JOIN",
+    };
+    stompClient?.publish({
+      destination: "/app/private-message",
+      body: JSON.stringify(chatMessage),
+    });
+  };
+
+  const onSend = () => {
     if (newMessage.trim()) {
-      const newMsg = {
+      const newMsg: ChatMessage = {
         id: (messages.length + 1).toString(),
         content: newMessage,
-        sender: 'User1', // Replace with dynamic sender id or name
-        receiver: 'User2', // Replace with dynamic receiver id or name
+        senderId: user.userId,
+        receiverId: parseInt(receiverId as string),
         timestamp: new Date().toISOString(),
+        status: "MESSAGE",
       };
-      setMessages([...messages, newMsg]);
-      setNewMessage('');
+
+      stompClient?.publish({
+        destination: "/app/private-message",
+        body: JSON.stringify(newMsg),
+      });
+
+      setNewMessage("");
+      setMessages((prevMessages) => [...prevMessages, newMsg]);
     }
   };
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const onPrivateMessage = (message: any) => {
+    const payloadData = JSON.parse(message.body);
+    setMessages((prevMessages) => [...prevMessages, payloadData]);
   };
 
-  if (!receiverId || !senderId) {
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  if (!receiverId || !user.userId) {
     return <Text>Missing receiverId or senderId</Text>;
   }
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={65} // Adjust this value according to your header height or other elements
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={65}
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-sharp" size={24} color="#FF5C00" />
         </TouchableOpacity>
-        <Image source={{ uri: {receiverImage}}} style={styles.profileImage} />
-        <Text style={styles.headerTitle}>{receiverName}</Text>
+        <Text style={styles.headerTitle}>{receiverId}</Text>
       </View>
       <FlatList
         data={messages}
@@ -70,19 +133,29 @@ const ChatScreen = () => {
           <View
             style={[
               styles.messageContainer,
-              item.sender === 'User1' ? styles.messageRight : styles.messageLeft,
+              item.senderId === user.userId
+                ? styles.messageRight
+                : styles.messageLeft,
             ]}
           >
             <Text
               style={[
-                item.sender === 'User1' ? styles.messageContentRight : styles.messageContentLeft,
+                item.senderId === user.userId
+                  ? styles.messageContentRight
+                  : styles.messageContentLeft,
               ]}
-            >{item.content}</Text>
+            >
+              {item.content}
+            </Text>
             <Text
               style={[
-                item.sender === 'User1' ? styles.messageTimestampRight : styles.messageTimestampLeft,
+                item.senderId === user.userId
+                  ? styles.messageTimestampRight
+                  : styles.messageTimestampLeft,
               ]}
-            >{formatTime(item.timestamp)}</Text>
+            >
+              {formatTime(item.timestamp)}
+            </Text>
           </View>
         )}
       />
@@ -93,7 +166,7 @@ const ChatScreen = () => {
           onChangeText={setNewMessage}
           placeholder="Type your message..."
         />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+        <TouchableOpacity style={styles.sendButton} onPress={onSend}>
           <Ionicons name="send" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -104,14 +177,14 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   profileImage: {
     width: 40,
@@ -121,8 +194,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FF5C00',
+    fontWeight: "bold",
+    color: "#FF5C00",
   },
   messageContainer: {
     paddingHorizontal: 10,
@@ -132,60 +205,60 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   messageLeft: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#e0e0e0',
+    alignSelf: "flex-start",
+    backgroundColor: "#e0e0e0",
   },
   messageRight: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#FF5C00',
+    alignSelf: "flex-end",
+    backgroundColor: "#FF5C00",
   },
   messageSender: {
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   messageContentRight: {
     marginTop: 5,
-    color: 'white',
+    color: "white",
   },
   messageContentLeft: {
     marginTop: 5,
-    color: 'black',
+    color: "black",
   },
   messageTimestampRight: {
     marginTop: 5,
     fontSize: 10,
-    color: '#FFC5A2',
-    alignSelf: 'flex-end',
+    color: "#FFC5A2",
+    alignSelf: "flex-end",
   },
   messageTimestampLeft: {
     marginTop: 5,
     fontSize: 10,
-    color: '#8A8A8A',
-    alignSelf: 'flex-end',
+    color: "#8A8A8A",
+    alignSelf: "flex-end",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    borderTopColor: "#ccc",
     marginBottom: 20,
   },
   input: {
     flex: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 50,
     padding: 10,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#FF5C00',
+    backgroundColor: "#FF5C00",
     borderRadius: 50,
     padding: 10,
   },
   sendButtonText: {
-    color: 'white',
+    color: "white",
   },
 });
 
