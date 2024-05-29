@@ -1,4 +1,4 @@
-package com.sporzvous.backend;
+package com.sporzvous.backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
