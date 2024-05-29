@@ -18,12 +18,33 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
+const getEventStatus = (isEventOver) => {
+  switch (isEventOver) {
+    case 0:
+      return "Not Started";
+    case 1:
+      return "OnGoing";
+    case 2:
+      return "Finished";
+    default:
+      return "Unknown";
+  }
+};
+
 function EventStatus({ isEventOver }: { isEventOver: number }) {
-  if (isEventOver === 1) {
+  
+  if (isEventOver === 2) {
     return (
       <View style={[styles.statusContainer, styles.completed]}>
         <Entypo name="check" size={16} color="white" />
         <Text style={styles.statusText}>Completed</Text>
+      </View>
+    );
+  } else if (isEventOver === 1) {
+    return (
+      <View style={[styles.statusContainer, styles.OnGoing]}>
+        <Entypo name="check" size={16} color="white" />
+        <Text style={styles.statusText}>OnGoing</Text>
       </View>
     );
   }
@@ -34,26 +55,18 @@ function EventStatus({ isEventOver }: { isEventOver: number }) {
         size={16}
         color="white"
       />
-      <Text style={styles.statusText}>Ongoing</Text>
+      <Text style={styles.statusText}>Not Started</Text>
     </View>
   );
 }
 
 const EventItem = ({ event }: { event: Event }) => {
-  const navigateByCondition = () => {
-    if (event.isEventOver === 1) {
-      router.push("drawer/(myevents)/ratePlayersFinished", { event });
-    } else {
-      router.push("drawer/(myevents)/ratePlayersUnfinished", { event });
-    }
-  };
-
   return (
     <TouchableOpacity
       onPress={() =>
         router.push({
-          pathname: "./eventDetail/[id]",
-          params: { id: event.eventId },
+          pathname: "drawer/(myevents)/mainEventScreen",
+          params: { event: JSON.stringify(event)},
         })
       }
       style={styles.card}
@@ -68,7 +81,7 @@ const EventItem = ({ event }: { event: Event }) => {
         <Text style={styles.eventDetail}>Date: {event.eventDate}</Text>
       </View>
       <View style={styles.cardFooter}>
-        <TouchableOpacity onPress={navigateByCondition}>
+        <TouchableOpacity>
           <Feather name="upload" size={24} color="#FF5C00" style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -188,10 +201,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   ongoing: {
-    backgroundColor: "#F7E900",
+    backgroundColor: "#FF9000",
   },
   completed: {
     backgroundColor: "#32CD32",
+  },
+  OnGoing: {
+    backgroundColor: "lightblue"
   },
   statusText: {
     color: "white",
