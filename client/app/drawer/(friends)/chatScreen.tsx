@@ -1,3 +1,4 @@
+import { useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -12,19 +13,22 @@ import {
   View,
 } from "react-native";
 import SockJS from "sockjs-client";
-import { over } from "stompjs";
+import { Client, over } from "stompjs";
 
 export type ChatMessage = {
   id: string;
   content: string;
-  sender: string;
-  receiver: string;
+  senderId: string;
+  receiverId: string;
   timestamp: string;
+  status: "JOIN" | "MESSAGE" | "LEAVE";
 };
 
+let stompClient: Client | null = null;
+
 const ChatScreen: React.FC = () => {
-  const { receiverId, senderId, receiverName, receiverImage } =
-    useLocalSearchParams();
+  const { receiverId } = useLocalSearchParams();
+  const { user } = useUserContext();
   const navigation = useNavigation();
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -32,21 +36,67 @@ const ChatScreen: React.FC = () => {
   useEffect(() => {
     let Sock = new SockJS("http://localhost:8080/ws");
     stompClient = over(Sock);
-    stompClient.connect({}, onConnected, onError);
+    stompClient.connect({}, onConnected, (error: any) => console.log(error));
   }, []);
+
+  const onConnected = () => {
+    stompClient?.subscribe(
+      "/user/" + user.username + "/private",
+      onPrivateMessage
+    );
+    userJoin();
+  };
+
+  const userJoin = () => {
+    let chatMessage = {
+      senderName: user.username,
+      status: "JOIN",
+    };
+    stompClient?.send("/app/message", {}, JSON.stringify(chatMessage));
+  };
 
   const onSend = () => {
     if (newMessage.trim()) {
       const newMsg: ChatMessage = {
         id: (messages.length + 1).toString(),
         content: newMessage,
-        sender: senderId as string,
-        receiver: receiverId as string,
+        senderId: user.userId,
+        receiverId: receiverId as string,
         timestamp: new Date().toISOString(),
+        status: "MESSAGE",
       };
 
       setNewMessage("");
-      setMessages((prevMessages) => [...prevMessages, newMsg]);
+      setMessages((prevMessages: ChatMessage[]) => [...prevMessages, newMsg]);
+    }
+  };
+
+  const onMessageReceived = (payload: { body: string }) => {
+    var payloadData = JSON.parse(payload.body);
+    switch (payloadData.status) {
+      case "JOIN":
+        if (!messages.get(payloadData.senderName)) {
+          messages.set(payloadData.senderName, []);
+          setMessages(new Map(messages));
+        }
+        break;
+      case "MESSAGE":
+        messages.push(payloadData);
+        break;
+    }
+  };
+
+  const onPrivateMessage = (payload: { body: string }) => {
+    console.log(payload);
+    var payloadData = JSON.parse(payload.body);
+    if (!messages.get(payloadData.senderName)) {
+      messages.get(payloadData.senderName).push(payloadData);
+      setMessages(new Map(messages));
+    } else {
+      let list = [];
+      list.push(payloadData);
+      messages.set(payloadData.senderName, list);
+      setMessages(new Map(messages));
     }
   };
 
@@ -55,7 +105,7 @@ const ChatScreen: React.FC = () => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  if (!receiverId || !senderId) {
+  if (!receiverId || !user.userId) {
     return <Text>Missing receiverId or senderId</Text>;
   }
 
@@ -69,7 +119,7 @@ const ChatScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-sharp" size={24} color="#FF5C00" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{receiverName}</Text>
+        <Text style={styles.headerTitle}>{receiverId}</Text>
       </View>
       <FlatList
         data={messages}
@@ -78,14 +128,14 @@ const ChatScreen: React.FC = () => {
           <View
             style={[
               styles.messageContainer,
-              item.sender === senderId
+              item.senderId === user.userId
                 ? styles.messageRight
                 : styles.messageLeft,
             ]}
           >
             <Text
               style={[
-                item.sender === senderId
+                item.senderId === user.userId
                   ? styles.messageContentRight
                   : styles.messageContentLeft,
               ]}
@@ -94,7 +144,7 @@ const ChatScreen: React.FC = () => {
             </Text>
             <Text
               style={[
-                item.sender === senderId
+                item.senderId === user.userId
                   ? styles.messageTimestampRight
                   : styles.messageTimestampLeft,
               ]}
