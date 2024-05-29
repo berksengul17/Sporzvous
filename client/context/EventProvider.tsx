@@ -49,7 +49,6 @@ const EventContext = createContext<EventContextType | null>(null);
 // EventProvider component
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
-  const [errorAddEvent, setErrorAddEvent] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
