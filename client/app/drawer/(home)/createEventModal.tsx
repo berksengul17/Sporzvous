@@ -24,6 +24,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
+import MapView, { Marker } from "react-native-maps"; // Import MapView and Marker
 
 const Page = () => {
   const router = useRouter();
@@ -49,6 +50,8 @@ const Page = () => {
 
   const [cities, setCities] = useState([]);
   const [villages, setVillages] = useState([]);
+  const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
+  const [selectedLocation, setSelectedLocation] = useState(null); // State to store selected location
 
   useEffect(() => {
     // Fetch cities from GeoNames API
@@ -136,6 +139,8 @@ const Page = () => {
         locationIndex: "5",
         isEventOver: 0,
         organizer: user,
+        latitude: selectedLocation?.latitude, // Include latitude
+        longitude: selectedLocation?.longitude, // Include longitude
       });
       setErrorAddEvent("");
       router.back(); // Navigate back to the previous screen
@@ -143,6 +148,17 @@ const Page = () => {
       setErrorAddEvent((error as Error).message);
       setModalVisible(true); // Show modal on error
     }
+  };
+
+  const handleChooseLocation = () => {
+    setIsMapVisible(true);
+  };
+
+  const handleMapPress = (event: {
+    nativeEvent: { coordinate: { latitude: any; longitude: any } };
+  }) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setSelectedLocation({ latitude, longitude });
   };
 
   return (
@@ -173,15 +189,15 @@ const Page = () => {
                   useNativeAndroidPickerStyle={false}
                   onValueChange={(sport) => setSport(sport)}
                   items={[
-                    { label: "Basketball", value: "basketball" },
-                    { label: "Football", value: "football" },
-                    { label: "Volleyball", value: "volleyball" },
-                    { label: "Tennis", value: "tennis" },
-                    { label: "Baseball", value: "baseball" },
-                    { label: "Badminton", value: "badminton" },
-                    { label: "Handball", value: "handball" },
-                    { label: "Ice Hockey", value: "icehockey" },
-                    { label: "Paintball", value: "paintball" },
+                    { label: "Basketball", value: "Basketball" },
+                    { label: "Football", value: "Football" },
+                    { label: "Volleyball", value: "Volleyball" },
+                    { label: "Tennis", value: "Tennis" },
+                    { label: "Baseball", value: "Baseball" },
+                    { label: "Badminton", value: "Badminton" },
+                    { label: "Handball", value: "Handball" },
+                    { label: "Ice Hockey", value: "Ice Hockey" },
+                    { label: "Paintball", value: "Paintball" },
                   ]}
                   placeholder={{
                     label: "Select a sport",
@@ -309,7 +325,7 @@ const Page = () => {
         <View style={styles.buttonContainer}>
           <Button
             title="Choose Location"
-            onPress={() => Alert.alert("Button clicked")}
+            onPress={handleChooseLocation}
             color="green"
           />
           <CustomButton title="Create" onPress={handleAddEvent} />
@@ -317,6 +333,46 @@ const Page = () => {
         <View style={styles.wave}>
           <Image source={require("../../../assets/images/Waves.png")} />
         </View>
+
+        {isMapVisible && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isMapVisible}
+            onRequestClose={() => {
+              setIsMapVisible(!isMapVisible);
+            }}
+          >
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: 39.9334, // Central latitude of Turkey (Ankara)
+                  longitude: 32.8597, // Central longitude of Turkey (Ankara)
+                  latitudeDelta: 10, // Adjust the delta to cover the entire country
+                  longitudeDelta: 10, // Adjust the delta to cover the entire country
+                }}
+                onPress={handleMapPress}
+              >
+                {selectedLocation && (
+                  <Marker
+                    coordinate={selectedLocation}
+                    title="Selected Location"
+                    description="This is the chosen location"
+                  />
+                )}
+              </MapView>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  setIsMapVisible(!isMapVisible);
+                }}
+              >
+                <Text style={styles.textStyle}>Confirm Location</Text>
+              </Pressable>
+            </View>
+          </Modal>
+        )}
 
         <Modal
           animationType="slide"
@@ -517,5 +573,13 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
+  },
+  mapContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
 });

@@ -25,6 +25,7 @@ type UserProps = {
   user: User;
   isProfileEditable: boolean;
   setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchUserById: (userId: number) => Promise<User>;
   signUp: (
     {
       username,
@@ -58,6 +59,30 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
   const [errorRegister, setErrorRegister] = useState("");
+
+  const fetchUserById = async (userId: number): Promise<User> => {
+    try {
+      const response = await axios.get(`${API_URL}/get/${userId}`);
+      return response.data;
+    } catch (err: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+          errorMessage = err.response.data.error;
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
+      }
+
+      throw Error(errorMessage);
+    }
+  };
 
   const signUp = async (
     {
@@ -192,6 +217,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setUser,
     isProfileEditable,
     setProfileEditable,
+    fetchUserById,
     login,
     signUp,
     updateProfile,

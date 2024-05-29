@@ -32,7 +32,7 @@ const LoginPage = () => {
 
       await login({ email, password }, (response) => {
         console.log("response", response.data);
-        router.replace("drawer/(home)/sportsScreen");
+        router.replace("information");
       });
       setErrorLogin("");
     } catch (error) {
