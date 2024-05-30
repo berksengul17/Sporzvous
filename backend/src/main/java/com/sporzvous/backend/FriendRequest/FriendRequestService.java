@@ -14,8 +14,10 @@ public class FriendRequestService {
     private UserRepository userRepository;
 
     public FriendRequest sendFriendRequest(String senderUsername, String receiverUsername) {
-        User sender = userRepository.findByUsername(senderUsername);
-        User receiver = userRepository.findByUsername(receiverUsername);
+        User sender = userRepository.findByUsername(senderUsername)
+                .orElseThrow(() -> new IllegalArgumentException("There does not exist such a user "));
+        User receiver = userRepository.findByUsername(receiverUsername)
+                .orElseThrow(() -> new IllegalArgumentException("There does not exist such a user "));
 
         if (sender == null || receiver == null) {
             throw new IllegalArgumentException("User not found");

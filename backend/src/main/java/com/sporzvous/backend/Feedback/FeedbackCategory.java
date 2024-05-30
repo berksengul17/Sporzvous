@@ -1,9 +1,9 @@
 package com.sporzvous.backend.Feedback;
 
 public enum FeedbackCategory {
-    APP_PERFORMANCE,
     REPORT_USER,
-    CUSTOMER_SUPPORT,
+    CUSTOMER_SERVICE,
     TECHNICAL_ISSUES,
-    ACCOUNT_PROFILE,
+    SUGGESTION
 }
+

@@ -84,7 +84,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body("Content capacity is exceeded");
             }
 
-            if (request.getUser() == null) {
+            if (request.getReporter() == null) {
                 // Call createFeedback from service
                 Feedback feedback = feedbackService.createFeedback(request);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Feedback with ID" + feedback.getFeedbackId() + "created successfully");

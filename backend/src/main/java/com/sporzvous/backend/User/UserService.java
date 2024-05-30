@@ -125,10 +125,11 @@ public class UserService {
 
     public User findUserByUsername(String username) {
 
-        if (userRepository.findByUsername(username) == null) {
+        if (userRepository.findByUsername(username).isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("There does not exist such a user "));
     }
 
     public void createTokenForUser(User user, String token) {

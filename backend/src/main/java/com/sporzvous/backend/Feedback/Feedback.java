@@ -2,9 +2,13 @@ package com.sporzvous.backend.Feedback;
 
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -22,7 +26,13 @@ public class Feedback {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User reporter;
+
+    @ManyToOne
+    @JoinColumn(name = "reported_user_id")
+    private User reportedUser;
+
+    private LocalDateTime createdAt;
 
     public Feedback(FeedbackCategory category, String title, String content) {
         this.category = category;
@@ -34,7 +44,7 @@ public class Feedback {
         this.category = category;
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.reporter = user;
     }
 
     @Override

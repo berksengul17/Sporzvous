@@ -43,10 +43,10 @@ public class EventService {
             throw new IllegalArgumentException("Event with this number of participants cannot created");
 
         }else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Deadline can't be before the current date.");
+            throw new IllegalArgumentException("Date can't be before the current date.");
             
-        }else if (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now())) {
-            throw new IllegalArgumentException("Deadline can't be before the current date.");
+        }else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
+            throw new IllegalArgumentException("Time can't be before the current time.");
         }
 
         return eventRepository.save(event);

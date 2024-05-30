@@ -47,7 +47,7 @@ public class User {
     )
     private List<Event> events;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Feedback> feedbacks;
 

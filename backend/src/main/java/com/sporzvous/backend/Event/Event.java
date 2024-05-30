@@ -53,6 +53,9 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private List<UserEvent> eventParticipants;
 
+    private Double latitude;
+    private Double longitude;
+
     public Event(String title, String sport, String locationCity,
                  String locationDistrict, Integer participants,
                  Integer teamNumber, LocalDate eventDate,
@@ -74,6 +77,7 @@ public class Event {
         this.users = users;
         this.maxParticipants = maxParticipants;
         this.teams = new ArrayList<>();
+
     }
 
     @PostConstruct
