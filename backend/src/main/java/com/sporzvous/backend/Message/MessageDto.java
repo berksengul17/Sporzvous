@@ -9,9 +9,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class MessageDto {
-    private Long receiverId;
+public class MessageDTO {
+    private Long id;
     private Long senderId;
+    private Long receiverId;
     private String content;
-    private LocalDateTime timeStamp;
+    private boolean readStatus;
+    private LocalDateTime timestamp;
 }
+
