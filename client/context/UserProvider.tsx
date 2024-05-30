@@ -1,5 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+export type FriendRequest = {
+  friendRequestId: number;
+  friendRequestStatus: string;
+  senderId: number;
+  senderFullName: string;
+};
 
 export type User = {
   userId: number;
@@ -10,6 +17,8 @@ export type User = {
   age: number;
   gender: string;
   favoriteSport: string;
+  friends: User[];
+  receivedFriendRequests: FriendRequest[];
 };
 
 export type UpdateUser = {
@@ -26,6 +35,7 @@ type UserProps = {
   isProfileEditable: boolean;
   setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
   fetchUserById: (userId: number) => Promise<User>;
+  refetchUser: () => Promise<void>;
   signUp: (
     {
       username,
@@ -56,14 +66,56 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     age: 0,
     gender: "",
     favoriteSport: "",
+    friends: [],
+    receivedFriendRequests: [],
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
   const [errorRegister, setErrorRegister] = useState("");
 
+  useEffect(() => {
+    console.log("USER", user);
+  }, [user]);
+
   const fetchUserById = async (userId: number): Promise<User> => {
     try {
       const response = await axios.get(`${API_URL}/get/${userId}`);
-      return response.data;
+      const fetchedUser: User = {
+        userId: response.data.userId,
+        image: response.data.image,
+        email: response.data.userEmail,
+        username: response.data.username,
+        fullName: response.data.fullName,
+        age: response.data.age,
+        gender: response.data.gender,
+        favoriteSport: response.data.favoriteSport,
+        friends: response.data.friends,
+        receivedFriendRequests: response.data.receivedFriendRequests,
+      };
+
+      return fetchedUser;
+    } catch (err: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+          errorMessage = err.response.data.error;
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
+      }
+
+      throw Error(errorMessage);
+    }
+  };
+
+  const refetchUser = async () => {
+    try {
+      setUser(await fetchUserById(user.userId));
     } catch (err: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -140,6 +192,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         age,
         gender,
         favoriteSport,
+        friends,
+        receivedFriendRequests,
       } = response.data;
 
       setUser({
@@ -151,6 +205,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         age,
         gender,
         favoriteSport,
+        friends,
+        receivedFriendRequests,
       });
 
       successCallback(response);
@@ -218,6 +274,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     isProfileEditable,
     setProfileEditable,
     fetchUserById,
+    refetchUser,
     login,
     signUp,
     updateProfile,

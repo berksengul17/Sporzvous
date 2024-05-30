@@ -1,11 +1,61 @@
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
-import React, { useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "@/components/CustomText";
+import { FriendRequest, useUserContext } from "@/context/UserProvider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const FriendRequestItem = ({ user }) => {
-  const handleAccept = () => alert("Accept clicked.");
-  const handleReject = () => alert("Reject clicked.");
+const FriendRequestItem = ({
+  friendRequest,
+  onRespondHandled,
+}: {
+  friendRequest: FriendRequest;
+  onRespondHandled: (requestId: number) => void;
+}) => {
+  const handleRespond = async (status: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("requestId", friendRequest.friendRequestId.toString());
+      formData.append("status", status);
+      await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/friendrequests/respond`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      onRespondHandled(friendRequest.friendRequestId);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+      }
+    }
+  };
+
+  const handleAccept = async () => await handleRespond("APPROVED");
+  const handleReject = async () => await handleRespond("REJECTED");
 
   return (
     <View style={styles.requestItem}>
@@ -13,15 +63,35 @@ const FriendRequestItem = ({ user }) => {
         style={styles.picAndName}
         onPress={() => console.log("Profile clicked!")}
       >
-        <Image source={user.profilePicUrl} style={styles.profilePic} />
-        <CustomText customStyle={styles.name} text={user.fullName} isBold={true} />
+        {/* <Image source={user.profilePicUrl} style={styles.profilePic} /> */}
+        <CustomText
+          customStyle={styles.name}
+          text={friendRequest.senderFullName}
+          isBold={true}
+        />
       </TouchableOpacity>
       <View style={styles.buttons}>
-        <TouchableOpacity onPress={handleAccept} style={[styles.button, styles.acceptButton]}>
-          <MaterialCommunityIcons name="check" size={24} color="white" style={styles.icon} />
+        <TouchableOpacity
+          onPress={handleAccept}
+          style={[styles.button, styles.acceptButton]}
+        >
+          <MaterialCommunityIcons
+            name="check"
+            size={24}
+            color="white"
+            style={styles.icon}
+          />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleReject} style={[styles.button, styles.rejectButton]}>
-          <MaterialCommunityIcons name="close" size={24} color="white" style={styles.icon} />
+        <TouchableOpacity
+          onPress={handleReject}
+          style={[styles.button, styles.rejectButton]}
+        >
+          <MaterialCommunityIcons
+            name="close"
+            size={24}
+            color="white"
+            style={styles.icon}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -29,30 +99,72 @@ const FriendRequestItem = ({ user }) => {
 };
 
 const FriendsRequestsScreen = () => {
-  const [userList, setUserList] = useState([
-    {
-      id: 1,
-      fullName: "Çağan Özsır",
-      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
-    },
-    {
-      id: 2,
-      fullName: "Bekir Şengül",
-      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
-    },
-    {
-      id: 3,
-      fullName: "Emre Erol",
-      profilePicUrl: require("../../../assets/images/friendpp.jpg"),
-    },
-  ]);
+  const { user, refetchUser } = useUserContext();
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+
+  useEffect(() => {
+    fetchFriendRequests();
+  }, []);
+
+  const fetchFriendRequests = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/friendrequests/get/${user.userId}`
+      );
+      setFriendRequests(
+        response.data.map(
+          ({
+            friendRequestId,
+            senderId,
+            senderFullName,
+            friendRequestStatus,
+          }: FriendRequest) => ({
+            friendRequestId,
+            senderId,
+            senderFullName,
+            friendRequestStatus,
+          })
+        )
+      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+      }
+    }
+  };
+
+  const handleResponseHandled = async (requestId: number) => {
+    setFriendRequests((prevRequests) =>
+      prevRequests.filter((request) => request.friendRequestId !== requestId)
+    );
+    await refetchUser();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={userList}
-        renderItem={({ item }) => <FriendRequestItem user={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        data={friendRequests}
+        renderItem={({ item }) => (
+          <FriendRequestItem
+            friendRequest={item}
+            onRespondHandled={handleResponseHandled}
+          />
+        )}
+        keyExtractor={(item) => item.friendRequestId.toString()}
         style={styles.list}
       />
     </SafeAreaView>

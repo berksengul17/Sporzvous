@@ -1,13 +1,15 @@
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import FriendList from "@/components/FriendList";
 import { useUserContext } from "@/context/UserProvider";
 import {
   AntDesign,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import axios from "axios";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -20,69 +22,50 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 
-const friendsData = [
-  {
-    id: "1",
-    name: "Emre Erol",
-    lastSeen: "1 Hour",
-    imageUri: require("../../../assets/images/friendpp.jpg"),
-  },
-  {
-    id: "2",
-    name: "Jane Doe",
-    lastSeen: "2 Hours",
-    imageUri: require("../../../assets/images/friendpp.jpg"),
-  },
-  {
-    id: "3",
-    name: "John Smith",
-    lastSeen: "5 Minutes",
-    imageUri: require("../../../assets/images/friendpp.jpg"),
-  },
-  // add more friends here
-];
-
-const FriendItem = ({ friend, onPress }) => (
-  <View style={styles.friendContainer}>
-    <Image source={friend.imageUri} style={styles.profileImage} />
-    <View style={styles.friendInfo}>
-      <CustomText
-        customStyle={styles.friendName}
-        text={friend.name}
-        isBold={true}
-      />
-      <CustomText
-        customStyle={styles.friendLastSeen}
-        text={`Last seen: ${friend.lastSeen}`}
-      />
-    </View>
-    <TouchableOpacity
-      style={styles.iconButton}
-      onPress={() => onPress(friend.id)}
-    >
-      <AntDesign name="message1" size={24} color="#FF5C00" />
-    </TouchableOpacity>
-  </View>
-);
-
 export default function FriendsScreen() {
   const { user } = useUserContext();
   const [searchText, setSearchText] = useState("");
+  const [friendName, setFriendName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const filteredFriends = friendsData.filter((friend) =>
-    friend.name.toLowerCase().includes(searchText.toLowerCase())
-  );
+  // const filteredFriends = friendsData.filter((friend) =>
+  //   friend.name.toLowerCase().includes(searchText.toLowerCase())
+  // );
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handlePress = (receiverId: number) => {
-    router.push({
-      pathname: "/drawer/(friends)/chatScreen",
-      params: { receiverId: user.userId === 1 ? 2 : 1 },
-    });
+  const sendRequest = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("senderUsername", user.username);
+      formData.append("receiverUsername", friendName);
+      await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/friendrequests/send`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+    } catch (err: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+          errorMessage = err.response.data.error;
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
+      }
+    }
   };
 
   return (
@@ -99,6 +82,8 @@ export default function FriendsScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.text}>Add Friend</Text>
             <TextInput
+              value={friendName}
+              onChangeText={setFriendName}
               style={styles.input}
               placeholder="Search"
               placeholderTextColor={"#6F6F6F"}
@@ -112,7 +97,7 @@ export default function FriendsScreen() {
               />
               <CustomButton
                 title="Send Request"
-                onPress={toggleModal}
+                onPress={sendRequest}
                 containerStyle={{ width: 130 }}
               />
             </View>
@@ -147,14 +132,7 @@ export default function FriendsScreen() {
           />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={filteredFriends}
-        renderItem={({ item }) => (
-          <FriendItem friend={item} onPress={handlePress} />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        style={styles.list}
-      />
+      <FriendList />
     </SafeAreaView>
   );
 }
@@ -186,47 +164,13 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
     flex: 1,
   },
-  list: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  friendContainer: {
-    flexDirection: "row",
-    padding: 15,
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    marginHorizontal: 10,
-    backgroundColor: "#FFF",
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-    marginVertical: 5,
-  },
   profileImage: {
     width: 60,
     height: 60,
     borderRadius: 30,
     marginRight: 15,
   },
-  friendInfo: {
-    flex: 1,
-  },
-  friendName: {
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  friendLastSeen: {
-    color: "#6F6F6F",
-    fontSize: 14,
-  },
-  iconButton: {
-    padding: 8,
-    marginLeft: 10,
-  },
+
   popUpContainer: {
     justifyContent: "center",
     alignItems: "center",
