@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, TextInput, Keyboard } from 'react-native';
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import CustomButton from "@/components/CustomButton";
 import { useLocalSearchParams, router } from 'expo-router';
 import { useUserContext } from '@/context/UserProvider';
 import { Rating } from 'react-native-ratings';
+import RNPickerSelect from "react-native-picker-select";
+import { FontAwesome } from '@expo/vector-icons';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const dummyEventData = {
   id: '1',
@@ -32,19 +35,19 @@ const dummyEventTeamsB = [
 ];
 
 const MainEventScreen = () => {
-  const [PlayerRating, setPlayerRating] = useState<number>(2.5);
   const { event: strEvent } = useLocalSearchParams();
+  const event: Event = JSON.parse(strEvent as string);
+
+  const [PlayerRating, setPlayerRating] = useState<number>(2.5);
   const { user } = useUserContext();
-  const [eventData, setEventData] = useState(dummyEventData);
+  const [eventData, setEventData] = useState<Event>(event);
   const [teamA, setTeamA] = useState(dummyEventTeamsA);
   const [teamB, setTeamB] = useState(dummyEventTeamsB);
   const [showRatePopup, setShowRatePopup] = useState(false);
   const [showOrganizerPopup, setShowOrganizerPopup] = useState(false);
   const [showEvaluateEventPopup, setShowEvaluateEventPopup] = useState(false);
   const [ratePlayer, setRatePlayer] = useState(null);
-
-
-  const event: Event = JSON.parse(strEvent as string);
+  const [mvp, setMvp] = useState("Mvp");
   
 
   const handlePlayerPress = (player) => {
@@ -67,7 +70,7 @@ const MainEventScreen = () => {
   };
 
   const handleFinishEvent = () => {
-    setEventData({ ...eventData, status: 'Finished' });
+    setEventData({ ...eventData, isEventOver: 2 });
     // Save the status change logic here
   };
 
@@ -89,17 +92,17 @@ const MainEventScreen = () => {
       <TouchableOpacity style={styles.playerName} onPress={() => handlePlayerPress(item)}>
         <Text style={{fontSize: 20}}>{item.playerName}</Text>
       </TouchableOpacity>
-      {event.organizer.userId === user.userId && event.isEventOver !== 2 && item.playerId !== event.organizer.userId && (
+      {event.organizer.userId === 2 && event.isEventOver !== 2 && item.playerId !== event.organizer.userId && (
         <TouchableOpacity style={styles.deletePlayer}>
           <MaterialIcons name="delete-outline" size={29} color="#FF3647" />
         </TouchableOpacity>
       )}
-      {event.organizer.userId !== user.userId && event.isEventOver !== 1 && event.isEventOver !== 0 && item.playerId !== event.organizer.userId && (
+      {event.organizer.userId !== 2 && event.isEventOver !== 1 && event.isEventOver !== 0 && item.playerId !== event.organizer.userId && (
         <TouchableOpacity style={styles.ratePlayer} onPress={() => handleRatePress(item)}>
           <AntDesign name="staro" size={24} color="black" />
         </TouchableOpacity>
       )}
-      {event.organizer.userId === user.userId && event.isEventOver === 2 && item.playerId !== event.organizer.userId && (
+      {event.organizer.userId === 2 && event.isEventOver === 2 && item.playerId !== event.organizer.userId && (
         <TouchableOpacity style={styles.ratePlayer} onPress={() => handleRatePress(item)}>
           <AntDesign name="staro" size={24} color="black" />
         </TouchableOpacity>
@@ -108,13 +111,16 @@ const MainEventScreen = () => {
   );
 
   const renderRatePopup = () => (
+    
     <Modal
       animationType="slide"
       transparent={true}
       visible={showRatePopup}
       onRequestClose={() => setShowRatePopup(false)}
     >
+     
       <View style={styles.popupContainer}>
+        
         <View style={styles.popup}>
           <Text style={styles.popupTitle}>Rate: {ratePlayer?.playerName}</Text>
           <Text>Rating:</Text>
@@ -129,12 +135,16 @@ const MainEventScreen = () => {
             style={styles.input}
             placeholder="Comments about this player"
             placeholderTextColor={"#6F6F6F"}
+            multiline={true}
+           
+            
           />
           <View style={styles.popupButtons}>
             <CustomButton title="Cancel" onPress={() => setShowRatePopup(false)} />
             <CustomButton title="Save" onPress={handleSaveRating} />
           </View>
         </View>
+        
       </View>
     </Modal>
   );
@@ -158,15 +168,27 @@ const MainEventScreen = () => {
                     onFinishRating={handleRatingCompleted}
                 />
           {/* Add rating stars component here */}
+          <View style={styles.pickerContainer}>
+            <RNPickerSelect
+              onValueChange={(value) => setMvp(value)}
+              items={[
+                { label: "EmreErol", value: "0" },
+                { label: "caganozsir", value: "0" },
+                { label: "player2", value: "0" },
+                { label: "player3", value: "0" },
+              ]}
+              style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{ label: "Select man of the Match", value: null }}
+              value={mvp}
+            />
+          </View>
           <TextInput
             style={styles.input}
             placeholder="Comments about this organizer"
             placeholderTextColor={"#6F6F6F"}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Man of the match"
-            placeholderTextColor={"#6F6F6F"}
+            multiline={true}
+
           />
           <View style={styles.popupButtons}>
             <CustomButton title="Cancel" onPress={() => setShowOrganizerPopup(false)}/>
@@ -223,7 +245,7 @@ const MainEventScreen = () => {
         </View>
         <View style={styles.detailsContainer}>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.date}</Text>
+            <Text style={styles.details}>{event.eventDate}</Text>
           </View>
           <TouchableOpacity style={styles.locationView}>
             <Text style={styles.location}>Location</Text>
@@ -232,21 +254,21 @@ const MainEventScreen = () => {
         </View>
         <View style={styles.detailsContainer}>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.host}</Text>
+            <Text style={styles.details}>{event.organizer.fullName}</Text>
           </View>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.time}</Text>
+            <Text style={styles.details}>{event.eventTime}</Text>
           </View>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.sport}</Text>
+            <Text style={styles.details}>{event.sport}</Text>
           </View>
         </View>
         <View style={styles.scoreContainer}>
-          <Text style={styles.teamScore}>{eventData.team_a} </Text>
-          <Text style={styles.teamScore}>{eventData.team_a_score}</Text>
+          <Text style={styles.teamScore}>{event.organizer.fullName} </Text>
+          <Text style={styles.teamScore}>7</Text>
           <Text style={styles.scoreDash}>-</Text>
-          <Text style={styles.teamScore}>{eventData.team_b_score}</Text>
-          <Text style={styles.teamScore}>{eventData.team_b}</Text>
+          <Text style={styles.teamScore}>8</Text>
+          <Text style={styles.teamScore}>{event.organizer.fullName}</Text>
         </View>
       </View>
       <View style={styles.playersTitleContainer}>
@@ -268,16 +290,16 @@ const MainEventScreen = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        {event.organizer.userId === user.userId && event.isEventOver === 1 && (
+        {event.organizer.userId === 2 && event.isEventOver === 1 && (
           <CustomButton title="Finish" onPress={handleFinishEvent} />
         )}
-        {event.organizer.userId === user.userId && event.isEventOver === 2  && (
+        {event.organizer.userId === 2 && event.isEventOver === 2  && (
           <CustomButton title="Evaluate Event" onPress={handleEvaluateEvent} />
         )}
-        {event.organizer.userId !== user.userId && event.isEventOver === 0 && (
+        {event.organizer.userId !== 2 && event.isEventOver === 0 && (
           <CustomButton title="Leave" onPress={() => console.log('Leave event')} />
         )}
-        {event.organizer.userId !== user.userId && event.isEventOver === 2  && (
+        {event.organizer.userId !== 2 && event.isEventOver === 2  && (
           <CustomButton title="Rate Organizer" onPress={handleRateOrganizer} />
         )}
 
@@ -396,10 +418,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 2,
     padding: 5,
-    alignContent: 'center',
-
-    
-    
+    alignContent: 'center',    
+  },
+  pickerContainer: {
+    width: "90%",
+    marginVertical: 10,
+    alignSelf: 'center'
   },
   playerName: {
     flex: 1,
@@ -444,6 +468,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    height: 100
   },
   popupButtons: {
     flexDirection: 'row',
@@ -463,6 +488,30 @@ const styles = StyleSheet.create({
     margin: 5,
     marginBottom: 15
   }
+});
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#6F6F6F",
+    borderRadius: 10,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+    backgroundColor: "#F0F0F0",
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: "#6F6F6F",
+    borderRadius: 10,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+    backgroundColor: "#F0F0F0",
+  },
 });
 
 export default MainEventScreen;
