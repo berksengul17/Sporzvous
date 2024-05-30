@@ -89,7 +89,7 @@ const LoginPage = () => {
           </View>
         </ImageBackground>
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
@@ -97,15 +97,17 @@ const LoginPage = () => {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{errorLogin}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
+          <View style={styles.overlay}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <CustomText customStyle={styles.modalText} text={errorLogin} />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </Modal>
