@@ -5,6 +5,9 @@ import com.sporzvous.backend.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class FriendRequestService {
     @Autowired
@@ -12,6 +15,19 @@ public class FriendRequestService {
 
     @Autowired
     private UserRepository userRepository;
+
+
+    public List<FriendRequestDTO> getFriendRequests(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        List<FriendRequest> requests = friendRequestRepository.findByReceiverAndFriendRequestStatus(user, FriendRequestStatus.PENDING);
+
+        return requests.stream()
+                .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(),
+                        req.getSender().getFullName(), req.getFriendRequestStatus()))
+                .toList();
+    }
 
     public FriendRequest sendFriendRequest(String senderUsername, String receiverUsername) {
         User sender = userRepository.findByUsername(senderUsername)
@@ -31,6 +47,17 @@ public class FriendRequestService {
 
         FriendRequest friendRequest = friendRequestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("Request not found"));
+
+        if (status.equals(FriendRequestStatus.APPROVED)) {
+            User sender = friendRequest.getSender();
+            User receiver = friendRequest.getReceiver();
+
+            sender.getFriends().add(receiver);
+            receiver.getFriends().add(sender);
+
+            userRepository.save(sender);
+            userRepository.save(receiver);
+        }
 
         friendRequest.setFriendRequestStatus(status);
         return friendRequestRepository.save(friendRequest);

@@ -2,6 +2,8 @@ package com.sporzvous.backend.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;

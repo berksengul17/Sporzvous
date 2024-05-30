@@ -1,5 +1,6 @@
 package com.sporzvous.backend.User;
 
+import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
 import com.sporzvous.backend.UserEvent.UserEventService;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
@@ -10,8 +11,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -47,15 +50,25 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(User userCredentials) {
+    public UserDTO login(User userCredentials) {
         Optional<User> user = userRepository.findByEmail(userCredentials.getEmail());
 
         if (user.isPresent() && user.get().getPassword().equals(userCredentials.getPassword())) {
             User userInfo = user.get();
-            return new User(userInfo.getUserId(), userInfo.getEmail(), userInfo.getFullName(), userInfo.getUsername(), userInfo.getCountry(), userInfo.getImage(),
-                    userInfo.getAge(), userInfo.getGender(), userInfo.getFavoriteSport(), userInfo.getEventCount(), userInfo.getIsVerified(),
-                    userInfo.getStatus(), userInfo.getEvents(), userInfo.getFeedbacks(), userInfo.getRatings(), userInfo.getFriends(),
-                    userInfo.getTeams(), userInfo.getSentRequests(), userInfo.getReceivedRequests());
+            List<FriendRequestDTO> receivedRequests = userInfo.getReceivedRequests().stream()
+                    .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(), req.getSender().getFullName(), req.getFriendRequestStatus()))
+                    .collect(Collectors.toList());
+
+            return new UserDTO(
+                    userInfo.getUserId(),
+                    userInfo.getEmail(),
+                    userInfo.getFullName(),
+                    userInfo.getUsername(),
+                    userInfo.getAge(),
+                    userInfo.getGender(),
+                    userInfo.getFavoriteSport(),
+                    receivedRequests
+            );
         }
 
         return null;

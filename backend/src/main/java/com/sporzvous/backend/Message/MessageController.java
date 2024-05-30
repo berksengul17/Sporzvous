@@ -5,12 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 @RestController
 @AllArgsConstructor
@@ -32,18 +29,4 @@ public class MessageController {
                     .body(e.getMessage());
         }
     }
-//
-//    @PostMapping("/send")
-//    public ResponseEntity<?> sendMessage(@RequestBody Message message) {
-//        try {
-//            User sender = userService.findUserByUsername(message.getSender().getUsername());
-//            User receiver = userService.findUserByUsername(message.getReceiver().getUsername());
-//            message.setSender(sender);
-//            message.setReceiver(receiver);
-//            return ResponseEntity.ok(messageService.saveMessage(message));
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(e.getMessage());
-//        }
-//    }
 }

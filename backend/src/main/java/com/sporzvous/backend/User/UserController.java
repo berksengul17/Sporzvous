@@ -52,7 +52,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User request) {
-        User loggedInUser = userService.login(request);
+        UserDTO loggedInUser = userService.login(request);
         if(loggedInUser != null) {
             return ResponseEntity.ok(loggedInUser);
         } else {
