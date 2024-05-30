@@ -16,11 +16,15 @@ public class FeedbackService {
     public Feedback createFeedback(Feedback feedback) {
         User reporter = userRepository.findById(feedback.getReporter().getUserId())
                 .orElseThrow(() -> new RuntimeException("Reporter not found"));
-        User reportedUser = userRepository.findByUsername(feedback.getReportedUser().getUsername())
-                .orElseThrow(() -> new RuntimeException("Reported user not found"));
+
+        if (feedback.getReportedUser() != null) {
+            User reportedUser = userRepository.findByUsername(feedback.getReportedUser().getUsername())
+                    .orElseThrow(() -> new RuntimeException("Reported user not found"));
+
+            feedback.setReportedUser(reportedUser);
+        }
 
         feedback.setReporter(reporter);
-        feedback.setReportedUser(reportedUser);
         feedback.setCreatedAt(LocalDateTime.now());
         return feedbackRepository.save(feedback);
     }

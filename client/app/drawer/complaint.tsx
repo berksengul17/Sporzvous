@@ -1,25 +1,24 @@
-import { useUserContext } from "@/context/UserProvider";
+import { User, useUserContext } from "@/context/UserProvider";
 import axios from "axios";
 import React, { useState } from "react";
 import {
   Alert,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  TouchableWithoutFeedback,
   Keyboard,
-  SafeAreaView,
   Modal,
   Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
 export type Feedback = {
   feedbackId: number;
-  reporterId: number;
+  reporter: User;
   content: string;
   category: string;
   reportedUsername: String;
@@ -58,7 +57,7 @@ export default function FeedbacksHomePage() {
 
   const handleAddFeedback = async () => {
     await addFeedback({
-      reporterId: user.userId,
+      reporter: user,
       content,
       category,
       reportedUsername: String(reportedUser), // assuming reportedUser is the ID
