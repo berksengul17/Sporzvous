@@ -32,7 +32,7 @@ const LoginPage = () => {
 
       await login({ email, password }, (response) => {
         console.log("response", response.data);
-        router.replace("information");
+        router.replace("drawer");
       });
       setErrorLogin("");
     } catch (error) {
