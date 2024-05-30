@@ -1,5 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import { useUserContext } from "@/context/UserProvider";
 import {
   AntDesign,
   Ionicons,
@@ -65,6 +66,7 @@ const FriendItem = ({ friend, onPress }) => (
 );
 
 export default function FriendsScreen() {
+  const { user } = useUserContext();
   const [searchText, setSearchText] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -79,7 +81,7 @@ export default function FriendsScreen() {
   const handlePress = (receiverId: number) => {
     router.push({
       pathname: "/drawer/(friends)/chatScreen",
-      params: { receiverId },
+      params: { receiverId: user.userId === 1 ? 2 : 1 },
     });
   };
 

@@ -14,22 +14,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
-
-const eventData = [
-  {
-    id: "1",
-    name: "Esenyurt Hailsaha",
-    sport: "Football",
-    host: "Çağan Özsir",
-    date: "20.04.2024",
-    team_a: "Team A",
-    team_a_score: "7",
-    team_b: "Team B",
-    team_b_score: "8",
-    time: "14:30",
-  },
-];
+import MapView, { Marker } from "react-native-maps";
+import Modal from "react-native-modal";
 
 const eventTeamsA = [
   {
@@ -41,11 +29,17 @@ const eventTeamsA = [
 const eventTeamsB = [
   {
     id: "1",
-    playerName: "caganozsir",
+    playerName: "emre",
   },
 ];
 
 const EventInformation = ({ event }: { event: Event }) => {
+  const [isMapVisible, setIsMapVisible] = useState(false);
+
+  const handleLocationClick = () => {
+    setIsMapVisible(true);
+  };
+
   return (
     <View style={styles.eventInfoContainer}>
       <View style={styles.headerContainer}>
@@ -61,7 +55,10 @@ const EventInformation = ({ event }: { event: Event }) => {
         <View style={styles.label}>
           <Text style={styles.details}>{event.eventDate}</Text>
         </View>
-        <TouchableOpacity style={styles.locationView}>
+        <TouchableOpacity
+          style={styles.locationView}
+          onPress={handleLocationClick}
+        >
           <Text style={styles.location}>Location</Text>
           <Entypo name="location-pin" size={24} color="#00C773" />
         </TouchableOpacity>
@@ -84,6 +81,33 @@ const EventInformation = ({ event }: { event: Event }) => {
         <Text style={styles.teamScore}>{event.team_b_score}</Text>
         <Text style={styles.teamScore}>{event.team_b}</Text>
       </View>
+
+      <Modal isVisible={isMapVisible}>
+        <View style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: event.latitude, // Event latitude
+              longitude: event.longitude, // Event longitude
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: event.latitude,
+                longitude: event.longitude,
+              }}
+              title="Event Location"
+            />
+          </MapView>
+          <Button
+            title="Close"
+            onPress={() => setIsMapVisible(false)}
+            color="red"
+          />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -281,5 +305,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     resizeMode: "cover",
+  },
+  mapContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  map: {
+    width: "100%",
+    height: "80%",
   },
 });

@@ -1,66 +1,144 @@
+import { useUserContext } from "@/context/UserProvider";
+import axios from "axios";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  SafeAreaView,
+  Modal,
+  Pressable,
+} from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
-export default function ComplaintsHomePage() {
+export type Feedback = {
+  feedbackId: number;
+  reporterId: number;
+  content: string;
+  category: string;
+  reportedUsername: String;
+};
+
+type CreateFeedback = Omit<Feedback, "feedbackId">;
+
+export default function FeedbacksHomePage() {
   const [category, setCategory] = useState("Category");
-  const [title, setTitle] = useState("Title");
   const [content, setContent] = useState("");
+  const [reportedUser, setReportedUser] = useState("");
+  const [errorFeedback, setErrorFeedback] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const { user } = useUserContext();
+
+  const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/feedback";
+
+  const addFeedback = async (feedback: CreateFeedback) => {
+    try {
+      const response = await axios.post(`${API_URL}/add`, feedback);
+      setErrorFeedback("");
+    } catch (err) {
+      setErrorFeedback("An unexpected error occurred. Please try again.");
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          setErrorFeedback(err.response.data.error); // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          setErrorFeedback(err.response?.data);
+          setModalVisible(true); // Show modal on error
+        }
+      }
+    }
+  };
+
+  const handleAddFeedback = async () => {
+    await addFeedback({
+      reporterId: user.userId,
+      content,
+      category,
+      reportedUsername: String(reportedUser), // assuming reportedUser is the ID
+    });
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.complaintsContainer}>
-          <Text  style={styles.headerText}>Complaints and Feedbacks</Text>
-        
-        <View style={styles.pickerContainer}>
-          <RNPickerSelect
-            onValueChange={(value) => setCategory(value)}
-            items={[
-              { label: "Category 1", value: "category1" },
-              { label: "Category 2", value: "category2" },
-              // Add more categories as needed
-            ]}
-            style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false}
-            placeholder={{ label: "Select Category", value: null }}
-            value={category}
-          />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.complaintsContainer}>
+          <Text style={styles.headerText}>Complaints and Feedbacks</Text>
+
+          <View style={styles.pickerContainer}>
+            <RNPickerSelect
+              onValueChange={(value) => setCategory(value)}
+              items={[
+                { label: "Report User", value: "REPORT_USER" },
+                { label: "Customer Service", value: "CUSTOMER_SERVICE" },
+                { label: "Technical Issues", value: "TECHNICAL_ISSUES" },
+                { label: "Suggestions", value: "SUGGESTION" },
+              ]}
+              style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{ label: "Select Category", value: null }}
+              value={category}
+            />
+          </View>
+
+          <View style={styles.reportedUserBoxContainer}>
+            <TextInput
+              placeholder="Reported User"
+              placeholderTextColor="#6F6F6F"
+              style={styles.reportedUserBox}
+              multiline={true}
+              value={reportedUser}
+              onChangeText={setReportedUser}
+            />
+          </View>
+
+          <View style={styles.contentBoxContainer}>
+            <TextInput
+              placeholder="Content"
+              placeholderTextColor="#6F6F6F"
+              style={styles.contentBox}
+              multiline={true}
+              value={content}
+              onChangeText={setContent}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={handleAddFeedback}
+          >
+            <Text style={styles.submitButtonText}>Submit</Text>
+          </TouchableOpacity>
         </View>
-        
-        <View style={styles.pickerContainer}>
-          <RNPickerSelect
-            onValueChange={(value) => setTitle(value)}
-            items={[
-              { label: "Title 1", value: "title1" },
-              { label: "Title 2", value: "title2" },
-              // Add more titles as needed
-            ]}
-            style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false}
-            placeholder={{ label: "Select Title", value: null }}
-            value={title}
-          />
-        </View>
-        
-        <View style={styles.contentBoxContainer}>
-          <TextInput
-            placeholder="Content"
-            placeholderTextColor="#6F6F6F"
-            style={styles.contentBox}
-            multiline={true}
-            value={content}
-            onChangeText={setContent}
-          />
-        </View>
-        
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => Alert.alert("Submit clicked!")}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
         >
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{errorFeedback}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -80,17 +158,22 @@ const styles = StyleSheet.create({
     margin: 20,
     color: "#FF5C00",
     fontWeight: "bold",
-  
-  
   },
   pickerContainer: {
-    width: "100%",
+    width: "60%",
     marginVertical: 10,
   },
   contentBoxContainer: {
     width: "100%",
     marginVertical: 20,
   },
+
+  reportedUserBoxContainer: {
+    width: "70%",
+    marginVertical: 20,
+    justifyContent: "center",
+  },
+
   contentBox: {
     padding: 10,
     height: 200,
@@ -99,6 +182,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     color: "black",
   },
+
+  reportedUserBox: {
+    padding: 10,
+    height: 50,
+    backgroundColor: "#F0F0F0",
+    textAlignVertical: "top",
+    borderRadius: 10,
+    color: "black",
+  },
+
   submitButton: {
     backgroundColor: "#FF5C00",
     paddingVertical: 15,
@@ -123,6 +216,50 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     resizeMode: "cover",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });
 
