@@ -1,9 +1,9 @@
-import { User, useUserContext } from "@/context/UserProvider";
+import { useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import SockJS from "sockjs-client";
 
 export type ChatMessage = {
   id: string;
@@ -22,7 +21,7 @@ export type ChatMessage = {
   senderId: number;
   receiverId: number;
   timestamp: string;
-  status: "JOIN" | "MESSAGE" | "LEAVE";
+  readStatus: boolean;
 };
 
 let stompClient: Client | null = null;
@@ -34,21 +33,18 @@ const ChatScreen: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [connected, setConnected] = useState(false);
+  const readMessages = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     console.log("Initializing WebSocket connection...");
     stompClient = new Client();
     stompClient.configure({
       brokerURL: "ws://192.168.1.43:8082/ws",
-      // webSocketFactory: () => new SockJS("http://192.168.1.43:8082/ws"),
       reconnectDelay: 5000,
       onConnect: onConnected,
       onStompError: onStompError,
       onWebSocketClose: onWebSocketClose,
       onWebSocketError: onWebSocketError,
-      debug: (str) => {
-        console.log("STOMP debug:", str);
-      },
       forceBinaryWSFrames: true,
       appendMissingNULLonIncoming: true,
     });
@@ -60,32 +56,37 @@ const ChatScreen: React.FC = () => {
         `${process.env.EXPO_PUBLIC_API_URL}/messages?user1Id=${user.userId}&user2Id=${receiverId}`
       )
       .then((response) => {
-        setMessages(
-          response.data.map(
-            ({
-              id,
-              content,
-              sender: { userId: senderId },
-              receiver: { userId: receiverId },
-              timestamp,
-              status,
-            }: {
-              id: string;
-              content: string;
-              sender: User;
-              receiver: User;
-              timestamp: string;
-              status: string;
-            }) => ({
-              id,
-              content,
-              senderId,
-              receiverId,
-              timestamp,
-              status,
-            })
-          )
+        const fetchedMessages = response.data.map(
+          ({
+            id,
+            senderId,
+            receiverId,
+            content,
+            timestamp,
+            readStatus,
+          }: ChatMessage) => ({
+            id,
+            senderId,
+            receiverId,
+            content,
+            timestamp,
+            readStatus,
+          })
         );
+
+        setMessages(fetchedMessages);
+
+        const newReadMessages = new Set(readMessages.current);
+        fetchedMessages.forEach((message: ChatMessage) => {
+          if (
+            message.receiverId === user.userId &&
+            message.readStatus != true
+          ) {
+            newReadMessages.add(message.id);
+            message.readStatus = true;
+          }
+        });
+        readMessages.current = newReadMessages;
       })
       .catch((error) => {
         console.error("Error fetching messages:", error);
@@ -93,6 +94,17 @@ const ChatScreen: React.FC = () => {
 
     return () => {
       console.log("Deactivating STOMP client...");
+
+      if (readMessages.current.size > 0) {
+        axios
+          .put(
+            `${process.env.EXPO_PUBLIC_API_URL}/messages/mark-read`,
+            Array.from(readMessages.current)
+          )
+          .then(() => console.log("Messages are marked as read"))
+          .catch(() => console.log("Error marking messages as read"));
+      }
+
       stompClient?.deactivate();
     };
   }, [user.userId, receiverId]);
@@ -129,8 +141,6 @@ const ChatScreen: React.FC = () => {
         destination: "/app/private-message",
         body: JSON.stringify(chatMessage),
       });
-    } else {
-      console.warn("Not connected to the STOMP server, cannot join");
     }
   };
 
@@ -143,7 +153,7 @@ const ChatScreen: React.FC = () => {
           senderId: user.userId,
           receiverId: parseInt(receiverId as string),
           timestamp: new Date().toISOString(),
-          status: "MESSAGE",
+          readStatus: false,
         };
 
         stompClient.publish({
@@ -153,14 +163,20 @@ const ChatScreen: React.FC = () => {
         console.log("Message sent:", newMsg);
         setNewMessage("");
         setMessages((prevMessages) => [...prevMessages, newMsg]);
-      } else {
-        console.warn("Not connected to the STOMP server");
       }
     }
   };
 
   const onPrivateMessage = (message: any) => {
     const payloadData = JSON.parse(message.body);
+
+    if (payloadData.receiverId == user.userId && payloadData.readStatus != 1) {
+      readMessages.current.add(payloadData.id);
+      payloadData.readStatus = true;
+    }
+
+    console.log("Payload data", payloadData);
+
     setMessages((prevMessages) => [...prevMessages, payloadData]);
   };
 
@@ -215,6 +231,17 @@ const ChatScreen: React.FC = () => {
             >
               {formatTime(item.timestamp)}
             </Text>
+            {item.senderId === user.userId && (
+              <Text
+                style={{
+                  marginLeft: 5,
+                  fontSize: 10,
+                  color: "#fff",
+                }}
+              >
+                {item.readStatus ? "Read" : "Sent"}
+              </Text>
+            )}
           </View>
         )}
       />

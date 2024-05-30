@@ -100,6 +100,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/friends/{userId}")
+    public ResponseEntity<?> getFriends(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(userService.getFriends(userId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @PostMapping("/addRating")
     public ResponseEntity<?> addComment(@RequestParam("sportField")SportField sportField,
                                         @RequestParam("userRating")Double userRating,

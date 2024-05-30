@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ImageBackground,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import CustomText from "@/components/CustomText";
 import CustomButton from "@/components/CustomButton";
@@ -14,89 +16,96 @@ import { router } from "expo-router";
 
 const StepTwo = () => {
   const { user, updateProfile } = useUserContext();
-  const [fullName, setFullName] = useState<string>(user.fullName || "");
-  const [age, setAge] = useState<string>(user.age?.toString() || "");
-  const [gender, setGender] = useState<string>(user.gender || "");
+  const [fullName, setFullName] = useState<string>("");
+  const [age, setAge] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
 
   const inputStyle = {
     ...styles.input,
   };
 
   const handleNext = async () => {
-    await updateProfile({ ...user, fullName, age: parseInt(age), gender });
+    const ageNumber = parseInt(age, 10);
+    if (isNaN(ageNumber)) {
+      alert("Please enter a valid age.");
+      return;
+    }
+    await updateProfile({ ...user, fullName, age: ageNumber, gender });
     router.navigate("setProfile3");
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/images/sporzvouswp.png")}
-      style={styles.background}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <CustomText
-              customStyle={styles.headerText}
-              text="Fill in your personal details"
-            />
-          </View>
-          <View style={styles.userInfo}>
-            <CustomText text="Name/Surname" customStyle={styles.label} />
-            <TextInput
-              value={fullName}
-              onChangeText={setFullName}
-              style={inputStyle}
-              placeholder="Enter your full name"
-              placeholderTextColor="#FF5C00"
-            />
-          </View>
-          <View style={styles.userInfo}>
-            <CustomText text="Age" customStyle={styles.label} />
-            <TextInput
-              value={age}
-              onChangeText={setAge}
-              keyboardType="numeric"
-              style={inputStyle}
-              placeholder="Enter your age"
-              placeholderTextColor="#FF5C00"
-            />
-          </View>
-          <View style={styles.userInfo}>
-            <CustomText text="Gender" customStyle={styles.label} />
-            <View style={{ flex: 1 }}>
-              <RNPickerSelect
-                onValueChange={(newGender) => setGender(newGender)}
-                items={[
-                  { label: "Male", value: "male" },
-                  { label: "Female", value: "female" },
-                ]}
-                useNativeAndroidPickerStyle={false}
-                style={{
-                  inputIOS: inputStyle,
-                  inputAndroid: inputStyle,
-                }}
-                placeholder={{
-                  label: "Select your gender...",
-                  value: null,
-                }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require("../assets/images/sporzvouswp.png")}
+        style={styles.background}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <CustomText
+                customStyle={styles.headerText}
+                text="Fill in your personal details"
+              />
+            </View>
+            <View style={styles.userInfo}>
+              <CustomText text="Name/Surname" customStyle={styles.label} />
+              <TextInput
+                value={fullName}
+                onChangeText={setFullName}
+                style={inputStyle}
+                placeholder="Enter your full name"
+                placeholderTextColor="#FF5C00"
+              />
+            </View>
+            <View style={styles.userInfo}>
+              <CustomText text="Age" customStyle={styles.label} />
+              <TextInput
+                value={age}
+                onChangeText={setAge}
+                keyboardType="numeric"
+                style={inputStyle}
+                placeholder="Enter your age"
+                placeholderTextColor="#FF5C00"
+              />
+            </View>
+            <View style={styles.userInfo}>
+              <CustomText text="Gender" customStyle={styles.label} />
+              <View style={{ flex: 1 }}>
+                <RNPickerSelect
+                  onValueChange={(newGender) => setGender(newGender)}
+                  items={[
+                    { label: "Male", value: "male" },
+                    { label: "Female", value: "female" },
+                  ]}
+                  useNativeAndroidPickerStyle={false}
+                  style={{
+                    inputIOS: inputStyle,
+                    inputAndroid: inputStyle,
+                  }}
+                  placeholder={{
+                    label: "Select your gender...",
+                    value: null,
+                  }}
+                />
+              </View>
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title="<"
+                onPress={() => router.back()}
+                containerStyle={styles.button}
+              />
+              <CustomButton
+                title=">"
+                onPress={handleNext}
+                containerStyle={styles.button}
               />
             </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton
-              title="<"
-              onPress={() => router.back()}
-              containerStyle={styles.button}
-            />
-            <CustomButton
-              title=">"
-              onPress={handleNext}
-              containerStyle={styles.button}
-            />
-          </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -129,9 +138,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 15,
-    width: "80%", // Make the container width smaller
-    height: "52%", // Limit the container height
-    justifyContent: "center", // Center the content vertically within the container
+    width: "80%",
+    height: "52%",
+    justifyContent: "center",
     position: "relative",
   },
   headerText: {

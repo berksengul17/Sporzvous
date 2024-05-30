@@ -67,7 +67,7 @@ public class UserService {
             User userInfo = user.get();
             List<FriendRequestDTO> receivedRequests = userInfo.getReceivedRequests().stream()
                     .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(), req.getSender().getFullName(), req.getFriendRequestStatus()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             return new UserDTO(
                     userInfo.getUserId(),
@@ -139,6 +139,16 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    public List<FriendDTO> getFriends(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return user.getFriends().stream().map(friend -> new FriendDTO(friend.getUserId(), friend.getEmail(),
+                friend.getFullName(), friend.getUsername(), friend.getAge(), friend.getGender(),
+                friend.getFavoriteSport()))
+                .toList();
     }
 
     public User findUserByEmail(String userEmail) {

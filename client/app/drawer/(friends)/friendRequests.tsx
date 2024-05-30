@@ -1,5 +1,6 @@
 import CustomText from "@/components/CustomText";
-import { FriendRequest, useUserContext } from "@/context/UserProvider";
+import { FriendRequest, useFriendContext } from "@/context/FriendProvider";
+import { useUserContext } from "@/context/UserProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -99,7 +100,8 @@ const FriendRequestItem = ({
 };
 
 const FriendsRequestsScreen = () => {
-  const { user, refetchUser } = useUserContext();
+  const { user } = useUserContext();
+  const { fetchFriends } = useFriendContext();
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
 
   useEffect(() => {
@@ -151,7 +153,7 @@ const FriendsRequestsScreen = () => {
     setFriendRequests((prevRequests) =>
       prevRequests.filter((request) => request.friendRequestId !== requestId)
     );
-    await refetchUser();
+    await fetchFriends();
   };
 
   return (
