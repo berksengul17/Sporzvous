@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import {
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-} from "react-native";
-import Modal from "react-native-modal";
-import ImageViewer from "react-native-image-zoom-viewer";
-import RNPickerSelect from "react-native-picker-select";
-import { useUserContext } from "@/context/UserProvider";
 import Button from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
+import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  Keyboard,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
+import Modal from "react-native-modal";
+import RNPickerSelect from "react-native-picker-select";
 
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
@@ -45,7 +45,16 @@ const Profile = () => {
   const getImageUri = () => {
     const documentBase64 = user.image;
 
-    if (!documentBase64) {
+    const isValidBase64 = (str: string) => {
+      if (typeof str !== "string") {
+        return false;
+      }
+      const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+      const paddingPattern = /^(?:.{4})*(?:.{2}==|.{3}=)?$/;
+      return base64Pattern.test(str) && paddingPattern.test(str);
+    };
+
+    if (!documentBase64 || !isValidBase64(documentBase64)) {
       // Use the default image if user's image is not set
       setImageUri(
         Image.resolveAssetSource(

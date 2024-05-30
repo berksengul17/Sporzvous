@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<String> signUp(HttpServletRequest request, @RequestBody User userInfo) {
+    public ResponseEntity<?> signUp(HttpServletRequest request, @RequestBody User userInfo) {
         try {
             User newUser = userService.signUp(userInfo);
             String token = UUID.randomUUID().toString();
             userService.createTokenForUser(newUser, token);
 //            mailSenderService.sendVerificationEmail(request, token, newUser);
-            return ResponseEntity.ok(newUser.getUsername() + " signed up successfully. Verify your email address to login.");
+            return ResponseEntity.ok(newUser);
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());

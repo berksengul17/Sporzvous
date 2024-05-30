@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-  Modal,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useUserContext } from "@/context/UserProvider";
-import { router } from "expo-router";
 import Rating from "@/components/Rating";
+import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  ImageBackground,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import { Sport } from "./setProfile4";
 
 const initialSportsData = [
   { id: "1", name: "Basketball", icon: "basketball", visible: true },
@@ -28,10 +29,20 @@ const initialSportsData = [
   { id: "9", name: "Paintball", icon: "pistol", visible: true },
 ];
 
-const SportCard = ({ sport, onPress }) => {
+const SportCard = ({
+  sport,
+  onPress,
+}: {
+  sport: Sport;
+  onPress: () => void;
+}) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <MaterialCommunityIcons name={sport.icon} size={40} color="#FF5C00" />
+      <MaterialCommunityIcons
+        name={sport.icon as any}
+        size={40}
+        color="#FF5C00"
+      />
       <Text style={styles.cardText}>{sport.name}</Text>
     </TouchableOpacity>
   );
@@ -39,11 +50,11 @@ const SportCard = ({ sport, onPress }) => {
 
 const StepFive = () => {
   const { user, updateProfile } = useUserContext();
-  const [selectedSport, setSelectedSport] = useState(null);
+  const [selectedSport, setSelectedSport] = useState<Sport>();
   const [modalVisible, setModalVisible] = useState(false);
   const [ratings, setRatings] = useState(user.ratings || {});
 
-  const handleSelectSport = (sport) => {
+  const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
     setModalVisible(true);
   };
@@ -53,10 +64,10 @@ const StepFive = () => {
     setModalVisible(false);
   };
 
-  const handleRatingCompleted = (rating) => {
+  const handleRatingCompleted = (rating: RatingType) => {
     setRatings((prevRatings) => ({
       ...prevRatings,
-      [selectedSport.id]: rating,
+      [selectedSport?.id!]: rating,
     }));
   };
 

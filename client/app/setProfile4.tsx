@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserContext } from "@/context/UserProvider";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ImageBackground,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const initialSportsData = [
   { id: "1", name: "Basketball", icon: "basketball" },
@@ -26,10 +26,28 @@ const initialSportsData = [
   { id: "9", name: "Paintball", icon: "pistol" },
 ];
 
-const SportCard = ({ sport, onPress, isSelected }) => {
+export type Sport = {
+  id: string;
+  name: string;
+  icon: string;
+};
+
+const SportCard = ({
+  sport,
+  onPress,
+  isSelected,
+}: {
+  sport: Sport;
+  onPress: () => void;
+  isSelected: boolean;
+}) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <MaterialCommunityIcons name={sport.icon} size={40} color="#FF5C00" />
+      <MaterialCommunityIcons
+        name={sport.icon as any}
+        size={40}
+        color="#FF5C00"
+      />
       <Text style={styles.cardText}>{sport.name}</Text>
       {isSelected && (
         <Ionicons
@@ -45,18 +63,21 @@ const SportCard = ({ sport, onPress, isSelected }) => {
 
 const StepFour = () => {
   const { user, updateProfile } = useUserContext();
-  const [selectedSport, setSelectedSport] = useState(null);
+  const [selectedSport, setSelectedSport] = useState<Sport>();
 
   useEffect(() => {
     if (user.favoriteSport) {
-      const favoriteSport = initialSportsData.find(
+      const favoriteSport: Sport | undefined = initialSportsData.find(
         (sport) => sport.name === user.favoriteSport
       );
-      setSelectedSport(favoriteSport);
+
+      if (favoriteSport != undefined) {
+        setSelectedSport(favoriteSport);
+      }
     }
   }, [user]);
 
-  const handleSelectSport = (sport) => {
+  const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
   };
 

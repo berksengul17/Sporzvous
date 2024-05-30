@@ -16,17 +16,17 @@ export type User = {
   gender: string;
   favoriteSport: string;
   receivedFriendRequests: FriendRequest[];
-  rating: Rating[];
+  ratings: Rating[];
 };
 
 export type UpdateUser = {
-  username: string;
-  fullName: string;
+  username?: string;
+  fullName?: string;
   image?: string;
-  age: number;
-  gender: string;
-  favoriteSport: string;
-  rating: Rating;
+  age?: number;
+  gender?: string;
+  favoriteSport?: string;
+  ratings?: Rating[];
 };
 
 type UserProps = {
@@ -65,7 +65,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     gender: "",
     favoriteSport: "",
     receivedFriendRequests: [],
-    rating: [],
+    ratings: [],
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
   const [errorRegister, setErrorRegister] = useState("");
@@ -88,7 +88,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         gender: response.data.gender,
         favoriteSport: response.data.favoriteSport,
         receivedFriendRequests: response.data.receivedFriendRequests,
-        rating: response.data.ratings,
+        ratings: response.data.ratings,
       };
 
       return fetchedUser;
@@ -121,6 +121,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
         country,
+      });
+
+      setUser({
+        ...user,
+        userId: response.data.userId,
+        username: response.data.username,
+        email: response.data.email,
       });
       successCallback(response);
     } catch (err: unknown) {
@@ -193,6 +200,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateProfile = async (newUserInfo: UpdateUser) => {
     try {
+      console.log(`${API_URL}/${user.userId}/edit-profile`);
       await axios.put(`${API_URL}/${user.userId}/edit-profile`, {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
@@ -200,7 +208,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         image: newUserInfo.image,
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
-        ratings: newUserInfo.rating,
+        ratings: newUserInfo.ratings,
       });
       setUser((prevUser) => ({ ...prevUser, ...newUserInfo }));
     } catch (error: unknown) {
