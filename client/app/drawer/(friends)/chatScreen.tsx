@@ -1,4 +1,4 @@
-import { useUserContext } from "@/context/UserProvider";
+import { User, useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { Client } from "@stomp/stompjs";
 import axios from "axios";
@@ -33,70 +33,129 @@ const ChatScreen: React.FC = () => {
   const navigation = useNavigation();
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const socket = new SockJS(`${process.env.EXPO_PUBLIC_API_URL}/ws`);
-    stompClient = new Client({
-      webSocketFactory: () => socket,
+    console.log("Initializing WebSocket connection...");
+    stompClient = new Client();
+    stompClient.configure({
+      brokerURL: "ws://192.168.1.43:8082/ws",
+      // webSocketFactory: () => new SockJS("http://192.168.1.43:8082/ws"),
       reconnectDelay: 5000,
       onConnect: onConnected,
-      onStompError: (frame) => {
-        console.error(frame.headers["message"]);
+      onStompError: onStompError,
+      onWebSocketClose: onWebSocketClose,
+      onWebSocketError: onWebSocketError,
+      debug: (str) => {
+        console.log("STOMP debug:", str);
       },
+      forceBinaryWSFrames: true,
+      appendMissingNULLonIncoming: true,
     });
     stompClient.activate();
 
     // Fetch messages from the backend
     axios
       .get(
-        `${process.env.EXPO_PUBLIC_API_URL}/messages?senderId=${user.userId}&receiverId=${receiverId}`
+        `${process.env.EXPO_PUBLIC_API_URL}/messages?user1Id=${user.userId}&user2Id=${receiverId}`
       )
       .then((response) => {
-        setMessages(response.data);
+        setMessages(
+          response.data.map(
+            ({
+              id,
+              content,
+              sender: { userId: senderId },
+              receiver: { userId: receiverId },
+              timestamp,
+              status,
+            }: {
+              id: string;
+              content: string;
+              sender: User;
+              receiver: User;
+              timestamp: string;
+              status: string;
+            }) => ({
+              id,
+              content,
+              senderId,
+              receiverId,
+              timestamp,
+              status,
+            })
+          )
+        );
       })
       .catch((error) => {
         console.error("Error fetching messages:", error);
       });
 
     return () => {
+      console.log("Deactivating STOMP client...");
       stompClient?.deactivate();
     };
-  }, []);
+  }, [user.userId, receiverId]);
 
   const onConnected = () => {
+    console.log("Connected to STOMP server");
     stompClient?.subscribe(`/user/${user.userId}/private`, onPrivateMessage);
+    setConnected(true);
     userJoin();
   };
 
+  const onStompError = (frame: any) => {
+    console.error("STOMP error:", frame.headers["message"]);
+    setConnected(false);
+  };
+
+  const onWebSocketClose = (evt: any) => {
+    console.log("WebSocket closed:", evt);
+    setConnected(false);
+  };
+
+  const onWebSocketError = (evt: any) => {
+    console.error("WebSocket error:", evt);
+    setConnected(false);
+  };
+
   const userJoin = () => {
-    let chatMessage = {
+    const chatMessage = {
       senderId: user.userId,
       status: "JOIN",
     };
-    stompClient?.publish({
-      destination: "/app/private-message",
-      body: JSON.stringify(chatMessage),
-    });
+    if (stompClient && connected) {
+      stompClient.publish({
+        destination: "/app/private-message",
+        body: JSON.stringify(chatMessage),
+      });
+    } else {
+      console.warn("Not connected to the STOMP server, cannot join");
+    }
   };
 
   const onSend = () => {
     if (newMessage.trim()) {
-      const newMsg: ChatMessage = {
-        id: (messages.length + 1).toString(),
-        content: newMessage,
-        senderId: user.userId,
-        receiverId: parseInt(receiverId as string),
-        timestamp: new Date().toISOString(),
-        status: "MESSAGE",
-      };
+      if (connected && stompClient) {
+        const newMsg: ChatMessage = {
+          id: (messages.length + 1).toString(),
+          content: newMessage,
+          senderId: user.userId,
+          receiverId: parseInt(receiverId as string),
+          timestamp: new Date().toISOString(),
+          status: "MESSAGE",
+        };
 
-      stompClient?.publish({
-        destination: "/app/private-message",
-        body: JSON.stringify(newMsg),
-      });
-
-      setNewMessage("");
-      setMessages((prevMessages) => [...prevMessages, newMsg]);
+        stompClient.publish({
+          destination: "/app/private-message",
+          body: JSON.stringify(newMsg),
+        });
+        console.log("Message sent:", newMsg);
+        setNewMessage("");
+        setMessages((prevMessages) => [...prevMessages, newMsg]);
+      } else {
+        console.warn("Not connected to the STOMP server");
+      }
     }
   };
 

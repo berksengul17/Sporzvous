@@ -38,7 +38,7 @@ const Register = () => {
         { username, email, password, country: country.name.common },
         (response) => {
           console.log("response", response.data);
-          router.replace("/");
+          router.replace("information");
         }
       );
       setErrorRegister("");

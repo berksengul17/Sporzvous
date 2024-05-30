@@ -8,6 +8,17 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import websocket from "websocket";
+import * as encoding from "text-encoding";
+import { WebSocket } from "ws";
+import { TextDecoder, TextEncoder } from "text-encoding";
+
+// Example usage
+const decoder = new TextDecoder("utf-8");
+const encoder = new TextEncoder();
+
+// Object.assign(global, { WebSocket });
+Object.assign(global, { WebSocket: websocket.w3cwebsocket });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -44,6 +55,10 @@ export default function RootLayout() {
           <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
           <Stack.Screen name="information" options={{ headerShown: false }} />
           <Stack.Screen name="setProfile" options={{ headerShown: false }} />
+          <Stack.Screen name="setProfile2" options={{ headerShown: false }} />
+          <Stack.Screen name="setProfile3" options={{ headerShown: false }} />
+          <Stack.Screen name="setProfile4" options={{ headerShown: false }} />
+          <Stack.Screen name="setProfile5" options={{ headerShown: false }} />
           <Stack.Screen name="drawer" options={{ headerShown: false }} />
         </Stack>
       </EventProvider>

@@ -1,42 +1,37 @@
 package com.sporzvous.backend.Message;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
-@Controller
+@RestController
 @AllArgsConstructor
 public class MessageController {
 
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final MessageService messageService;
 
     @MessageMapping("/private-message")
-    public Message receivePrivateMessage(@Payload Message message) {
-        message.setTimestamp(LocalDateTime.now());
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiver().getUserId().toString(), "/private", message);
-        return message;
+    public Message receivePrivateMessage(@Payload MessageDto message) {
+        return messageService.sendMessage(message);
     }
 
-
-//    @GetMapping("/get")
-//    public ResponseEntity<?> getMessagesBetweenUsers(@RequestParam Long receiverId, @RequestParam Long senderId) {
-//        try {
-//            if (senderId == null) {
-//                return ResponseEntity.ok(messageService.getMessagesByReceiverId(receiverId));
-//            } else {
-//
-//            return ResponseEntity.ok(messageService.getMessagesBetweenUsers(receiverId, senderId));
-//            }
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(e.getMessage());
-//        }
-//    }
+    @GetMapping("/messages")
+    public ResponseEntity<?> getMessagesBetweenUsers(@RequestParam Long user1Id, @RequestParam Long user2Id) {
+        try {
+            return ResponseEntity.ok(messageService.getMessagesBetweenUsers(user1Id, user2Id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 //
 //    @PostMapping("/send")
 //    public ResponseEntity<?> sendMessage(@RequestBody Message message) {
