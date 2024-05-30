@@ -1,3 +1,4 @@
+import CustomText from "@/components/CustomText";
 import { User, useUserContext } from "@/context/UserProvider";
 import axios from "axios";
 import React, { useState } from "react";
@@ -62,14 +63,26 @@ export default function FeedbacksHomePage() {
       category,
       reportedUsername: String(reportedUser), // assuming reportedUser is the ID
     });
+    setModalVisible(true);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.complaintsContainer}>
-          <Text style={styles.headerText}>Complaints and Feedbacks</Text>
-
+          <CustomText
+            customStyle={styles.headerText}
+            text={"Complaints and Feedbacks"}
+            isBold={true}
+          />
+          <CustomText
+            customStyle={styles.underText}
+            text={"Your feedback is valuable to us!"}
+          />
+          <CustomText
+            customStyle={styles.underText}
+            text={"Let us know how we can improve."}
+          />
           <View style={styles.pickerContainer}>
             <RNPickerSelect
               onValueChange={(value) => setCategory(value)}
@@ -86,16 +99,18 @@ export default function FeedbacksHomePage() {
             />
           </View>
 
-          <View style={styles.reportedUserBoxContainer}>
-            <TextInput
-              placeholder="Reported User"
-              placeholderTextColor="#6F6F6F"
-              style={styles.reportedUserBox}
-              multiline={true}
-              value={reportedUser}
-              onChangeText={setReportedUser}
-            />
-          </View>
+          {category === "REPORT_USER" && (
+            <View style={styles.reportedUserBoxContainer}>
+              <TextInput
+                placeholder="Username to be reported"
+                placeholderTextColor="#6F6F6F"
+                style={styles.reportedUserBox}
+                multiline={true}
+                value={reportedUser}
+                onChangeText={setReportedUser}
+              />
+            </View>
+          )}
 
           <View style={styles.contentBoxContainer}>
             <TextInput
@@ -116,23 +131,27 @@ export default function FeedbacksHomePage() {
           </TouchableOpacity>
         </View>
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{errorFeedback}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
+          <View style={styles.overlay}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <CustomText
+                  customStyle={styles.modalText}
+                  text="Thank you for your feedback! We will review your message and get back to you soon."
+                />
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </Modal>
@@ -148,15 +167,19 @@ const styles = StyleSheet.create({
   },
   complaintsContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    paddingVertical: 40,
   },
   headerText: {
     fontSize: 23,
     margin: 20,
     color: "#FF5C00",
-    fontWeight: "bold",
+  },
+  underText: {
+    fontSize: 18,
+    color: "black",
+    marginBottom: 20,
   },
   pickerContainer: {
     width: "60%",
@@ -170,7 +193,6 @@ const styles = StyleSheet.create({
   reportedUserBoxContainer: {
     width: "70%",
     marginVertical: 20,
-    justifyContent: "center",
   },
 
   contentBox: {
@@ -183,12 +205,13 @@ const styles = StyleSheet.create({
   },
 
   reportedUserBox: {
-    padding: 10,
+    justifyContent: "center",
     height: 50,
     backgroundColor: "#F0F0F0",
-    textAlignVertical: "top",
     borderRadius: 10,
     color: "black",
+    paddingVertical: 15,
+    paddingHorizontal: 10,
   },
 
   submitButton: {
@@ -216,8 +239,13 @@ const styles = StyleSheet.create({
     width: "100%",
     resizeMode: "cover",
   },
-  centeredView: {
+  overlay: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centeredView: {
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
@@ -246,7 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#FF5C00", // Updated button color
   },
   textStyle: {
     color: "white",

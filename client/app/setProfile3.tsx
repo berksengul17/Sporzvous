@@ -32,6 +32,7 @@ const StepThree = () => {
         return;
       }
       result = await ImagePicker.launchCameraAsync({
+        cameraType: ImagePicker.CameraType.front,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
