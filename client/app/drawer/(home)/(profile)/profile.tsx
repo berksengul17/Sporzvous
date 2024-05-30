@@ -3,7 +3,8 @@ import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { useUserContext } from "@/context/UserProvider";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
-
+import ImageViewer from "react-native-image-zoom-viewer"; // Import the Image Viewer
+import Modal from "react-native-modal"; // Import Modal
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -13,6 +14,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -34,7 +37,12 @@ const Profile = () => {
   const [userSkillField, setUserSkillField] = useState<string>("");
   const [overallField, setOverallField] = useState<string>("");
 
-  //TODO rating state ekle
+  const [isModalVisible, setModalVisible] = useState(false); // State to manage modal visibility
+
+  // Toggle Modal visibility
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   const inputStyle = isProfileEditable
     ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
@@ -44,16 +52,20 @@ const Profile = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView style={{ backgroundColor: "#fff", height: "100%" }}>
         <View style={styles.header}>
-          <CustomText
-            text=""
-            customStyle={{
-              borderWidth: 1,
-              width: 60,
-              height: 60,
-              borderRadius: 100,
-              alignSelf: "flex-end",
-            }}
-          />
+          <TouchableOpacity onPress={toggleModal}>
+            <Image
+              source={{ uri: user.image }}
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 100,
+                borderWidth: 1,
+              }}
+            />
+          </TouchableOpacity>
+          <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+            <ImageViewer imageUrls={[{ url: user.image }]} />
+          </Modal>
           <View style={{ alignItems: "center" }}>
             <CustomText
               text="Verified"
