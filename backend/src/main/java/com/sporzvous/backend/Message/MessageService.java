@@ -34,12 +34,27 @@ public class MessageService {
                 .orElseThrow(() -> new IllegalArgumentException("No messages found related with the receiver" + receiverId));
     }
 
-    public List<Message> getMessagesBetweenUsers(Long user1Id, Long user2Id) {
+    public List<MessageDTO> getMessagesBetweenUsers(Long user1Id, Long user2Id) {
         User user1 = userRepository.findById(user1Id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         User user2 = userRepository.findById(user2Id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return messageRepository.findMessagesBetweenUsers(user1, user2);
+        List<Message> messsages = messageRepository.findMessagesBetweenUsers(user1, user2);
+
+        return messsages.stream()
+                        .map(message -> new MessageDTO(message.getId(), message.getSender().getUserId(),
+                                message.getReceiver().getUserId(), message.getContent(), message.isReadStatus(),
+                                message.getTimestamp()))
+                        .toList();
+    }
+
+    public void markMessagesAsRead(List<Long> messageIds) {
+        messageIds.forEach(messageId -> {
+            Message message = messageRepository.findById(messageId)
+                    .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+            message.setReadStatus(true);
+            messageRepository.save(message);
+        });
     }
 }
