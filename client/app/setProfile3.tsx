@@ -7,6 +7,8 @@ import {
   Modal,
   Text,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -63,101 +65,112 @@ const StepThree = () => {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/images/sporzvouswp.png")}
-      style={styles.background}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Upload Your Profile Picture</Text>
-          </View>
-          <View style={styles.imagePickerContainer}>
-            <TouchableOpacity
-              style={styles.imagePicker}
-              onPress={() => setImageModalVisible(true)}
-            >
-              <Image
-                source={
-                  profileImage
-                    ? { uri: profileImage }
-                    : require("../assets/images/defaultpp.jpg")
-                }
-                style={styles.profileImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cameraIconContainer}
-              onPress={() => setModalVisible(true)}
-            >
-              <Ionicons name="camera" size={20} color="#fff" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton
-              title="<"
-              onPress={() => router.back()}
-              containerStyle={styles.button}
-            />
-            <CustomButton
-              title=">"
-              onPress={handleNext}
-              containerStyle={styles.button}
-            />
-          </View>
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalTitle}>Select Image Source</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require("../assets/images/sporzvouswp.png")}
+        style={styles.background}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Upload Your Profile Picture</Text>
+            </View>
+            <View style={styles.imagePickerContainer}>
               <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleImagePick("camera")}
+                style={styles.imagePicker}
+                onPress={() => setImageModalVisible(true)}
               >
-                <Ionicons name="camera" size={24} color="#FF5C00" />
-                <Text style={styles.modalOptionText}>Take Photo</Text>
+                <Image
+                  source={
+                    profileImage
+                      ? { uri: profileImage }
+                      : require("../assets/images/defaultpp.jpg")
+                  }
+                  style={styles.profileImage}
+                />
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleImagePick("gallery")}
+                style={styles.cameraIconContainer}
+                onPress={() => setModalVisible(true)}
               >
-                <MaterialIcons name="photo-library" size={24} color="#FF5C00" />
-                <Text style={styles.modalOptionText}>Choose from Gallery</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => setModalVisible(false)}
-              >
-                <Ionicons name="arrow-back" size={24} color="#FF5C00" />
-                <Text style={styles.modalOptionText}>Cancel</Text>
+                <Ionicons name="camera" size={20} color="#fff" />
               </TouchableOpacity>
             </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title="<"
+                onPress={() => router.back()}
+                containerStyle={styles.button}
+              />
+              <CustomButton
+                title=">"
+                onPress={handleNext}
+                containerStyle={styles.button}
+              />
+            </View>
           </View>
-        </Modal>
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={imageModalVisible}
-          onRequestClose={() => setImageModalVisible(false)}
-        >
-          <View style={styles.imageModalContainer}>
-            <TouchableOpacity
-              style={styles.imageModalBackground}
-              onPress={() => setImageModalVisible(false)}
-            >
-              <Image source={{ uri: profileImage }} style={styles.imageModal} />
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
-    </ImageBackground>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTitle}>Select Image Source</Text>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick("camera")}
+                >
+                  <Ionicons name="camera" size={24} color="#FF5C00" />
+                  <Text style={styles.modalOptionText}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick("gallery")}
+                >
+                  <MaterialIcons
+                    name="photo-library"
+                    size={24}
+                    color="#FF5C00"
+                  />
+                  <Text style={styles.modalOptionText}>
+                    Choose from Gallery
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#FF5C00" />
+                  <Text style={styles.modalOptionText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={imageModalVisible}
+            onRequestClose={() => setImageModalVisible(false)}
+          >
+            <View style={styles.imageModalContainer}>
+              <TouchableOpacity
+                style={styles.imageModalBackground}
+                onPress={() => setImageModalVisible(false)}
+              >
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.imageModal}
+                />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        </View>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 

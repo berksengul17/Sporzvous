@@ -8,6 +8,10 @@ export type FriendRequest = {
   senderFullName: string;
 };
 
+export type Rating = {
+  [sportId: string]: number;
+};
+
 export type User = {
   userId: number;
   image?: string;
@@ -19,6 +23,7 @@ export type User = {
   favoriteSport: string;
   friends: User[];
   receivedFriendRequests: FriendRequest[];
+  rating: Rating[];
 };
 
 export type UpdateUser = {
@@ -28,6 +33,7 @@ export type UpdateUser = {
   age: number;
   gender: string;
   favoriteSport: string;
+  rating: Rating;
 };
 
 type UserProps = {
@@ -68,6 +74,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     favoriteSport: "",
     friends: [],
     receivedFriendRequests: [],
+    rating: [],
   });
   const [isProfileEditable, setProfileEditable] = useState<boolean>(false);
   const [errorRegister, setErrorRegister] = useState("");
@@ -90,6 +97,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         favoriteSport: response.data.favoriteSport,
         friends: response.data.friends,
         receivedFriendRequests: response.data.receivedFriendRequests,
+        rating: response.data.ratings,
       };
 
       return fetchedUser;
@@ -97,15 +105,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
           errorMessage = err.response.data.error;
         } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
-          errorMessage = err.response?.data;
+          errorMessage = err.message;
         }
       }
 
@@ -120,15 +122,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
           errorMessage = err.response.data.error;
         } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
-          errorMessage = err.response?.data;
+          errorMessage = err.message;
         }
       }
 
@@ -157,19 +153,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
           errorMessage = err.response.data.error;
         } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
-          errorMessage = err.response?.data;
+          errorMessage = err.message;
         }
       }
       setErrorRegister(errorMessage);
-      throw new Error(errorMessage); // Throw the error so it can be caught in the component
+      throw new Error(errorMessage);
     }
   };
 
@@ -194,6 +184,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         favoriteSport,
         friends,
         receivedFriendRequests,
+        ratings,
       } = response.data;
 
       setUser({
@@ -207,61 +198,48 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         favoriteSport,
         friends,
         receivedFriendRequests,
+        ratings,
       });
 
       successCallback(response);
     } catch (error: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error)) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            errorMessage = error.response.data.error;
-          } else if (error instanceof Error) {
-            // Handle other types of errors (non-Axios errors)
-            errorMessage = error.response?.data;
-          }
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
         }
-        throw new Error(errorMessage); // Throw the error so it can be caught in the component
       }
+      throw new Error(errorMessage);
     }
   };
 
   const updateProfile = async (newUserInfo: UpdateUser) => {
     try {
-      console.log("newUserInfo", newUserInfo);
-
       await axios.put(`${API_URL}/${user.userId}/edit-profile`, {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
         age: newUserInfo.age,
+        image: newUserInfo.image,
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
+        ratings: newUserInfo.rating,
       });
       setUser((prevUser) => ({ ...prevUser, ...newUserInfo }));
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log("Error", error.message);
         }
       }

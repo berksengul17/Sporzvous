@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
-  Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
@@ -14,15 +15,15 @@ import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 
 const initialSportsData = [
-  { id: "1", name: "Basketball", icon: "basketball", visible: true },
-  { id: "2", name: "Football", icon: "soccer", visible: true },
-  { id: "3", name: "Volleyball", icon: "volleyball", visible: true },
-  { id: "4", name: "Tennis", icon: "tennis", visible: true },
-  { id: "5", name: "Baseball", icon: "baseball", visible: true },
-  { id: "6", name: "Badminton", icon: "badminton", visible: true },
-  { id: "7", name: "Handball", icon: "handball", visible: true },
-  { id: "8", name: "Ice Hockey", icon: "hockey-puck", visible: true },
-  { id: "9", name: "Paintball", icon: "pistol", visible: true },
+  { id: "1", name: "Basketball", icon: "basketball" },
+  { id: "2", name: "Football", icon: "soccer" },
+  { id: "3", name: "Volleyball", icon: "volleyball" },
+  { id: "4", name: "Tennis", icon: "tennis" },
+  { id: "5", name: "Baseball", icon: "baseball" },
+  { id: "6", name: "Badminton", icon: "badminton" },
+  { id: "7", name: "Handball", icon: "handball" },
+  { id: "8", name: "Ice Hockey", icon: "hockey-puck" },
+  { id: "9", name: "Paintball", icon: "pistol" },
 ];
 
 const SportCard = ({ sport, onPress, isSelected }) => {
@@ -44,58 +45,70 @@ const SportCard = ({ sport, onPress, isSelected }) => {
 
 const StepFour = () => {
   const { user, updateProfile } = useUserContext();
-  const [favoriteSport, setFavoriteSport] = useState<string>(
-    user.favoriteSport || ""
-  );
   const [selectedSport, setSelectedSport] = useState(null);
+
+  useEffect(() => {
+    if (user.favoriteSport) {
+      const favoriteSport = initialSportsData.find(
+        (sport) => sport.name === user.favoriteSport
+      );
+      setSelectedSport(favoriteSport);
+    }
+  }, [user]);
 
   const handleSelectSport = (sport) => {
     setSelectedSport(sport);
   };
 
   const handleNext = async () => {
+    if (!selectedSport) {
+      alert("Please select a favorite sport.");
+      return;
+    }
     await updateProfile({ ...user, favoriteSport: selectedSport.name });
     router.navigate("setProfile5");
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/images/sporzvouswp.png")}
-      style={styles.background}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <CustomText
-              customStyle={styles.headerText}
-              text="Select Your Favorite Sport"
-            />
-          </View>
-          <View style={styles.sportsGrid}>
-            {initialSportsData.map((sport) => (
-              <SportCard
-                key={sport.id}
-                sport={sport}
-                onPress={() => handleSelectSport(sport)}
-                isSelected={selectedSport?.id === sport.id}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require("../assets/images/sporzvouswp.png")}
+        style={styles.background}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <CustomText
+                customStyle={styles.headerText}
+                text="Select Your Favorite Sport"
               />
-            ))}
-          </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton
-              title="<"
-              onPress={() => router.back()}
-              containerStyle={styles.button}
-            />
-            <CustomButton
-              title=">"
-              onPress={handleNext}
-              containerStyle={styles.button}
-            />
+            </View>
+            <View style={styles.sportsGrid}>
+              {initialSportsData.map((sport) => (
+                <SportCard
+                  key={sport.id}
+                  sport={sport}
+                  onPress={() => handleSelectSport(sport)}
+                  isSelected={selectedSport?.id === sport.id}
+                />
+              ))}
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title="<"
+                onPress={() => router.back()}
+                containerStyle={styles.button}
+              />
+              <CustomButton
+                title=">"
+                onPress={handleNext}
+                containerStyle={styles.button}
+              />
+            </View>
           </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -191,30 +204,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "80%",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  modalSportName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FF5C00",
-    marginBottom: 20,
   },
 });
 

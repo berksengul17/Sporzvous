@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   Modal,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
@@ -36,99 +38,104 @@ const SportCard = ({ sport, onPress }) => {
 };
 
 const StepFive = () => {
-  const { user } = useUserContext();
+  const { user, updateProfile } = useUserContext();
   const [selectedSport, setSelectedSport] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [skillLevel, setSkillLevel] = useState<number>(2.5);
+  const [ratings, setRatings] = useState(user.ratings || {});
 
   const handleSelectSport = (sport) => {
     setSelectedSport(sport);
     setModalVisible(true);
   };
 
-  const handleSave = () => {
-    // buraya selectedSport setSkillLevel gelecek
+  const handleSave = async () => {
+    await updateProfile({ ...user, ratings });
     setModalVisible(false);
   };
 
-  const handleRatingCompleted = (rating: React.SetStateAction<number>) => {
-    console.log("Rated: ", rating);
-    setSkillLevel(rating);
+  const handleRatingCompleted = (rating) => {
+    setRatings((prevRatings) => ({
+      ...prevRatings,
+      [selectedSport.id]: rating,
+    }));
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/images/sporzvouswp.png")}
-      style={styles.background}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <CustomText
-              customStyle={styles.headerText}
-              text="Rate your skills for these sports"
-            />
-          </View>
-          <View style={styles.sportsGrid}>
-            {initialSportsData.map((sport) => (
-              <SportCard
-                key={sport.id}
-                sport={sport}
-                onPress={() => handleSelectSport(sport)}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ImageBackground
+        source={require("../assets/images/sporzvouswp.png")}
+        style={styles.background}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <CustomText
+                customStyle={styles.headerText}
+                text="Rate your skills for these sports"
               />
-            ))}
-          </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton
-              title="<"
-              onPress={() => router.back()}
-              containerStyle={styles.button}
-            />
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={() => router.replace("drawer")}
-            >
-              <Ionicons name="checkmark" size={30} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalTitle}>Rate your skill level</Text>
-              <Text style={styles.modalSportName}>{selectedSport?.name}</Text>
-              <View style={styles.ratingStars}>
-                <Rating
-                  type="star"
-                  ratingCount={5}
-                  imageSize={30}
-                  style={styles.ratingStars}
-                  onFinishRating={handleRatingCompleted}
+            </View>
+            <View style={styles.sportsGrid}>
+              {initialSportsData.map((sport) => (
+                <SportCard
+                  key={sport.id}
+                  sport={sport}
+                  onPress={() => handleSelectSport(sport)}
                 />
-              </View>
-              <View style={styles.modalButtons}>
-                <CustomButton
-                  title="Close"
-                  onPress={() => setModalVisible(false)}
-                  containerStyle={styles.modalButton}
-                />
-                <CustomButton
-                  title="Save"
-                  onPress={handleSave}
-                  containerStyle={styles.modalButton}
-                />
-              </View>
+              ))}
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title="<"
+                onPress={() => router.back()}
+                containerStyle={styles.button}
+              />
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => router.replace("drawer")}
+              >
+                <Ionicons name="checkmark" size={30} color="#fff" />
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
-      </View>
-    </ImageBackground>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTitle}>Rate your skill level</Text>
+                <Text style={styles.modalSportName}>{selectedSport?.name}</Text>
+                <View style={styles.ratingStars}>
+                  <Rating
+                    type="star"
+                    ratingCount={5}
+                    imageSize={30}
+                    startingValue={ratings[selectedSport?.id] || 0}
+                    style={styles.ratingStars}
+                    onFinishRating={handleRatingCompleted}
+                  />
+                </View>
+                <View style={styles.modalButtons}>
+                  <CustomButton
+                    title="Close"
+                    onPress={() => setModalVisible(false)}
+                    containerStyle={styles.modalButton}
+                  />
+                  <CustomButton
+                    title="Save"
+                    onPress={handleSave}
+                    containerStyle={styles.modalButton}
+                  />
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -264,7 +271,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalButton: {
-    width: "100%",
+    width: "45%",
     borderRadius: 10,
     backgroundColor: "#FF5C00",
     padding: 10,
