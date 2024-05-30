@@ -2,14 +2,13 @@ package com.sporzvous.backend.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.UserEvent.UserEvent;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,6 +82,12 @@ public class User {
     private List<UserEvent> eventsParticipated;
 
 
+    @PostConstruct
+    public void prePersist() {
+        if (image == null || image.length == 0) {
+            this.image = ImageUtils.loadDefaultImage();
+        }
+    }
 
     public User(Long userId, String email, String username) {
         this.userId = userId;

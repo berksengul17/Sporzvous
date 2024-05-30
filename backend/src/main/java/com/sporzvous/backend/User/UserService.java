@@ -9,6 +9,7 @@ import com.sporzvous.backend.Token.Token;
 import com.sporzvous.backend.Token.TokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,13 +31,17 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
     }
-
+    @Transactional
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
 
+        if (user.getImage() == null || user.getImage().length == 0) {
+            user.setImage(ImageUtils.loadDefaultImage());
+        }
+
         if (isEmailTaken) {
             throw new IllegalArgumentException("Email is already taken");
-        } else if (userRepository.findByUsername(user.getUsername()) != null){
+        } else if (userRepository.findByUsername(user.getUsername()).isPresent()){
             throw new IllegalArgumentException("Username is already taken");
         } else if (user.getUsername().length() > 30 || user.getUsername().length() < 2) {
             throw new IllegalArgumentException("User name should be between 2 and 30 characters");
