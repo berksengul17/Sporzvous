@@ -8,6 +8,17 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import websocket from "websocket";
+import * as encoding from "text-encoding";
+import { WebSocket } from "ws";
+import { TextDecoder, TextEncoder } from "text-encoding";
+
+// Example usage
+const decoder = new TextDecoder("utf-8");
+const encoder = new TextEncoder();
+
+// Object.assign(global, { WebSocket });
+Object.assign(global, { WebSocket: websocket.w3cwebsocket });
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

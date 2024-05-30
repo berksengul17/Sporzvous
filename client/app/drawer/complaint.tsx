@@ -27,17 +27,6 @@ export type Feedback = {
 
 type CreateFeedback = Omit<Feedback, "feedbackId">;
 
-export type User = {
-  userId: number;
-  image?: string;
-  email: string;
-  username: string;
-  fullName: string;
-  age: number;
-  gender: string;
-  favoriteSport: string;
-};
-
 export default function FeedbacksHomePage() {
   const [category, setCategory] = useState("Category");
   const [content, setContent] = useState("");
