@@ -1,22 +1,16 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import CustomText from "./CustomText";
+import { Friend, useFriendContext } from "@/context/FriendProvider";
+import { useUserContext } from "@/context/UserProvider";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { User, useUserContext } from "@/context/UserProvider";
+import React from "react";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import CustomText from "./CustomText";
 
 const FriendItem = ({
   friend,
   onPress,
 }: {
-  friend: User;
+  friend: Friend;
   onPress: (userId: number) => void;
 }) => (
   <View style={styles.friendContainer}>
@@ -43,18 +37,19 @@ const FriendItem = ({
 
 const FriendList = () => {
   const { user } = useUserContext();
+  const { friends } = useFriendContext();
 
   const handlePress = (receiverId: number) => {
     router.push({
       pathname: "/drawer/(friends)/chatScreen",
-      params: { receiverId: user.userId === 1 ? 2 : 1 },
+      params: { receiverId },
     });
   };
 
   return (
     <>
       <FlatList
-        data={user.friends}
+        data={friends}
         renderItem={({ item }) => (
           <FriendItem friend={item} onPress={handlePress} />
         )}

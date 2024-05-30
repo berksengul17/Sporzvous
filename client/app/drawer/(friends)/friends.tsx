@@ -1,5 +1,4 @@
 import CustomButton from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
 import FriendList from "@/components/FriendList";
 import { useUserContext } from "@/context/UserProvider";
 import {
@@ -9,10 +8,8 @@ import {
 } from "@expo/vector-icons";
 import axios from "axios";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  FlatList,
-  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -24,6 +21,7 @@ import Modal from "react-native-modal";
 
 export default function FriendsScreen() {
   const { user } = useUserContext();
+
   const [searchText, setSearchText] = useState("");
   const [friendName, setFriendName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);

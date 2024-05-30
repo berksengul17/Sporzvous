@@ -1,12 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-export type FriendRequest = {
-  friendRequestId: number;
-  friendRequestStatus: string;
-  senderId: number;
-  senderFullName: string;
-};
+import { FriendRequest } from "./FriendProvider";
 
 export type Rating = {
   [sportId: string]: number;
@@ -21,7 +15,6 @@ export type User = {
   age: number;
   gender: string;
   favoriteSport: string;
-  friends: User[];
   receivedFriendRequests: FriendRequest[];
   rating: Rating[];
 };
@@ -41,7 +34,6 @@ type UserProps = {
   isProfileEditable: boolean;
   setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
   fetchUserById: (userId: number) => Promise<User>;
-  refetchUser: () => Promise<void>;
   signUp: (
     {
       username,
@@ -72,7 +64,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     age: 0,
     gender: "",
     favoriteSport: "",
-    friends: [],
     receivedFriendRequests: [],
     rating: [],
   });
@@ -86,6 +77,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchUserById = async (userId: number): Promise<User> => {
     try {
       const response = await axios.get(`${API_URL}/get/${userId}`);
+      console.log("fetchUser", response);
       const fetchedUser: User = {
         userId: response.data.userId,
         image: response.data.image,
@@ -95,29 +87,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         age: response.data.age,
         gender: response.data.gender,
         favoriteSport: response.data.favoriteSport,
-        friends: response.data.friends,
         receivedFriendRequests: response.data.receivedFriendRequests,
         rating: response.data.ratings,
       };
 
       return fetchedUser;
-    } catch (err: unknown) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      if (axios.isAxiosError(err)) {
-        if (err.response && err.response.data && err.response.data.error) {
-          errorMessage = err.response.data.error;
-        } else if (err instanceof Error) {
-          errorMessage = err.message;
-        }
-      }
-
-      throw Error(errorMessage);
-    }
-  };
-
-  const refetchUser = async () => {
-    try {
-      setUser(await fetchUserById(user.userId));
     } catch (err: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -182,7 +156,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         age,
         gender,
         favoriteSport,
-        friends,
         receivedFriendRequests,
         ratings,
       } = response.data;
@@ -196,7 +169,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         age,
         gender,
         favoriteSport,
-        friends,
         receivedFriendRequests,
         ratings,
       });
@@ -252,7 +224,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     isProfileEditable,
     setProfileEditable,
     fetchUserById,
-    refetchUser,
     login,
     signUp,
     updateProfile,
