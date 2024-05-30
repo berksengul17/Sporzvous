@@ -1,17 +1,13 @@
 package com.sporzvous.backend.User;
 
+import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 
 public class ImageUtils {
 
-    public static byte[] loadDefaultImage() {
-        try {
-            InputStream is = ImageUtils.class.getResourceAsStream("/static/default-profile-photo.png");
-            assert is != null;
-            return is.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load default image", e);
-        }
+    public static byte[] getDefaultProfileImage() throws IOException {
+        ClassPathResource imgFile = new ClassPathResource("static/default-profile-photo.jpg");
+        return Files.readAllBytes(imgFile.getFile().toPath());
     }
 }

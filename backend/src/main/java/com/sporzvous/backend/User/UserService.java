@@ -36,7 +36,12 @@ public class UserService {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
 
         if (user.getImage() == null || user.getImage().length == 0) {
-            user.setImage(ImageUtils.loadDefaultImage());
+            try {
+                user.setImage(ImageUtils.getDefaultProfileImage());
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Handle the exception appropriately in your application
+            }
         }
 
         if (isEmailTaken) {

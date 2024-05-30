@@ -2,7 +2,6 @@ package com.sporzvous.backend.config;
 
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
-import com.sporzvous.backend.User.UserStatus;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +13,8 @@ public class DataInitializer implements CommandLineRunner {
     public DataInitializer(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    private String defaultPhotoPath = "/static/default-profile-photo.jpg";
 
     @Override
     public void run(String... args) throws Exception {

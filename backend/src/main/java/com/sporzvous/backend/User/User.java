@@ -8,12 +8,12 @@ import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.UserEvent.UserEvent;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,21 +81,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<UserEvent> eventsParticipated;
 
-
-    @PostConstruct
-    public void prePersist() {
-        if (image == null || image.length == 0) {
-            this.image = ImageUtils.loadDefaultImage();
-        }
-    }
-
     public User(Long userId, String email, String username) {
         this.userId = userId;
         this.email = email;
         this.username = username;
     }
 
-    public User(Long userId, String email, String fullName, String username, String country, byte[] image, int age, String gender,
+    public User(Long userId, String email, String fullName, String username, String country, int age, String gender,
                 String favoriteSport, int eventCount, int isVerified, UserStatus status, List<Event> events,
                 List<Feedback> feedbacks, List<Rating> ratings, List<User> friends, List<Team> teams,
                 Set<FriendRequest> sentRequests, Set<FriendRequest> receivedRequests) {
@@ -104,7 +96,6 @@ public class User {
         this.fullName = fullName;
         this.username = username;
         this.country = country;
-        this.image = image;
         this.age = age;
         this.gender = gender;
         this.favoriteSport = favoriteSport;
@@ -118,6 +109,12 @@ public class User {
         this.teams = teams;
         this.sentRequests = sentRequests;
         this.receivedRequests = receivedRequests;
+        try {
+            this.image = ImageUtils.getDefaultProfileImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception appropriately in your application
+        }
     }
 
     public User(Long userId, String email, String password, String fullName,

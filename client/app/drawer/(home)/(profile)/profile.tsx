@@ -1,45 +1,39 @@
-import Button from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
-import { useUserContext } from "@/context/UserProvider";
-import RNPickerSelect from "react-native-picker-select"; // Import the Picker
-import ImageViewer from "react-native-image-zoom-viewer"; // Import the Image Viewer
-import Modal from "react-native-modal"; // Import Modal
-import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Keyboard,
-  Platform,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
   Image,
   TouchableOpacity,
+  ScrollView,
+  Platform,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import Modal from "react-native-modal";
+import ImageViewer from "react-native-image-zoom-viewer";
+import RNPickerSelect from "react-native-picker-select";
+import { useUserContext } from "@/context/UserProvider";
+import Button from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
+import { router } from "expo-router";
 
-// TODO isEditable propu yollanıcak, updateProfile fonksiyonun nasıl çağrılacak
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
     useUserContext();
 
-  const [username, setUsername] = useState<string>(user.username);
-  const [fullName, setFullName] = useState<string>(user.fullName);
-  const [age, setAge] = useState<string>(user.age.toString());
-  const [gender, setGender] = useState<string>(user.gender);
-  const [favoriteSport, setFavoriteSport] = useState<string>(
-    user.favoriteSport
-  );
+  const [username, setUsername] = useState(user.username);
+  const [fullName, setFullName] = useState(user.fullName);
+  const [age, setAge] = useState(user.age.toString());
+  const [gender, setGender] = useState(user.gender);
+  const [favoriteSport, setFavoriteSport] = useState(user.favoriteSport);
+  const [imageUri, setImageUri] = useState("");
+  const [userSkillByOthersField, setUserSkillByOthersField] = useState("");
+  const [userSkillField, setUserSkillField] = useState("");
+  const [overallField, setOverallField] = useState("");
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  const [userSkillByOthersField, setUserSkillByOthersField] =
-    useState<string>("");
-  const [userSkillField, setUserSkillField] = useState<string>("");
-  const [overallField, setOverallField] = useState<string>("");
-
-  const [isModalVisible, setModalVisible] = useState(false); // State to manage modal visibility
-
-  // Toggle Modal visibility
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -48,13 +42,53 @@ const Profile = () => {
     ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
     : styles.input;
 
+  const getImageUri = () => {
+    const documentBase64 = user.image;
+
+    if (!documentBase64) {
+      // Use the default image if user's image is not set
+      setImageUri(
+        Image.resolveAssetSource(
+          require("../../../../assets/images/default-profile-photo.jpg")
+        ).uri
+      );
+      return;
+    }
+
+    // Decode the Base64 string to binary
+    const binaryString = window.atob(documentBase64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    // Create a Blob from the binary data
+    const imageBlob = new Blob([bytes], { type: "image/jpeg" });
+
+    // Generate a URL for the Blob
+    const imageUrl = URL.createObjectURL(imageBlob);
+
+    setImageUri(imageUrl);
+  };
+
+  useEffect(() => {
+    getImageUri();
+  }, [user.image]);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView style={{ backgroundColor: "#fff", height: "100%" }}>
         <View style={styles.header}>
           <TouchableOpacity onPress={toggleModal}>
             <Image
-              source={{ uri: user.image }}
+              source={{
+                uri:
+                  imageUri ||
+                  Image.resolveAssetSource(
+                    require("../../../../assets/images/default-profile-photo.jpg")
+                  ).uri,
+              }}
               style={{
                 width: 70,
                 height: 70,
@@ -64,22 +98,26 @@ const Profile = () => {
             />
           </TouchableOpacity>
           <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-            <ImageViewer imageUrls={[{ url: user.image }]} />
+            <ImageViewer
+              imageUrls={[
+                {
+                  url:
+                    user.image ||
+                    Image.resolveAssetSource(
+                      require("../../../../assets/images/default-profile-photo.jpg")
+                    ).uri,
+                },
+              ]}
+            />
           </Modal>
           <View style={{ alignItems: "center" }}>
             <CustomText
               text="Verified"
               customStyle={{ alignSelf: "flex-start", marginBottom: 10 }}
             />
-            {/* <AntDesign name="checksquareo" size={40} color="black" /> */}
             <CustomText text="" customStyle={styles.headerRectangle} />
           </View>
-          {/* TODO - add space between title and value */}
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
+          <View style={{ alignItems: "center" }}>
             <CustomText text="Event Count" customStyle={{ marginBottom: 10 }} />
             <CustomText text="107" customStyle={styles.headerRectangle} />
           </View>
@@ -244,7 +282,7 @@ const Profile = () => {
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
-            <CustomText text="Organizaton skills" customStyle={styles.label} />
+            <CustomText text="Organization skills" customStyle={styles.label} />
             <Rating />
           </View>
         </View>
