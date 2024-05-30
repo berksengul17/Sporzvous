@@ -1,5 +1,4 @@
 import AuthHeader from "@/components/AuthHeader";
-import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import { router } from "expo-router";
@@ -11,20 +10,32 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
-  TouchableOpacity,
-  Text,
   Modal,
   Pressable,
 } from "react-native";
 
-const Forgotpw = () => {
-  const [email, setEmail] = useState("");
+const SetNewPassword = () => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
-  const onRequestPasswordReset = () => {
-    // Simulate sending password reset email
-    //setModalVisible(true);
-    router.navigate("verificationCode");
+  const onSetNewPassword = () => {
+    if (password !== confirmPassword) {
+      setModalMessage("Passwords do not match. Please try again.");
+      setModalVisible(true);
+    } else {
+      // Simulate setting the new password
+      setModalMessage("Your password has been successfully set.");
+      setModalVisible(true);
+    }
+  };
+
+  const onCloseModal = () => {
+    setModalVisible(false);
+    if (modalMessage === "Your password has been successfully set.") {
+      router.dismissAll();
+    }
   };
 
   return (
@@ -33,27 +44,41 @@ const Forgotpw = () => {
         <ImageBackground
           source={require("../assets/images/sporzvouswp.png")}
           style={styles.background}
-          imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
+          imageStyle={{ opacity: 0.2 }} // Adjust the opacity here for a subtle background
         >
           <View style={styles.overlay}>
             <View style={styles.container}>
               <View style={styles.formContainer}>
                 <AuthHeader />
+                <CustomText
+                  customStyle={styles.infoText}
+                  text="Please enter your new password."
+                />
                 <TextInput
                   style={styles.input}
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="E-Mail"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="New Password"
                   placeholderTextColor={"#6F6F6F"}
+                  secureTextEntry
+                />
+                <TextInput
+                  style={styles.input}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="Confirm Password"
+                  placeholderTextColor={"#6F6F6F"}
+                  secureTextEntry
                 />
                 <CustomButton
-                  onPress={onRequestPasswordReset}
-                  title="Request Password Reset"
+                  onPress={onSetNewPassword}
+                  title="Set New Password"
+                  containerStyle={styles.submitButton}
                 />
                 <CustomButton
-                  onPress={() => router.back()}
-                  title="Back"
-                  containerStyle={styles.backBtn}
+                  onPress={() => router.dismissAll()}
+                  title="Back to Login"
+                  containerStyle={styles.backButton}
                 />
               </View>
             </View>
@@ -64,19 +89,19 @@ const Forgotpw = () => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            setModalVisible(!modalVisible);
+            setModalVisible(false);
           }}
         >
-          <View style={styles.overlay}>
+          <View style={styles.modalOverlay}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <CustomText
                   customStyle={styles.modalText}
-                  text={`An email is sent for password reset if account exists.`}
+                  text={modalMessage}
                 />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
+                  onPress={onCloseModal}
                 >
                   <CustomText customStyle={styles.textStyle} text="Close" />
                 </Pressable>
@@ -99,27 +124,33 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)", // Subtle darker overlay to improve text visibility
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Subtle darker overlay to improve text visibility
     alignItems: "center",
     justifyContent: "center",
   },
   container: {
     flex: 1,
-    width: "90%", // Add padding from left and right
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20, // Optional: add inner padding if needed
+    paddingHorizontal: 20,
   },
   formContainer: {
-    height: "60%",
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,
     backgroundColor: "rgba(255, 255, 255, 0.8)", // Slight background color for form container
     borderRadius: 10,
-    padding: 40,
+    padding: 20,
     marginTop: 50,
     justifyContent: "space-between",
+  },
+  infoText: {
+    fontSize: 18,
+    color: "#000",
+    marginBottom: 20,
+    marginTop: 10,
+    textAlign: "center",
   },
   input: {
     width: "100%",
@@ -132,19 +163,36 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for input fields
     fontSize: 16,
   },
-  backButtonText: {
-    color: "#FF5C00",
-    marginVertical: 16,
+  submitButton: {
+    width: "100%",
+    backgroundColor: "#FF5C00",
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  backButton: {
+    width: "100%",
+    backgroundColor: "#6F6F6F",
+    borderColor: "#6F6F6F",
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
   },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Overlay for the modal background
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
     margin: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for modal view
+    backgroundColor: "white", // Slight background color for modal view
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -173,17 +221,8 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
-    color: "#000", // Black text color for modal text
-  },
-  backBtn: {
-    width: "100%",
-    backgroundColor: "#6F6F6F",
-    borderColor: "#6F6F6F",
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 35,
+    color: "#000",
   },
 });
 
-export default Forgotpw;
+export default SetNewPassword;
