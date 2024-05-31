@@ -7,53 +7,19 @@ import {
   ScrollView,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const FAQPage = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("faq");
 
   const toggleAccordion = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const faqs = [
-    {
-      question: "What is Sporzvous?",
-      answer:
-        "Sporzvous is a mobile app that connects sports enthusiasts with events and organizations. It enables users to discover and participate in sports activities, track their involvement, and rate their skills in various sports.",
-    },
-    {
-      question: "How do I create an account?",
-      answer:
-        "To create an account on Sporzvous, download the app from the App Store or Google Play. Open the app and tap the 'Sign Up' button. Follow the prompts to enter your email, set a password, and complete your profile details.",
-    },
-    {
-      question: "How can I find sports activities?",
-      answer:
-        "You can find sports activities on the homepage. Browse the sports cards displayed, and tap on a card to view the events associated with that sport. Select an event to see more details and join.",
-    },
-    {
-      question: "How do I rate my skills in a sport?",
-      answer:
-        "To rate your skills, go to your profile and tap the edit button at the top right corner. Choose a sport and use the star rating component to select a rating from 1 to 5 stars. This helps others understand your skill level in various sports.",
-    },
-    {
-      question: "Can I create my own sports event?",
-      answer:
-        "Yes, you can create your own sports event by tapping the 'Create Event' button at the top section of the homepage. Fill in the event details such as sport type, location, date, and time, and publish the event. Other users will be able to see and join your event.",
-    },
-    {
-      question: "Is there a fee to use Sporzvous?",
-      answer:
-        "Sporzvous is free to download and use. While the basic functionalities are free, some events or premium features may have associated costs.",
-    },
-    {
-      question: "How do I contact customer support?",
-      answer:
-        "If you need assistance, you can submit a complaint through the 'Complaints' page accessible from the app drawer. Fill out the form with your query, and our support team will respond as soon as possible.",
-    },
-  ];
+  const faqs = t("faqs", { returnObjects: true });
 
   return (
     <ScrollView

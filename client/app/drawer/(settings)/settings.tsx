@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { useDarkMode } from "@/context/DarkModeContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function SettingsScreen() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const [language, setLanguage] = useState("tr");
+  const { t, i18n } = useTranslation("settings");
+  const [language, setLanguage] = useState(i18n.language);
+
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
 
   return (
     <View style={{ flex: 1, backgroundColor: isDarkMode ? "#333" : "white" }}>
@@ -26,7 +26,7 @@ export default function SettingsScreen() {
               { color: isDarkMode ? "white" : "black" },
             ]}
           >
-            Dark Mode
+            {t("darkMode")}
           </Text>
           <Switch
             trackColor={{ false: "purple", true: "#FF5C00" }}
@@ -43,22 +43,23 @@ export default function SettingsScreen() {
               { color: isDarkMode ? "white" : "black" },
             ]}
           >
-            Language
+            {t("language")}
           </Text>
           <RNPickerSelect
             onValueChange={(value) => setLanguage(value)}
             items={[
-              { label: "Turkish", value: "tr" },
               { label: "English", value: "en" },
+              { label: "Türkçe", value: "tr" },
             ]}
             style={pickerSelectStyles(isDarkMode)}
             useNativeAndroidPickerStyle={false}
-            placeholder={{ label: "Select a language...", value: null }}
+            placeholder={{ label: t("selectLanguage"), value: null }}
             value={language}
           />
         </View>
         <View style={styles.settingItem}>
           <TouchableOpacity
+            style={{ flexDirection: "row" }}
             onPress={() => router.push("drawer/(settings)/faq")}
           >
             <Text
@@ -67,8 +68,14 @@ export default function SettingsScreen() {
                 { color: isDarkMode ? "white" : "black" },
               ]}
             >
-              F.A.Q.
+              {t("faq")}
             </Text>
+            <FontAwesome
+              style={{ marginLeft: 5 }}
+              name="question-circle-o"
+              size={20}
+              color={"black"}
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -94,7 +101,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const pickerSelectStyles = (isDarkMode) =>
+const pickerSelectStyles = (isDarkMode: boolean) =>
   StyleSheet.create({
     inputIOS: {
       fontSize: 16,

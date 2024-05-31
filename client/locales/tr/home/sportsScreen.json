@@ -1,0 +1,17 @@
+{
+"joinOrHostEvent": "Bir etkinliğe katılın ya da yeni bir tane oluşturun!",
+"createEvent": "Etkinlik Oluştur",
+"edit": "Düzenle",
+"save": "Kaydet",
+"sports": {
+  "Basketball": "Basketbol",
+  "Football": "Futbol",
+  "Volleyball": "Voleybol",
+  "Tennis": "Tenis",
+  "Baseball": "Beyzbol",
+  "Badminton": "Badminton",
+  "Handball": "Hentbol",
+  "Ice Hockey": "Buz Hokeyi",
+  "Paintball": "Paintball"
+}
+}

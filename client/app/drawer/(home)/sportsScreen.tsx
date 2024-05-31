@@ -14,6 +14,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const initialSportsData = [
   { id: "1", name: "Basketball", icon: "basketball", visible: true },
@@ -30,6 +31,7 @@ const initialSportsData = [
 const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
   const router = useRouter();
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("sportsScreen");
 
   const handlePress = () => {
     if (!isCustomizeMode) {
@@ -51,7 +53,7 @@ const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
     >
       <MaterialCommunityIcons name={sport.icon} size={40} color="#FF5C00" />
       <Text style={[styles.cardText, { color: isDarkMode ? "#fff" : "#333" }]}>
-        {sport.name}
+        {t(`sports.${sport.name}`)}
       </Text>
       {isCustomizeMode && (
         <TouchableOpacity
@@ -72,6 +74,7 @@ const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
 };
 
 const EditButtonCard = ({ isCustomizeMode, setIsCustomizeMode }) => {
+  const { t } = useTranslation("sportsScreen");
   return (
     <TouchableOpacity
       style={styles.editCard}
@@ -82,13 +85,16 @@ const EditButtonCard = ({ isCustomizeMode, setIsCustomizeMode }) => {
         size={40}
         color="black"
       />
-      <Text style={styles.cardText}>{isCustomizeMode ? "Save" : "Edit"}</Text>
+      <Text style={styles.cardText}>
+        {isCustomizeMode ? t("save") : t("edit")}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 export default function SportsScreen() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("sportsScreen");
   const [sportsData, setSportsData] = useState(initialSportsData);
   const [isCustomizeMode, setIsCustomizeMode] = useState(false);
 
@@ -121,7 +127,7 @@ export default function SportsScreen() {
         ]}
       >
         <View style={styles.topContent}>
-          <Text style={[styles.headerText]}>Join or host an event today!</Text>
+          <Text style={[styles.headerText]}>{t("joinOrHostEvent")}</Text>
           <TouchableOpacity
             onPress={() => router.push("drawer/(home)/createEventModal")}
             style={[
@@ -135,7 +141,7 @@ export default function SportsScreen() {
                 { color: isDarkMode ? "white" : "#333" },
               ]}
             >
-              Create Event
+              {t("createEvent")}
             </Text>
           </TouchableOpacity>
         </View>

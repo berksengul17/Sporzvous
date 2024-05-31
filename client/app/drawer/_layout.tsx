@@ -1,11 +1,9 @@
-import { useUserContext } from "@/context/UserProvider";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { useRouter } from "expo-router";
+
 import { Drawer } from "expo-router/drawer";
 import React, { useEffect, useState } from "react";
 import {
@@ -21,6 +19,7 @@ import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useUserContext } from "@/context/UserProvider";
 import { useRouter } from "expo-router";
 import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
+import { useTranslation } from "react-i18next";
 
 export const unstable_settings = {
   initialRouteName: "(home)",
@@ -32,6 +31,7 @@ const Layout = () => {
   const router = useRouter();
   const { top } = useSafeAreaInsets();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user.image) {
@@ -47,15 +47,15 @@ const Layout = () => {
 
   const handleLogout = () => {
     Alert.alert(
-      "Confirm Logout",
-      "Are you sure you want to log out?",
+      t("confirmLogout"),
+      t("logoutMessage"),
       [
         {
-          text: "Cancel",
+          text: t("cancel"),
           style: "cancel",
         },
         {
-          text: "Log out",
+          text: t("logout"),
           onPress: () => router.replace("/"),
         },
       ],
@@ -86,7 +86,7 @@ const Layout = () => {
         <DrawerItemList {...props} />
         <DrawerItem
           labelStyle={{ marginLeft: -20, color: isDarkMode ? "#fff" : "#000" }}
-          label={"Log out"}
+          label={t("logout")}
           onPress={handleLogout}
           icon={({ color, size }) => (
             <Ionicons
@@ -137,7 +137,7 @@ const Layout = () => {
         name="(home)"
         options={{
           headerTitle: "Sporzvous",
-          drawerLabel: "Homepage",
+          drawerLabel: t("home"),
           drawerIcon: ({ size, color }) => (
             <Ionicons
               name="home"
@@ -168,8 +168,8 @@ const Layout = () => {
       <Drawer.Screen
         name="(friends)"
         options={{
-          headerTitle: "My Friends",
-          drawerLabel: "My Friends",
+          headerTitle: t("friends"),
+          drawerLabel: t("friends"),
           drawerIcon: ({ size, color }) => (
             <Ionicons
               name="people"
@@ -182,8 +182,8 @@ const Layout = () => {
       <Drawer.Screen
         name="inbox"
         options={{
-          headerTitle: "Inbox",
-          drawerLabel: "Inbox",
+          headerTitle: t("inbox"),
+          drawerLabel: t("inbox"),
           drawerIcon: ({ size, color }) => (
             <FontAwesome
               name="envelope-o"
@@ -196,8 +196,8 @@ const Layout = () => {
       <Drawer.Screen
         name="(myevents)"
         options={{
-          headerTitle: "My Events",
-          drawerLabel: "My Events",
+          headerTitle: t("myEvents"),
+          drawerLabel: t("myEvents"),
           drawerIcon: ({ size, color }) => (
             <MaterialIcons
               name="event"
@@ -210,8 +210,8 @@ const Layout = () => {
       <Drawer.Screen
         name="complaint"
         options={{
-          headerTitle: "Complaint",
-          drawerLabel: "Complaint",
+          headerTitle: t("complaint"),
+          drawerLabel: t("complaint"),
           drawerIcon: ({ size, color }) => (
             <FontAwesome
               name="warning"
@@ -224,8 +224,8 @@ const Layout = () => {
       <Drawer.Screen
         name="(settings)"
         options={{
-          headerTitle: "Settings",
-          drawerLabel: "Settings",
+          headerTitle: t("settings"),
+          drawerLabel: t("settings"),
           drawerIcon: ({ size, color }) => (
             <Ionicons
               name="settings"
