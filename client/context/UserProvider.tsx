@@ -157,7 +157,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       const {
         userId,
-        image,
+        base64Img,
         email: userEmail,
         username,
         fullName,
@@ -170,7 +170,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser({
         userId,
-        image,
+        image: `data:image/jpeg;base64,${base64Img}`, // add the base64 prefix
         email: userEmail,
         username,
         fullName,
@@ -206,7 +206,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
         age: newUserInfo.age,
-        image: newUserInfo.image,
+        image: newUserInfo.image?.split(",")[1], // only get the base64 string
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
         ratings: newUserInfo.ratings,

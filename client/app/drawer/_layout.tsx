@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  View,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { useUserContext } from "@/context/UserProvider";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { Drawer } from "expo-router/drawer";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useUserContext } from "@/context/UserProvider";
 import { useRouter } from "expo-router";
+import { Drawer } from "expo-router/drawer";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Layout = () => {
   const { user } = useUserContext();
@@ -61,7 +61,9 @@ const Layout = () => {
         contentContainerStyle={{ paddingTop: top }}
       >
         <View style={styles.profileContainer}>
-          <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          {imageUri && (
+            <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          )}
           <Text style={styles.profileName}>{user.username}</Text>
         </View>
         <DrawerItemList {...props} />
