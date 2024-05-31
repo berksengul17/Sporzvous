@@ -20,11 +20,11 @@ import {
   View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import MapView, { Marker } from "react-native-maps"; // Import MapView and Marker
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
-import MapView, { Marker } from "react-native-maps"; // Import MapView and Marker
 
 const Page = () => {
   const router = useRouter();
@@ -138,7 +138,7 @@ const Page = () => {
         skillRating: minSkillLevel,
         locationIndex: "5",
         isEventOver: 0,
-        organizer: user,
+        organizer: { ...user, image: user.image?.split(",")[1] },
         latitude: selectedLocation?.latitude, // Include latitude
         longitude: selectedLocation?.longitude, // Include longitude
       });

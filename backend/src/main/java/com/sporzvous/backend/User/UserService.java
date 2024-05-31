@@ -63,14 +63,16 @@ public class UserService {
 
             return new UserDTO(
                     userInfo.getUserId(),
-                    Base64.getEncoder().encodeToString(userInfo.getImage()),
+                    userInfo.getImageAsBase64(),
                     userInfo.getEmail(),
                     userInfo.getFullName(),
                     userInfo.getUsername(),
                     userInfo.getAge(),
                     userInfo.getGender(),
                     userInfo.getFavoriteSport(),
-                    receivedRequests
+                    receivedRequests,
+                    userInfo.getRatings(),
+                    userInfo.getSportRatings()
             );
         }
 

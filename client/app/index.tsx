@@ -13,9 +13,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  TouchableOpacity,
 } from "react-native";
 
 const LoginPage = () => {
@@ -31,7 +31,6 @@ const LoginPage = () => {
       console.log(email, password);
 
       await login({ email, password }, (response) => {
-        console.log("response", response.data);
         router.replace("drawer");
       });
       setErrorLogin("");

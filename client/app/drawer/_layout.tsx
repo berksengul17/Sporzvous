@@ -26,7 +26,7 @@ export const unstable_settings = {
 };
 
 const Layout = () => {
-  const { user } = useUserContext();
+  const { user, logout } = useUserContext();
   const [imageUri, setImageUri] = useState("");
   const router = useRouter();
   const { top } = useSafeAreaInsets();
@@ -73,7 +73,9 @@ const Layout = () => {
         }}
       >
         <View style={styles.profileContainer}>
-          <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          {imageUri && (
+            <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          )}
           <Text
             style={[
               styles.profileName,
@@ -151,16 +153,18 @@ const Layout = () => {
               style={{ marginRight: "10%" }}
               onPress={() => router.push("drawer/(home)/(profile)")}
             >
-              <Image
-                source={{ uri: imageUri }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  borderWidth: 1,
-                  borderColor: "#FF5C00",
-                }}
-              />
+              {imageUri && (
+                <Image
+                  source={{ uri: imageUri }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    borderWidth: 1,
+                    borderColor: "#FF5C00",
+                  }}
+                />
+              )}
             </TouchableOpacity>
           ),
         }}

@@ -6,13 +6,16 @@ import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.SportRating.SportRating;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.UserEvent.UserEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.Base64Utils;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +83,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<UserEvent> eventsParticipated;
 
+    @OneToMany(mappedBy = "user")
+    private List<SportRating> sportRatings;
+
     public User(Long userId, String email, String username) {
         this.userId = userId;
         this.email = email;
@@ -123,5 +129,9 @@ public class User {
         this.gender = gender;
         this.favoriteSport = favoriteSport;
         this.eventCount = eventCount;
+    }
+
+    public String getImageAsBase64() {
+        return this.image != null ? Base64.getEncoder().encodeToString(this.image) : null;
     }
 }

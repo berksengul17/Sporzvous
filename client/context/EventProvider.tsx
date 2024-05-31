@@ -18,6 +18,7 @@ export type Event = {
   locationIndex: string;
   isEventOver: number;
   organizer: User;
+  organizerImage?: string;
   latitude: number;
   longitude: number;
 };
@@ -30,7 +31,7 @@ type EventContextType = {
   fetchAllEvents: () => Promise<void>;
   fetchMyEvents: () => Promise<Event[]>;
   fetchEvent: (id: number) => Promise<Event>;
-  addEvent: (event: CreateEvent) => void;
+  addEvent: (event: CreateEvent) => Promise<void>;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
   filterEvents: (

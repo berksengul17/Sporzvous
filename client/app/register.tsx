@@ -5,15 +5,15 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
+  ImageBackground,
   Keyboard,
   Modal,
   Pressable,
   StyleSheet,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  Text,
-  ImageBackground,
 } from "react-native";
 import CountryPicker from "react-native-country-picker-modal";
 
@@ -37,7 +37,6 @@ const Register = () => {
       await signUp(
         { username, email, password, country: country.name.common },
         (response) => {
-          console.log("response", response.data);
           router.replace("information");
         }
       );

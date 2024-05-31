@@ -1,6 +1,8 @@
 package com.sporzvous.backend.User;
 
 import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
+import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.SportRating.SportRating;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,4 +22,6 @@ public class UserDTO {
     private String gender;
     private String favoriteSport;
     private List<FriendRequestDTO> receivedFriendRequests;
+    private List<Rating> ratings;
+    private List<SportRating> sportRatings;
 }

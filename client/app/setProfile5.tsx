@@ -3,6 +3,7 @@ import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -49,26 +50,54 @@ const SportCard = ({
 };
 
 const StepFive = () => {
-  const { user, updateProfile } = useUserContext();
+  const { user, setUser } = useUserContext();
   const [selectedSport, setSelectedSport] = useState<Sport>();
+  const [selectedSportRating, setSelectedSportRating] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [ratings, setRatings] = useState(user.ratings || {});
+  const [ratings, setRatings] = useState<RatingType[]>([]);
+
+  const [errorRating, setErrorRating] = useState("");
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
     setModalVisible(true);
   };
 
+  const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/sportRating";
+
   const handleSave = async () => {
-    await updateProfile({ ...user, ratings });
-    setModalVisible(false);
+    try {
+      const response = await axios.post(
+        `${API_URL}/initializeSportRatings/${user.userId}`,
+        ratings
+      );
+      console.log(response.data);
+      setErrorRating("");
+      setUser({ ...user, ratings });
+      router.navigate("/drawer/(home)/home");
+    } catch (err) {
+      setErrorRating("An unexpected error occurred. Please try again.");
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
+          setErrorRating(err.response.data.error);
+        } else if (err instanceof Error) {
+          setErrorRating(err.response?.data);
+        }
+      }
+    }
   };
 
-  const handleRatingCompleted = (rating: RatingType) => {
-    setRatings((prevRatings) => ({
-      ...prevRatings,
-      [selectedSport?.id!]: rating,
-    }));
+  const handleRatingCompleted = () => {
+    setRatings((prevRatings: RatingType[]) => [
+      ...prevRatings.filter(
+        (r: RatingType) => r.sportName !== selectedSport?.name
+      ),
+      {
+        sportName: selectedSport?.name!,
+        rating: selectedSportRating,
+      },
+    ]);
+    setModalVisible(false);
   };
 
   return (
@@ -100,10 +129,7 @@ const StepFive = () => {
                 onPress={() => router.back()}
                 containerStyle={styles.button}
               />
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={() => router.replace("drawer")}
-              >
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Ionicons name="checkmark" size={30} color="#fff" />
               </TouchableOpacity>
             </View>
@@ -121,12 +147,8 @@ const StepFive = () => {
                 <Text style={styles.modalSportName}>{selectedSport?.name}</Text>
                 <View style={styles.ratingStars}>
                   <Rating
-                    type="star"
-                    ratingCount={5}
-                    imageSize={30}
-                    startingValue={ratings[selectedSport?.id] || 0}
-                    style={styles.ratingStars}
-                    onFinishRating={handleRatingCompleted}
+                    customStyles={styles.ratingStars}
+                    onFinishRating={(rating) => setSelectedSportRating(rating)}
                   />
                 </View>
                 <View style={styles.modalButtons}>
@@ -137,7 +159,7 @@ const StepFive = () => {
                   />
                   <CustomButton
                     title="Save"
-                    onPress={handleSave}
+                    onPress={handleRatingCompleted}
                     containerStyle={styles.modalButton}
                   />
                 </View>

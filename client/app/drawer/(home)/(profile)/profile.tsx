@@ -1,7 +1,7 @@
 import Button from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
-import { useUserContext } from "@/context/UserProvider";
+import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,6 +19,18 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import Modal from "react-native-modal";
 import RNPickerSelect from "react-native-picker-select";
 
+const initialSportsData = [
+  { id: "1", label: "Basketball", value: "basketball" },
+  { id: "2", label: "Football", value: "football" },
+  { id: "3", label: "Volleyball", value: "volleyball" },
+  { id: "4", label: "Tennis", value: "tennis" },
+  { id: "5", label: "Baseball", value: "baseball" },
+  { id: "6", label: "Badminton", value: "badminton" },
+  { id: "7", label: "Handball", value: "handball" },
+  { id: "8", label: "Ice Hockey", value: "hockey-puck" },
+  { id: "9", label: "Paintball", value: "pistol" },
+];
+
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
     useUserContext();
@@ -34,10 +46,6 @@ const Profile = () => {
   const [overallField, setOverallField] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    console.log(favoriteSport);
-  }, []);
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -51,6 +59,12 @@ const Profile = () => {
   const inputStyle = isProfileEditable
     ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
     : styles.input;
+
+  const selectedRating =
+    user.ratings.find((rating: RatingType) => {
+      console.log("rating", rating.sportName, userSkillField);
+      return rating.sportName.toLowerCase() === userSkillField;
+    })?.rating || 0;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -162,10 +176,10 @@ const Profile = () => {
               <RNPickerSelect
                 value={favoriteSport.toLowerCase()}
                 onValueChange={(newSport) => setFavoriteSport(newSport)}
-                items={[
-                  { label: "Basketball", value: "basketball" },
-                  { label: "Football", value: "football" },
-                ]}
+                items={initialSportsData.map((sport) => ({
+                  label: sport.label,
+                  value: sport.value,
+                }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
                   inputIOS: inputStyle,
@@ -189,10 +203,10 @@ const Profile = () => {
             <View>
               <RNPickerSelect
                 onValueChange={(field) => setUserSkillByOthersField(field)}
-                items={[
-                  { label: "Basketball", value: "basketball" },
-                  { label: "Football", value: "football" },
-                ]}
+                items={initialSportsData.map((sport) => ({
+                  label: sport.label,
+                  value: sport.value,
+                }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
                   inputIOS: styles.input,
@@ -215,10 +229,10 @@ const Profile = () => {
             <View>
               <RNPickerSelect
                 onValueChange={(field) => setUserSkillField(field)}
-                items={[
-                  { label: "Basketball", value: "basketball" },
-                  { label: "Football", value: "football" },
-                ]}
+                items={initialSportsData.map((sport) => ({
+                  label: sport.label,
+                  value: sport.value,
+                }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
                   inputIOS: styles.input,
@@ -231,7 +245,7 @@ const Profile = () => {
                 }}
               />
             </View>
-            <Rating />
+            <Rating value={selectedRating} isEditable={false} />
           </View>
           <View style={styles.ratingContainer}>
             <CustomText
@@ -241,10 +255,10 @@ const Profile = () => {
             <View>
               <RNPickerSelect
                 onValueChange={(field) => setOverallField(field)}
-                items={[
-                  { label: "Basketball", value: "basketball" },
-                  { label: "Football", value: "football" },
-                ]}
+                items={initialSportsData.map((sport) => ({
+                  label: sport.label,
+                  value: sport.value,
+                }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
                   inputIOS: styles.input,
