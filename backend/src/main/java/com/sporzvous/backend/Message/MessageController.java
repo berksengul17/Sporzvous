@@ -17,7 +17,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @MessageMapping("/private-message")
-    public Message receivePrivateMessage(@Payload MessageDto message) {
+    public Message receivePrivateMessage(@Payload MessageDTO message) {
         return messageService.sendMessage(message);
     }
 

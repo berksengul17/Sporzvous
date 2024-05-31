@@ -74,8 +74,6 @@ const ChatScreen: React.FC = () => {
           })
         );
 
-        setMessages(fetchedMessages);
-
         const newReadMessages = new Set(readMessages.current);
         fetchedMessages.forEach((message: ChatMessage) => {
           if (
@@ -86,6 +84,11 @@ const ChatScreen: React.FC = () => {
             message.readStatus = true;
           }
         });
+
+        console.log("fetched", fetchedMessages);
+
+        setMessages(fetchedMessages);
+
         readMessages.current = newReadMessages;
       })
       .catch((error) => {
@@ -170,7 +173,10 @@ const ChatScreen: React.FC = () => {
   const onPrivateMessage = (message: any) => {
     const payloadData = JSON.parse(message.body);
 
-    if (payloadData.receiverId == user.userId && payloadData.readStatus != 1) {
+    if (
+      payloadData.receiverId == user.userId &&
+      payloadData.readStatus != true
+    ) {
       readMessages.current.add(payloadData.id);
       payloadData.readStatus = true;
     }

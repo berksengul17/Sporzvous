@@ -16,15 +16,15 @@ public class MessageService {
     private final UserRepository userRepository;
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public Message sendMessage(MessageDto message) {
+    public Message sendMessage(MessageDTO message) {
         User receiver = userRepository.findById(message.getReceiverId())
                 .orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
         User sender = userRepository.findById(message.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
-        message.setTimeStamp(LocalDateTime.now());
+        message.setTimestamp(LocalDateTime.now());
         simpMessagingTemplate.convertAndSendToUser(receiver.getUserId().toString(), "/private", message);
-        return messageRepository.save(new Message(sender, receiver, message.getContent(), message.getTimeStamp()));
+        return messageRepository.save(new Message(sender, receiver, message.getContent(), message.getTimestamp()));
     }
 
     public List<Message> getMessagesByReceiverId(Long receiverId) {
