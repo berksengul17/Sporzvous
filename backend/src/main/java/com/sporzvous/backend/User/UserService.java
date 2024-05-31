@@ -71,7 +71,8 @@ public class UserService {
                     userInfo.getGender(),
                     userInfo.getFavoriteSport(),
                     receivedRequests,
-                    userInfo.getRatings()
+                    userInfo.getRatings(),
+                    userInfo.getSportRatings()
             );
         }
 

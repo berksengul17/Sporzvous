@@ -15,10 +15,10 @@ public class SportRatingController {
 
 
     @PostMapping("/initializeSportRatings/{userId}")
-    public ResponseEntity<?> initializeSportRating(@RequestBody List<SportRating> sportRatings, @PathVariable Long userId) {
+    public ResponseEntity<String> initializeSportRating(@RequestBody List<SportRating> sportRatings, @PathVariable Long userId) {
         try {
-            List<SportRating> sportRatingList = sportRatingService.createSportRating(sportRatings, userId);
-            return ResponseEntity.ok("Ratings are added to" + userId );
+            sportRatingService.createSportRating(sportRatings, userId);
+            return ResponseEntity.ok("Ratings are added to " + userId );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" + e.getMessage());
         }

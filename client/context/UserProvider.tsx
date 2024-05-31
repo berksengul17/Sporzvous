@@ -5,7 +5,6 @@ import { FriendRequest } from "./FriendProvider";
 export type Rating = {
   sportName: string;
   rating: number;
-  user: User;
 };
 
 export type User = {
@@ -33,6 +32,7 @@ export type UpdateUser = {
 
 type UserProps = {
   user: User;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isProfileEditable: boolean;
   setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
   fetchUserById: (userId: number) => Promise<User>;
@@ -168,7 +168,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         gender,
         favoriteSport,
         receivedFriendRequests,
-        ratings,
+        sportRatings,
       } = response.data;
 
       setUser({
@@ -181,7 +181,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         gender,
         favoriteSport,
         receivedFriendRequests,
-        ratings,
+        ratings: sportRatings,
       });
 
       successCallback(response);

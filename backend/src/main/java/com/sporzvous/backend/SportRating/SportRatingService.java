@@ -15,16 +15,14 @@ public class SportRatingService {
     private final SportRatingRepository sportRatingRepository;
     private final UserRepository userRepository;
 
-    public List<SportRating> createSportRating(List<SportRating> sportRatings, Long userId) {
+    public void createSportRating(List<SportRating> sportRatings, Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("A problem occurred while creating sport rating"));
 
-        List<SportRating> ratings = new ArrayList<>();
         for (SportRating sportRating : sportRatings) {
             SportRating newSportRating = new SportRating( sportRating.getSportName(), sportRating.getRating(), user);
-            ratings.add(sportRatingRepository.save(newSportRating));
+            sportRatingRepository.save(newSportRating);
         }
-        return ratings;
     }
 }

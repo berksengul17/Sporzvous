@@ -1,5 +1,6 @@
 package com.sporzvous.backend.SportRating;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class SportRating {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public SportRating(String sportName, double rating, User user) {
