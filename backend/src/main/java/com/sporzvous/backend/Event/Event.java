@@ -1,6 +1,7 @@
 package com.sporzvous.backend.Event;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.UserEvent.UserEvent;
@@ -55,6 +56,11 @@ public class Event {
 
     private Double latitude;
     private Double longitude;
+
+    @JsonInclude
+    public String getOrganizerImage() {
+        return organizer != null ? "data:image/jpeg;base64," + organizer.getImageAsBase64() : null;
+    }
 
     public Event(String title, String sport, String locationCity,
                  String locationDistrict, Integer participants,

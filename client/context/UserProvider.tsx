@@ -50,6 +50,7 @@ type UserProps = {
     successCallback: (response: AxiosResponse) => void
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
+  logout: () => void;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -229,6 +230,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logout = () => {
+    setUser({
+      userId: 0,
+      image: "",
+      email: "",
+      username: "",
+      fullName: "",
+      age: 0,
+      gender: "",
+      favoriteSport: "",
+      receivedFriendRequests: [],
+      ratings: [],
+    });
+  };
+
   const value = {
     user,
     setUser,
@@ -238,6 +254,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     signUp,
     updateProfile,
+    logout,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

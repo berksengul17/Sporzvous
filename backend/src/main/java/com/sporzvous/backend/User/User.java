@@ -13,7 +13,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.Base64Utils;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,5 +129,9 @@ public class User {
         this.gender = gender;
         this.favoriteSport = favoriteSport;
         this.eventCount = eventCount;
+    }
+
+    public String getImageAsBase64() {
+        return this.image != null ? Base64.getEncoder().encodeToString(this.image) : null;
     }
 }

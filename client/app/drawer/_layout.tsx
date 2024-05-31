@@ -1,8 +1,12 @@
+import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
+import { useUserContext } from "@/context/UserProvider";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
+import { useRouter } from "expo-router";
 
 import { Drawer } from "expo-router/drawer";
 import React, { useEffect, useState } from "react";
@@ -15,17 +19,13 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useUserContext } from "@/context/UserProvider";
-import { useRouter } from "expo-router";
-import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 
 export const unstable_settings = {
   initialRouteName: "(home)",
 };
 
 const Layout = () => {
-  const { user } = useUserContext();
+  const { user, logout } = useUserContext();
   const [imageUri, setImageUri] = useState("");
   const router = useRouter();
   const { top } = useSafeAreaInsets();
@@ -54,7 +54,10 @@ const Layout = () => {
         },
         {
           text: "Log out",
-          onPress: () => router.replace("/"),
+          onPress: () => {
+            logout();
+            router.replace("/");
+          },
         },
       ],
       { cancelable: false }
@@ -71,7 +74,9 @@ const Layout = () => {
         }}
       >
         <View style={styles.profileContainer}>
-          <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          {imageUri && (
+            <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          )}
           <Text
             style={[
               styles.profileName,
@@ -149,16 +154,18 @@ const Layout = () => {
               style={{ marginRight: "10%" }}
               onPress={() => router.push("drawer/(home)/(profile)")}
             >
-              <Image
-                source={{ uri: imageUri }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 100,
-                  borderWidth: 1,
-                  borderColor: "#FF5C00",
-                }}
-              />
+              {imageUri && (
+                <Image
+                  source={{ uri: imageUri }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 100,
+                    borderWidth: 1,
+                    borderColor: "#FF5C00",
+                  }}
+                />
+              )}
             </TouchableOpacity>
           ),
         }}
