@@ -1,22 +1,19 @@
+import { Event, useEventContext } from "@/context/EventProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import { router } from "expo-router";
-import { Event, useEventContext } from "@/context/EventProvider";
-import { useUserContext } from "@/context/UserProvider";
 
 const EventItem = ({ event }: { event: Event }) => {
-  const { user } = useUserContext();
-  const [imageUri, setImageUri] = useState("");
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
 
   return (
@@ -30,7 +27,9 @@ const EventItem = ({ event }: { event: Event }) => {
       }
     >
       <Image
-        source={event.image ? { uri: event.image } : defaultImage}
+        source={
+          event.organizerImage ? { uri: event.organizerImage } : defaultImage
+        }
         style={styles.eventImage}
       />
       <View style={styles.eventInfo}>

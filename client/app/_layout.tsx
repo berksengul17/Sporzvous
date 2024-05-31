@@ -12,6 +12,7 @@ import websocket from "websocket";
 import * as encoding from "text-encoding";
 import { WebSocket } from "ws";
 import { TextDecoder, TextEncoder } from "text-encoding";
+import { DarkModeProvider } from "@/context/DarkModeContext";
 
 // Example usage
 const decoder = new TextDecoder("utf-8");
@@ -47,29 +48,31 @@ export default function RootLayout() {
   }
 
   return (
-    <UserProvider>
-      <EventProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ headerShown: false }} />
-          <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="verificationCode"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="setNewPassword"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="information" options={{ headerShown: false }} />
-          <Stack.Screen name="setProfile" options={{ headerShown: false }} />
-          <Stack.Screen name="setProfile2" options={{ headerShown: false }} />
-          <Stack.Screen name="setProfile3" options={{ headerShown: false }} />
-          <Stack.Screen name="setProfile4" options={{ headerShown: false }} />
-          <Stack.Screen name="setProfile5" options={{ headerShown: false }} />
-          <Stack.Screen name="drawer" options={{ headerShown: false }} />
-        </Stack>
-      </EventProvider>
-    </UserProvider>
+    <DarkModeProvider>
+      <UserProvider>
+        <EventProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="register" options={{ headerShown: false }} />
+            <Stack.Screen name="forgotpw" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="verificationCode"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="setNewPassword"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="information" options={{ headerShown: false }} />
+            <Stack.Screen name="setProfile" options={{ headerShown: false }} />
+            <Stack.Screen name="setProfile2" options={{ headerShown: false }} />
+            <Stack.Screen name="setProfile3" options={{ headerShown: false }} />
+            <Stack.Screen name="setProfile4" options={{ headerShown: false }} />
+            <Stack.Screen name="setProfile5" options={{ headerShown: false }} />
+            <Stack.Screen name="drawer" options={{ headerShown: false }} />
+          </Stack>
+        </EventProvider>
+      </UserProvider>
+    </DarkModeProvider>
   );
 }

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -56,18 +57,22 @@ public class UserService {
         if (user.isPresent() && user.get().getPassword().equals(userCredentials.getPassword())) {
             User userInfo = user.get();
             List<FriendRequestDTO> receivedRequests = userInfo.getReceivedRequests().stream()
-                    .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(), req.getSender().getFullName(), req.getFriendRequestStatus()))
+                    .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(),
+                            req.getSender().getFullName(), req.getFriendRequestStatus()))
                     .toList();
 
             return new UserDTO(
                     userInfo.getUserId(),
+                    userInfo.getImageAsBase64(),
                     userInfo.getEmail(),
                     userInfo.getFullName(),
                     userInfo.getUsername(),
                     userInfo.getAge(),
                     userInfo.getGender(),
                     userInfo.getFavoriteSport(),
-                    receivedRequests
+                    receivedRequests,
+                    userInfo.getRatings(),
+                    userInfo.getSportRatings()
             );
         }
 
@@ -121,7 +126,7 @@ public class UserService {
         }
 
         if (profileUpdateDto.getImage() != null) {
-            user.setImage(profileUpdateDto.getImage());
+            user.setImage(Base64.getDecoder().decode(profileUpdateDto.getImage()));
         }
 //        if (profileUpdateDto.getMultipartFile() != null && !profileUpdateDto.getMultipartFile().isEmpty()) {
 //            try {

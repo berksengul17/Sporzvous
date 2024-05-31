@@ -1,0 +1,25 @@
+{
+    "header": "Şikayetler ve Geri Bildirimler",
+    "selectCategory": "Kategori Seçiniz",
+    "submitButton": "Gönder",
+    "modalMessage": "Geri bildiriminiz için teşekkür ederiz! Mesajınızı inceleyip en kısa sürede size geri dönüş yapacağız.",
+    "closeButton": "Kapat",
+    "unexpectedError": "Beklenmedik bir hata meydana geldi. Lütfen tekrar deneyin.",
+    "categories": {
+    "reportUser": "Kullanıcı Bildir",
+    "customerService": "Müşteri Destek",
+    "technicalIssues": "Teknik Problemler",
+    "suggestion": "Öneri"
+    },
+    "categoryMessage": {
+    "reportUser": "Olumlu bir deneyim sağlamamız için bize yardımcı olun. Bildirmek istediğiniz kullanıcının adını yazın ve şikayetinizi detaylandırın.",
+    "customerService": "Bir konuda desteğe mi ihtiyacınız var? Müşteri destek ekibimiz size yardımcı olmaktan memnuniyet duyacaktır.",
+    "technicalIssues": "Teknik bir sorun mu yaşıyorsunuz? Hızla çözebilmemiz için lütfen detayları paylaşın.",
+    "suggestion": "Geri bildiriminiz bizim için çok değerlidir! Nasıl daha iyi olabileceğimizi bize iletin.",
+    "default": "Lütfen geri bildiriminiz için bir kategori seçin"
+    },
+    "placeholders": {
+    "reportedUser": "Bildirilmek İstenen Kullanıcı Adı",
+    "content": "İçerik"
+    }
+    }

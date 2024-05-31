@@ -1,0 +1,33 @@
+{
+    "faqs": [
+      {
+        "question": "Sporzvous nedir?",
+        "answer": "Sporzvous, spor meraklılarını etkinlikler ve organizasyonlarla buluşturan bir mobil uygulamadır. Kullanıcıların spor etkinliklerini keşfetmelerini, katılmalarını, katılımlarını takip etmelerini ve çeşitli sporlarda yeteneklerini değerlendirmelerini sağlar."
+      },
+      {
+        "question": "Nasıl hesap oluştururum?",
+        "answer": "Sporzvous'ta hesap oluşturmak için, uygulamayı App Store veya Google Play'den indirin. Uygulamayı açın ve 'Kaydol' butonuna dokunun. E-postanızı girin, bir şifre belirleyin ve profil bilgilerinizi tamamlayın."
+      },
+      {
+        "question": "Spor aktivitelerini nasıl bulurum?",
+        "answer": "Ana sayfada spor aktivitelerini bulabilirsiniz. Görüntülenen spor kartlarını gözden geçirin ve bir spor etkinliğini görüntülemek için karta dokunun. Etkinlik ayrıntılarını görmek ve katılmak için bir etkinlik seçin."
+      },
+      {
+        "question": "Bir spordaki yeteneklerimi nasıl değerlendiririm?",
+        "answer": "Yeteneklerinizi değerlendirmek için profilinize gidin ve sağ üst köşedeki düzenle butonuna dokunun. Bir spor seçin ve yıldız derecelendirme bileşenini kullanarak 1 ila 5 yıldız arasında bir değerlendirme seçin. Bu, diğer kullanıcıların çeşitli sporlardaki yetenek seviyenizi anlamalarına yardımcı olur."
+      },
+      {
+        "question": "Kendi spor etkinliğimi oluşturabilir miyim?",
+        "answer": "Evet, ana sayfanın üst kısmındaki 'Etkinlik Oluştur' butonuna dokunarak kendi spor etkinliğinizi oluşturabilirsiniz. Spor türü, konum, tarih ve saat gibi etkinlik ayrıntılarını doldurun ve etkinliği yayınlayın. Diğer kullanıcılar etkinliğinizi görebilecek ve katılabilecektir."
+      },
+      {
+        "question": "Sporzvous'u kullanmak için bir ücret var mı?",
+        "answer": "Sporzvous'u indirmek ve kullanmak ücretsizdir. Temel işlevler ücretsizken, bazı etkinlikler veya premium özellikler için maliyetler olabilir."
+      },
+      {
+        "question": "Müşteri desteğiyle nasıl iletişime geçerim?",
+        "answer": "Yardım ihtiyacınız varsa, uygulama çekmecesinden erişilebilen 'Şikayetler' sayfası aracılığıyla bir şikayet gönderebilirsiniz. Sorgunuzu içeren formu doldurun ve destek ekibimiz en kısa sürede size yanıt verecektir."
+      }
+    ]
+  }
+  

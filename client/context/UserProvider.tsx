@@ -6,7 +6,8 @@ import { router } from "expo-router";
 import { Event } from "./EventProvider";
 
 export type Rating = {
-  [sportId: string]: number;
+  sportName: string;
+  rating: number;
 };
 
 export type User = {
@@ -34,6 +35,7 @@ export type UpdateUser = {
 
 type UserProps = {
   user: User;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isProfileEditable: boolean;
   setProfileEditable: React.Dispatch<React.SetStateAction<boolean>>;
   fetchUserById: (userId: number) => Promise<User>;
@@ -52,6 +54,7 @@ type UserProps = {
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
   joinEvent: (event: Event) => Promise<string>;
+  logout: () => void;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -161,7 +164,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       const {
         userId,
-        image,
+        base64Img,
         email: userEmail,
         username,
         fullName,
@@ -169,12 +172,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         gender,
         favoriteSport,
         receivedFriendRequests,
-        ratings,
+        sportRatings,
       } = response.data;
 
       setUser({
         userId,
-        image,
+        image: `data:image/jpeg;base64,${base64Img}`, // add the base64 prefix
         email: userEmail,
         username,
         fullName,
@@ -182,7 +185,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         gender,
         favoriteSport,
         receivedFriendRequests,
-        ratings,
+        ratings: sportRatings,
       });
 
       successCallback(response);
@@ -210,7 +213,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
         age: newUserInfo.age,
-        image: newUserInfo.image,
+        image: newUserInfo.image?.split(",")[1], // only get the base64 string
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
         ratings: newUserInfo.ratings,
@@ -240,6 +243,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logout = () => {
+    setUser({
+      userId: 0,
+      image: "",
+      email: "",
+      username: "",
+      fullName: "",
+      age: 0,
+      gender: "",
+      favoriteSport: "",
+      receivedFriendRequests: [],
+      ratings: [],
+    });
+  };
+
   const value = {
     user,
     setUser,
@@ -250,6 +268,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     updateProfile,
     joinEvent,
+    logout,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

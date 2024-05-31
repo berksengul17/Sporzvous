@@ -6,9 +6,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Dimensions,
-  Modal,
-  Pressable,
-  TextInput,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useRouter } from "expo-router";
@@ -16,6 +13,8 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const initialSportsData = [
   { id: "1", name: "Basketball", icon: "basketball", visible: true },
@@ -31,6 +30,8 @@ const initialSportsData = [
 
 const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
   const router = useRouter();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("sportsScreen");
 
   const handlePress = () => {
     if (!isCustomizeMode) {
@@ -43,11 +44,17 @@ const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
 
   return (
     <TouchableOpacity
-      style={[styles.card, !sport.visible && styles.cardInvisible]}
+      style={[
+        styles.card,
+        !sport.visible && styles.cardInvisible,
+        { backgroundColor: isDarkMode ? "#444" : "#fff" },
+      ]}
       onPress={handlePress}
     >
       <MaterialCommunityIcons name={sport.icon} size={40} color="#FF5C00" />
-      <Text style={styles.cardText}>{sport.name}</Text>
+      <Text style={[styles.cardText, { color: isDarkMode ? "#fff" : "#333" }]}>
+        {t(`sports.${sport.name}`)}
+      </Text>
       {isCustomizeMode && (
         <TouchableOpacity
           onPress={() =>
@@ -67,6 +74,7 @@ const SportCard = ({ sport, onDiscard, onAddBack, isCustomizeMode }) => {
 };
 
 const EditButtonCard = ({ isCustomizeMode, setIsCustomizeMode }) => {
+  const { t } = useTranslation("sportsScreen");
   return (
     <TouchableOpacity
       style={styles.editCard}
@@ -77,12 +85,16 @@ const EditButtonCard = ({ isCustomizeMode, setIsCustomizeMode }) => {
         size={40}
         color="black"
       />
-      <Text style={styles.cardText}>{isCustomizeMode ? "Save" : "Edit"}</Text>
+      <Text style={styles.cardText}>
+        {isCustomizeMode ? t("save") : t("edit")}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 export default function SportsScreen() {
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("sportsScreen");
   const [sportsData, setSportsData] = useState(initialSportsData);
   const [isCustomizeMode, setIsCustomizeMode] = useState(false);
 
@@ -108,14 +120,29 @@ export default function SportsScreen() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#333" : "#f7f7f7" },
+        ]}
+      >
         <View style={styles.topContent}>
-          <Text style={styles.headerText}>Join or host an event today!</Text>
+          <Text style={[styles.headerText]}>{t("joinOrHostEvent")}</Text>
           <TouchableOpacity
             onPress={() => router.push("drawer/(home)/createEventModal")}
-            style={styles.addButton}
+            style={[
+              styles.addButton,
+              { backgroundColor: isDarkMode ? "#333" : "white" },
+            ]}
           >
-            <Text style={styles.addButtonText}>Create Event</Text>
+            <Text
+              style={[
+                styles.addButtonText,
+                { color: isDarkMode ? "white" : "#333" },
+              ]}
+            >
+              {t("createEvent")}
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomSports}>
@@ -136,7 +163,13 @@ export default function SportsScreen() {
                 <TouchableOpacity
                   style={[
                     styles.cardContainer,
-                    { backgroundColor: isActive ? "#e0e0e0" : "#fff" },
+                    {
+                      backgroundColor: isActive
+                        ? "#e0e0e0"
+                        : isDarkMode
+                        ? "#444"
+                        : "#fff",
+                    },
                   ]}
                   onLongPress={drag}
                   disabled={!isCustomizeMode}
@@ -165,7 +198,6 @@ export default function SportsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
   },
   topContent: {
     height: Dimensions.get("window").height / 6,
@@ -175,13 +207,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
     padding: 20,
+    borderColor: "white",
   },
   bottomSports: {
     flex: 1,
     paddingTop: 20,
     paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#ddd",
+
     position: "relative",
   },
   list: {
@@ -218,7 +250,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
   },
   actionButton: {
@@ -227,9 +258,9 @@ const styles = StyleSheet.create({
     right: 10,
   },
   headerText: {
+    color: "white",
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
     marginBottom: 20,
     textAlign: "center",
   },

@@ -1,0 +1,26 @@
+{
+    "header": "Complaints and Feedbacks",
+    "selectCategory": "Select Category",
+    "submitButton": "Submit",
+    "modalMessage": "Thank you for your feedback! We will review your message and get back to you soon.",
+    "closeButton": "Close",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "categories": {
+      "reportUser": "Report User",
+      "customerService": "Customer Service",
+      "technicalIssues": "Technical Issues",
+      "suggestion": "Suggestions"
+    },
+    "categoryMessage": {
+      "reportUser": "Help us maintain a positive experience. Please enter the username of the user you are reporting and describe your complaint.",
+      "customerService": "Need help with something? Our customer service team is here to assist you.",
+      "technicalIssues": "Encountering technical issues? Please provide details so we can resolve them quickly.",
+      "suggestion": "Your feedback is valuable to us! Let us know how we can improve.",
+      "default": "Choose a category for your feedback"
+    },
+    "placeholders": {
+      "reportedUser": "Username to be reported",
+      "content": "Content"
+    }
+  }
+  

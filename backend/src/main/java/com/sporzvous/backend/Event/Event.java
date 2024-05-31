@@ -1,6 +1,9 @@
 package com.sporzvous.backend.Event;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.UserEvent.UserEvent;
@@ -39,7 +42,7 @@ public class Event {
     private String locationIndex;
     private int isEventOver;
     @ManyToOne
-    @JoinColumn(name="organizer_id", referencedColumnName="userId", nullable=false)
+    @JoinColumn(name = "organizer_id", referencedColumnName = "userId", nullable = false)
     private User organizer;
 
     @ManyToMany(mappedBy = "events")
@@ -57,12 +60,17 @@ public class Event {
     private Double latitude;
     private Double longitude;
 
+    @JsonInclude
+    public String getOrganizerImage() {
+        return organizer != null ? "data:image/jpeg;base64," + organizer.getImageAsBase64() : null;
+    }
+
     public Event(String title, String sport, String locationCity,
-                 String locationDistrict, Integer participants,
-                 Integer teamNumber, LocalDate eventDate,
-                 LocalTime eventTime, Double skillRating,
-                 String locationIndex, int isEventOver, User organizer,
-                 List<User> users, Integer maxParticipants) {
+            String locationDistrict, Integer participants,
+            Integer teamNumber, LocalDate eventDate,
+            LocalTime eventTime, Double skillRating,
+            String locationIndex, int isEventOver, User organizer,
+            List<User> users, Integer maxParticipants) {
         this.title = title;
         this.sport = sport;
         this.locationCity = locationCity;
@@ -83,16 +91,18 @@ public class Event {
 
     @PostConstruct
     private void teamInitializer() {
-        Team team1 = new Team("Team A", this, maxParticipants/2);
-        Team team2 = new Team("Team B", this, maxParticipants/2);
+        Team team1 = new Team("Team A", this, maxParticipants / 2);
+        Team team2 = new Team("Team B", this, maxParticipants / 2);
         teams.add(team1);
         teams.add(team2);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
         Event event = (Event) o;
         return eventId != null && Objects.equals(eventId, event.eventId);
     }
@@ -102,4 +112,3 @@ public class Event {
         return getClass().hashCode();
     }
 }
-

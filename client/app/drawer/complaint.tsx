@@ -16,6 +16,8 @@ import {
   View,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next"; // Import useTranslation hook
 
 export type Feedback = {
   feedbackId: number;
@@ -34,6 +36,8 @@ export default function FeedbacksHomePage() {
   const [errorFeedback, setErrorFeedback] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const { user } = useUserContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("complaint"); // Use useTranslation hook
 
   const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/feedback";
 
@@ -42,15 +46,12 @@ export default function FeedbacksHomePage() {
       const response = await axios.post(`${API_URL}/add`, feedback);
       setErrorFeedback("");
     } catch (err) {
-      setErrorFeedback("An unexpected error occurred. Please try again.");
+      setErrorFeedback(t("unexpectedError"));
       if (axios.isAxiosError(err)) {
-        // err is an AxiosError here
         if (err.response && err.response.data && err.response.data.error) {
-          setErrorFeedback(err.response.data.error); // Use the error message from the backend
+          setErrorFeedback(err.response.data.error);
         } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
           setErrorFeedback(err.response?.data);
-          setModalVisible(true); // Show modal on error
         }
       }
     }
@@ -61,40 +62,80 @@ export default function FeedbacksHomePage() {
       reporter: user,
       content,
       category,
-      reportedUsername: String(reportedUser), // assuming reportedUser is the ID
+      reportedUsername: String(reportedUser),
     });
     setModalVisible(true);
   };
 
+  const getCategoryMessage = () => {
+    switch (category) {
+      case "REPORT_USER":
+        return t("categoryMessage.reportUser");
+      case "CUSTOMER_SERVICE":
+        return t("categoryMessage.customerService");
+      case "TECHNICAL_ISSUES":
+        return t("categoryMessage.technicalIssues");
+      case "SUGGESTION":
+        return t("categoryMessage.suggestion");
+      default:
+        return t("categoryMessage.default");
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#333" : "white" },
+        ]}
+      >
         <View style={styles.complaintsContainer}>
           <CustomText
-            customStyle={styles.headerText}
-            text={"Complaints and Feedbacks"}
+            customStyle={[
+              styles.headerText,
+              { color: isDarkMode ? "#FF5C00" : "#FF5C00" },
+            ]}
+            text={t("header")}
             isBold={true}
           />
           <CustomText
-            customStyle={styles.underText}
-            text={"Your feedback is valuable to us!"}
-          />
-          <CustomText
-            customStyle={styles.underText}
-            text={"Let us know how we can improve."}
+            customStyle={[
+              styles.underText,
+              { color: isDarkMode ? "#fff" : "black" },
+            ]}
+            text={getCategoryMessage()}
           />
           <View style={styles.pickerContainer}>
             <RNPickerSelect
               onValueChange={(value) => setCategory(value)}
               items={[
-                { label: "Report User", value: "REPORT_USER" },
-                { label: "Customer Service", value: "CUSTOMER_SERVICE" },
-                { label: "Technical Issues", value: "TECHNICAL_ISSUES" },
-                { label: "Suggestions", value: "SUGGESTION" },
+                { label: t("categories.reportUser"), value: "REPORT_USER" },
+                {
+                  label: t("categories.customerService"),
+                  value: "CUSTOMER_SERVICE",
+                },
+                {
+                  label: t("categories.technicalIssues"),
+                  value: "TECHNICAL_ISSUES",
+                },
+                { label: t("categories.suggestion"), value: "SUGGESTION" },
               ]}
-              style={pickerSelectStyles}
+              style={{
+                ...pickerSelectStyles,
+                inputIOS: {
+                  ...pickerSelectStyles.inputIOS,
+                  backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+                  color: isDarkMode ? "#fff" : "#000",
+                },
+                inputAndroid: {
+                  ...pickerSelectStyles.inputAndroid,
+                  backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+                  color: isDarkMode ? "#fff" : "#000",
+                },
+              }}
               useNativeAndroidPickerStyle={false}
-              placeholder={{ label: "Select Category", value: null }}
+              placeholder={{ label: t("selectCategory"), value: null }}
               value={category}
             />
           </View>
@@ -102,9 +143,15 @@ export default function FeedbacksHomePage() {
           {category === "REPORT_USER" && (
             <View style={styles.reportedUserBoxContainer}>
               <TextInput
-                placeholder="Username to be reported"
+                placeholder={t("placeholders.reportedUser")}
                 placeholderTextColor="#6F6F6F"
-                style={styles.reportedUserBox}
+                style={[
+                  styles.reportedUserBox,
+                  {
+                    backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+                    color: isDarkMode ? "#fff" : "#000",
+                  },
+                ]}
                 multiline={true}
                 value={reportedUser}
                 onChangeText={setReportedUser}
@@ -114,9 +161,15 @@ export default function FeedbacksHomePage() {
 
           <View style={styles.contentBoxContainer}>
             <TextInput
-              placeholder="Content"
+              placeholder={t("placeholders.content")}
               placeholderTextColor="#6F6F6F"
-              style={styles.contentBox}
+              style={[
+                styles.contentBox,
+                {
+                  backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+                  color: isDarkMode ? "#fff" : "#000",
+                },
+              ]}
               multiline={true}
               value={content}
               onChangeText={setContent}
@@ -124,10 +177,10 @@ export default function FeedbacksHomePage() {
           </View>
 
           <TouchableOpacity
-            style={styles.submitButton}
+            style={[styles.submitButton, { backgroundColor: "#FF5C00" }]}
             onPress={handleAddFeedback}
           >
-            <Text style={styles.submitButtonText}>Submit</Text>
+            <Text style={styles.submitButtonText}>{t("submitButton")}</Text>
           </TouchableOpacity>
         </View>
         <Modal
@@ -143,13 +196,13 @@ export default function FeedbacksHomePage() {
               <View style={styles.modalView}>
                 <CustomText
                   customStyle={styles.modalText}
-                  text="Thank you for your feedback! We will review your message and get back to you soon."
+                  text={t("modalMessage")}
                 />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <Text style={styles.textStyle}>Close</Text>
+                  <Text style={styles.textStyle}>{t("closeButton")}</Text>
                 </Pressable>
               </View>
             </View>
@@ -163,7 +216,6 @@ export default function FeedbacksHomePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
   },
   complaintsContainer: {
     flex: 1,
@@ -174,11 +226,9 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 23,
     margin: 20,
-    color: "#FF5C00",
   },
   underText: {
     fontSize: 18,
-    color: "black",
     marginBottom: 20,
   },
   pickerContainer: {
@@ -189,33 +239,24 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 20,
   },
-
   reportedUserBoxContainer: {
     width: "70%",
     marginVertical: 20,
   },
-
   contentBox: {
     padding: 10,
     height: 200,
-    backgroundColor: "#F0F0F0",
     textAlignVertical: "top",
     borderRadius: 10,
-    color: "black",
   },
-
   reportedUserBox: {
     justifyContent: "center",
     height: 50,
-    backgroundColor: "#F0F0F0",
     borderRadius: 10,
-    color: "black",
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
-
   submitButton: {
-    backgroundColor: "#FF5C00",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 25,
@@ -298,9 +339,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#6F6F6F",
     borderRadius: 10,
-    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: "#F0F0F0",
   },
   inputAndroid: {
     fontSize: 16,
@@ -309,8 +348,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#6F6F6F",
     borderRadius: 10,
-    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: "#F0F0F0",
   },
 });

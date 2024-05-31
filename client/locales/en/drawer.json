@@ -1,0 +1,13 @@
+{
+    "home": "Homepage",
+    "friends": "My Friends",
+    "inbox": "Inbox",
+    "myEvents": "My Events",
+    "complaint": "Complaint",
+    "settings": "Settings",
+    "logout": "Log out",
+    "confirmLogout": "Confirm Logout",
+    "logoutMessage": "Are you sure you want to log out?",
+    "cancel": "Cancel"
+  }
+  

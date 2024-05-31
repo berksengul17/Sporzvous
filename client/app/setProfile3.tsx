@@ -1,29 +1,33 @@
-import React, { useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Text,
-  ImageBackground,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import CustomButton from "@/components/CustomButton";
+import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const StepThree = () => {
   const { user, updateProfile } = useUserContext();
-  const [profileImage, setProfileImage] = useState<string>(
-    user.image ||
-      Image.resolveAssetSource(require("../assets/images/defaultpp.jpg")).uri
-  );
+  const defaultImageUri = Image.resolveAssetSource(
+    require("../assets/images/defaultpp.jpg")
+  ).uri;
+  const [profileImage, setProfileImage] = useState<string>(defaultImageUri);
   const [modalVisible, setModalVisible] = useState(false);
   const [imageModalVisible, setImageModalVisible] = useState(false);
+
+  useEffect(() => {
+    setProfileImage(defaultImageUri);
+  }, []);
 
   const handleImagePick = async (source: "camera" | "gallery") => {
     let result;
@@ -64,6 +68,7 @@ const StepThree = () => {
 
   const handleNext = async () => {
     await updateProfile({ ...user, image: profileImage });
+    setProfileImage(defaultImageUri); // Reset the image back to default
     router.navigate("setProfile4");
   };
 

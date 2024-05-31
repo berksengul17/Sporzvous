@@ -1,0 +1,18 @@
+{
+    "joinOrHostEvent": "Join or host an event today!",
+    "createEvent": "Create Event",
+    "edit": "Edit",
+    "save": "Save",
+    "sports": {
+      "Basketball": "Basketball",
+      "Football": "Football",
+      "Volleyball": "Volleyball",
+      "Tennis": "Tennis",
+      "Baseball": "Baseball",
+      "Badminton": "Badminton",
+      "Handball": "Handball",
+      "Ice Hockey": "Ice Hockey",
+      "Paintball": "Paintball"
+    }
+  }
+  

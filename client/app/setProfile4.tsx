@@ -3,7 +3,7 @@ import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ImageBackground,
   Keyboard,
@@ -64,18 +64,6 @@ const SportCard = ({
 const StepFour = () => {
   const { user, updateProfile } = useUserContext();
   const [selectedSport, setSelectedSport] = useState<Sport>();
-
-  useEffect(() => {
-    if (user.favoriteSport) {
-      const favoriteSport: Sport | undefined = initialSportsData.find(
-        (sport) => sport.name === user.favoriteSport
-      );
-
-      if (favoriteSport != undefined) {
-        setSelectedSport(favoriteSport);
-      }
-    }
-  }, [user]);
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);

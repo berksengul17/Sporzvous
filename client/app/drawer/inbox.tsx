@@ -1,6 +1,14 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View, TextInput, SafeAreaView } from "react-native";
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 const friendsData = [
   {
@@ -33,7 +41,12 @@ const FriendItem = ({ friend }) => (
     <View style={styles.friendInfo}>
       <Text style={styles.friendName}>{friend.name}</Text>
       <View style={{ flexDirection: "row" }}>
-        <FontAwesome5 name="check-double" size={14} color="#FF5C00" style={{ padding: 5 }} />
+        <FontAwesome5
+          name="check-double"
+          size={14}
+          color="#FF5C00"
+          style={{ padding: 5 }}
+        />
         <Text style={styles.friendLastSeen}>{friend.lastMessage}</Text>
       </View>
     </View>
@@ -44,7 +57,7 @@ const FriendItem = ({ friend }) => (
 export default function InboxScreen() {
   const [searchText, setSearchText] = useState("");
 
-  const filteredFriends = friendsData.filter(friend =>
+  const filteredFriends = friendsData.filter((friend) =>
     friend.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
