@@ -132,11 +132,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       successCallback(response);
     } catch (err: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
+
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
           errorMessage = err.response.data.error;
         } else if (err instanceof Error) {
-          errorMessage = err.message;
+          errorMessage = err.response?.data;
         }
       }
       setErrorRegister(errorMessage);
@@ -191,7 +192,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         ) {
           errorMessage = error.response.data.error;
         } else if (error instanceof Error) {
-          errorMessage = error.message;
+          errorMessage = error.response?.data;
         }
       }
       throw new Error(errorMessage);

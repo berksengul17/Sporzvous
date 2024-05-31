@@ -1,12 +1,12 @@
 package com.sporzvous.backend.User;
 
-import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
-import com.sporzvous.backend.UserEvent.UserEventService;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.Event.EventService;
+import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
 import com.sporzvous.backend.Token.Token;
 import com.sporzvous.backend.Token.TokenRepository;
+import com.sporzvous.backend.UserEvent.UserEventService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -35,14 +34,6 @@ public class UserService {
     public User signUp(User user) {
         boolean isEmailTaken = userRepository.findByEmail(user.getEmail()).isPresent();
 
-        if (user.getImage() == null || user.getImage().length == 0) {
-            try {
-                user.setImage(ImageUtils.getDefaultProfileImage());
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Handle the exception appropriately in your application
-            }
-        }
 
         if (isEmailTaken) {
             throw new IllegalArgumentException("Email is already taken");

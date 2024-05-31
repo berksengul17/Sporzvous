@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -109,12 +108,6 @@ public class User {
         this.teams = teams;
         this.sentRequests = sentRequests;
         this.receivedRequests = receivedRequests;
-        try {
-            this.image = ImageUtils.getDefaultProfileImage();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception appropriately in your application
-        }
     }
 
     public User(Long userId, String email, String password, String fullName,

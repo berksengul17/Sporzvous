@@ -40,9 +40,9 @@ public class MessageService {
         User user2 = userRepository.findById(user2Id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        List<Message> messsages = messageRepository.findMessagesBetweenUsers(user1, user2);
+        List<Message> messages = messageRepository.findMessagesBetweenUsers(user1, user2);
 
-        return messsages.stream()
+        return messages.stream()
                         .map(message -> new MessageDTO(message.getId(), message.getSender().getUserId(),
                                 message.getReceiver().getUserId(), message.getContent(), message.isReadStatus(),
                                 message.getTimestamp()))
