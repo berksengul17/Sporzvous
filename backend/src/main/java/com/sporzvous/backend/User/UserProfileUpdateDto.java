@@ -2,7 +2,6 @@ package com.sporzvous.backend.User;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -12,5 +11,7 @@ public class UserProfileUpdateDto {
     private Integer age;
     private String gender;
     private String favoriteSport;
-    private MultipartFile profilePicture;
+    private String image; // Change from MultipartFile to String
+
+    // Getters and Setters
 }

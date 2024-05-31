@@ -1,22 +1,40 @@
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { router, useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import React from "react";
-import { Alert, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useUserContext } from "@/context/UserProvider";
+import { useRouter } from "expo-router";
 
-export const unstable_settings = {
-  initialRouteName: "(home)",
-};
-
-const CustomDrawerContent = (props: any) => {
+const Layout = () => {
+  const { user } = useUserContext();
+  const [imageUri, setImageUri] = useState("");
   const router = useRouter();
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (user.image) {
+      setImageUri(user.image);
+    } else {
+      setImageUri(
+        Image.resolveAssetSource(
+          require("../../assets/images/default-profile-photo.jpg")
+        ).uri
+      );
+    }
+  }, [user.image]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -36,13 +54,16 @@ const CustomDrawerContent = (props: any) => {
     );
   };
 
-  return (
+  const CustomDrawerContent = (props) => (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView
         {...props}
-        scrollEnabled={false}
         contentContainerStyle={{ paddingTop: top }}
       >
+        <View style={styles.profileContainer}>
+          <Image source={{ uri: imageUri }} style={styles.profileImage} />
+          <Text style={styles.profileName}>{user.username}</Text>
+        </View>
         <DrawerItemList {...props} />
         <DrawerItem
           labelStyle={{ marginLeft: -20 }}
@@ -55,12 +76,10 @@ const CustomDrawerContent = (props: any) => {
       </DrawerContentScrollView>
     </View>
   );
-};
 
-const Layout = () => {
   return (
     <Drawer
-      drawerContent={CustomDrawerContent}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
         headerTintColor: "#FF5C00",
@@ -84,12 +103,19 @@ const Layout = () => {
           ),
           headerShown: true,
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: "10%" }}>
-              <Ionicons
-                onPress={() => router.push("drawer/(home)/(profile)")}
-                name="person-circle"
-                size={48}
-                color="black"
+            <TouchableOpacity
+              style={{ marginRight: "10%" }}
+              onPress={() => router.push("drawer/(home)/(profile)")}
+            >
+              <Image
+                source={{ uri: imageUri }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 100,
+                  borderWidth: 1,
+                  borderColor: "#FF5C00",
+                }}
               />
             </TouchableOpacity>
           ),
@@ -148,5 +174,25 @@ const Layout = () => {
     </Drawer>
   );
 };
+
+const styles = StyleSheet.create({
+  profileContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 1,
+    borderColor: "#FF5C00",
+  },
+  profileName: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+});
 
 export default Layout;

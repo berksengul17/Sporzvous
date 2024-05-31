@@ -38,6 +38,7 @@ const StepThree = () => {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
+        base64: true,
       });
     } else {
       const { status } =
@@ -50,11 +51,13 @@ const StepThree = () => {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
+        base64: true,
       });
     }
 
     if (!result.canceled && result.assets.length > 0) {
-      setProfileImage(result.assets[0].uri);
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setProfileImage(base64Image);
     }
     setModalVisible(false);
   };

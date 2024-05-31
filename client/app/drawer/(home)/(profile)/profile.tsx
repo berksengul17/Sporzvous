@@ -1,8 +1,3 @@
-import Button from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
-import { useUserContext } from "@/context/UserProvider";
-import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -18,6 +13,11 @@ import {
 import ImageViewer from "react-native-image-zoom-viewer";
 import Modal from "react-native-modal";
 import RNPickerSelect from "react-native-picker-select";
+import Button from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
+import { useUserContext } from "@/context/UserProvider";
+import { router } from "expo-router";
 
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
@@ -38,52 +38,13 @@ const Profile = () => {
     setModalVisible(!isModalVisible);
   };
 
+  useEffect(() => {
+    setImageUri(user.image);
+  }, [user.image]);
+
   const inputStyle = isProfileEditable
     ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
     : styles.input;
-
-  const getImageUri = () => {
-    const documentBase64 = user.image;
-
-    const isValidBase64 = (str: string) => {
-      if (typeof str !== "string") {
-        return false;
-      }
-      const base64Pattern = /^[A-Za-z0-9+/=]+$/;
-      const paddingPattern = /^(?:.{4})*(?:.{2}==|.{3}=)?$/;
-      return base64Pattern.test(str) && paddingPattern.test(str);
-    };
-
-    if (!documentBase64 || !isValidBase64(documentBase64)) {
-      // Use the default image if user's image is not set
-      setImageUri(
-        Image.resolveAssetSource(
-          require("../../../../assets/images/default-profile-photo.jpg")
-        ).uri
-      );
-      return;
-    }
-
-    // Decode the Base64 string to binary
-    const binaryString = window.atob(documentBase64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    // Create a Blob from the binary data
-    const imageBlob = new Blob([bytes], { type: "image/jpeg" });
-
-    // Generate a URL for the Blob
-    const imageUrl = URL.createObjectURL(imageBlob);
-
-    setImageUri(imageUrl);
-  };
-
-  useEffect(() => {
-    getImageUri();
-  }, [user.image]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -111,7 +72,7 @@ const Profile = () => {
               imageUrls={[
                 {
                   url:
-                    user.image ||
+                    imageUri ||
                     Image.resolveAssetSource(
                       require("../../../../assets/images/default-profile-photo.jpg")
                     ).uri,

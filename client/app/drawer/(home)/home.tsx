@@ -1,9 +1,4 @@
-import { Event, useEventContext } from "@/context/EventProvider";
-import { Ionicons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import { router } from "expo-router";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -11,9 +6,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { router } from "expo-router";
+import { Event, useEventContext } from "@/context/EventProvider";
+import { useUserContext } from "@/context/UserProvider";
 
 const EventItem = ({ event }: { event: Event }) => {
+  const { user } = useUserContext();
+  const [imageUri, setImageUri] = useState("");
+  const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
+
+  useEffect(() => {
+    setImageUri(user.image);
+  }, [user.image]);
+
   return (
     <TouchableOpacity
       style={styles.eventContainer}
@@ -24,6 +33,10 @@ const EventItem = ({ event }: { event: Event }) => {
         })
       }
     >
+      <Image
+        source={event.image ? { uri: event.image } : defaultImage}
+        style={styles.eventImage}
+      />
       <View style={styles.eventInfo}>
         <Text style={styles.username}>{event.organizer.fullName}</Text>
         <Text numberOfLines={1} style={styles.eventName}>
@@ -102,7 +115,6 @@ const styles = StyleSheet.create({
   },
   selectSportText: {
     fontSize: 16,
-
     color: "#FF5C00",
     margin: 16,
     borderBottomWidth: 1,
@@ -152,6 +164,12 @@ const styles = StyleSheet.create({
   },
   eventInfo: {
     flex: 1,
+  },
+  eventImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
   username: {
     fontWeight: "bold",

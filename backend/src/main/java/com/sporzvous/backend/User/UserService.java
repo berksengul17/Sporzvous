@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -50,7 +49,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
+    @Transactional
     public UserDTO login(User userCredentials) {
         Optional<User> user = userRepository.findByEmail(userCredentials.getEmail());
 
@@ -120,17 +119,24 @@ public class UserService {
         if (profileUpdateDto.getFavoriteSport() != null) {
             user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
         }
-        if (profileUpdateDto.getProfilePicture() != null && !profileUpdateDto.getProfilePicture().isEmpty()) {
-            try {
-                byte[] imageBytes = profileUpdateDto.getProfilePicture().getBytes();
-                user.setImage(imageBytes);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Failed to upload profile picture");
-            }
+
+        if (profileUpdateDto.getImage() != null) {
+            user.setImage(profileUpdateDto.getImage());
         }
+//        if (profileUpdateDto.getMultipartFile() != null && !profileUpdateDto.getMultipartFile().isEmpty()) {
+//            try {
+//                byte[] imageBytes = profileUpdateDto.getMultipartFile().getBytes();
+//                user.setImage(imageBytes);
+//            } catch (IllegalArgumentException e) {
+//                throw new IllegalArgumentException("Failed to decode profile picture");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         return userRepository.save(user);
     }
+
 
     public List<FriendDTO> getFriends(Long userId) {
         User user = userRepository.findById(userId)
