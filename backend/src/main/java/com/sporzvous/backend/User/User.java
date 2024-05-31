@@ -32,7 +32,7 @@ public class User {
     private String username;
     private String country;
     @Lob
-    private String image;
+    private byte[] image;
     private int age;
     private String gender;
     private String favoriteSport;

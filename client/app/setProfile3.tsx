@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Text,
-  ImageBackground,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import CustomButton from "@/components/CustomButton";
+import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 const StepThree = () => {
   const { user, updateProfile } = useUserContext();

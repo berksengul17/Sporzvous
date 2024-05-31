@@ -1,3 +1,8 @@
+import Button from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
+import { useUserContext } from "@/context/UserProvider";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -13,11 +18,6 @@ import {
 import ImageViewer from "react-native-image-zoom-viewer";
 import Modal from "react-native-modal";
 import RNPickerSelect from "react-native-picker-select";
-import Button from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
-import { useUserContext } from "@/context/UserProvider";
-import { router } from "expo-router";
 
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
@@ -34,12 +34,18 @@ const Profile = () => {
   const [overallField, setOverallField] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
 
+  useEffect(() => {
+    console.log(favoriteSport);
+  }, []);
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   useEffect(() => {
-    setImageUri(user.image);
+    if (user.image) {
+      setImageUri(user.image);
+    }
   }, [user.image]);
 
   const inputStyle = isProfileEditable
@@ -131,6 +137,7 @@ const Profile = () => {
             <CustomText text="Gender" customStyle={styles.label} />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
+                value={gender}
                 onValueChange={(newGender) => setGender(newGender)}
                 items={[
                   { label: "Male", value: "male" },
@@ -153,6 +160,7 @@ const Profile = () => {
             <CustomText text="Favorite Sport" customStyle={styles.label} />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
+                value={favoriteSport.toLowerCase()}
                 onValueChange={(newSport) => setFavoriteSport(newSport)}
                 items={[
                   { label: "Basketball", value: "basketball" },
