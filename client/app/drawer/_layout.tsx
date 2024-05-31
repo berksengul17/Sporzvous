@@ -17,12 +17,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useUserContext } from "@/context/UserProvider";
 import { useRouter } from "expo-router";
+import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
+
+export const unstable_settings = {
+  initialRouteName: "(home)",
+};
 
 const Layout = () => {
   const { user } = useUserContext();
   const [imageUri, setImageUri] = useState("");
   const router = useRouter();
   const { top } = useSafeAreaInsets();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     if (user.image) {
@@ -58,19 +64,33 @@ const Layout = () => {
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{ paddingTop: top }}
+        contentContainerStyle={{
+          paddingTop: top,
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+        }}
       >
         <View style={styles.profileContainer}>
           <Image source={{ uri: imageUri }} style={styles.profileImage} />
-          <Text style={styles.profileName}>{user.username}</Text>
+          <Text
+            style={[
+              styles.profileName,
+              { color: isDarkMode ? "#fff" : "#333" },
+            ]}
+          >
+            {user.username}
+          </Text>
         </View>
         <DrawerItemList {...props} />
         <DrawerItem
-          labelStyle={{ marginLeft: -20 }}
+          labelStyle={{ marginLeft: -20, color: isDarkMode ? "#fff" : "#000" }}
           label={"Log out"}
           onPress={handleLogout}
           icon={({ color, size }) => (
-            <Ionicons name="log-out" color={color} size={size} />
+            <Ionicons
+              name="log-out"
+              color={isDarkMode ? "#fff" : color}
+              size={size}
+            />
           )}
         />
       </DrawerContentScrollView>
@@ -81,16 +101,33 @@ const Layout = () => {
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
-        headerTitleStyle: { fontWeight: "bold", fontSize: 30 },
+        headerTitleStyle: {
+          fontWeight: "bold",
+          fontSize: 30,
+          color: "#FF5C00",
+        },
         headerTintColor: "#FF5C00",
         headerTitleAlign: "center",
         drawerHideStatusBarOnOpen: true,
-        drawerActiveBackgroundColor: "#fff",
-        drawerActiveTintColor: "#FF5C00",
-        drawerLabelStyle: { marginLeft: -20 },
-        drawerStyle: {
-          backgroundColor: "#fff",
+        drawerActiveBackgroundColor: "#FF5C00",
+        drawerActiveTintColor: isDarkMode ? "#000" : "#fff",
+        drawerLabelStyle: {
+          marginLeft: -20,
+          color: isDarkMode ? "#fff" : "#000",
         },
+        drawerStyle: {
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+        },
+        headerStyle: {
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+        },
+        drawerIcon: ({ size, color }) => (
+          <Ionicons
+            name="log-out"
+            size={size}
+            color={isDarkMode ? "#fff" : color}
+          />
+        ),
       }}
     >
       <Drawer.Screen
@@ -99,7 +136,11 @@ const Layout = () => {
           headerTitle: "Sporzvous",
           drawerLabel: "Homepage",
           drawerIcon: ({ size, color }) => (
-            <Ionicons name="home" size={size} color={color} />
+            <Ionicons
+              name="home"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
           headerShown: true,
           headerRight: () => (
@@ -127,7 +168,11 @@ const Layout = () => {
           headerTitle: "My Friends",
           drawerLabel: "My Friends",
           drawerIcon: ({ size, color }) => (
-            <Ionicons name="people" size={size} color={color} />
+            <Ionicons
+              name="people"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
         }}
       />
@@ -137,7 +182,11 @@ const Layout = () => {
           headerTitle: "Inbox",
           drawerLabel: "Inbox",
           drawerIcon: ({ size, color }) => (
-            <FontAwesome name="envelope-o" size={size} color={color} />
+            <FontAwesome
+              name="envelope-o"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
         }}
       />
@@ -147,27 +196,39 @@ const Layout = () => {
           headerTitle: "My Events",
           drawerLabel: "My Events",
           drawerIcon: ({ size, color }) => (
-            <MaterialIcons name="event" size={size} color={color} />
+            <MaterialIcons
+              name="event"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
         }}
       />
       <Drawer.Screen
         name="complaint"
         options={{
-          headerTitle: "Sporzvous",
+          headerTitle: "Complaint",
           drawerLabel: "Complaint",
           drawerIcon: ({ size, color }) => (
-            <FontAwesome name="warning" size={size} color={color} />
+            <FontAwesome
+              name="warning"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
         }}
       />
       <Drawer.Screen
-        name="settings"
+        name="(settings)"
         options={{
           headerTitle: "Settings",
           drawerLabel: "Settings",
           drawerIcon: ({ size, color }) => (
-            <Ionicons name="settings" size={size} color={color} />
+            <Ionicons
+              name="settings"
+              size={size}
+              color={isDarkMode ? "#fff" : color}
+            />
           ),
         }}
       />
@@ -191,7 +252,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
   },
 });
 
