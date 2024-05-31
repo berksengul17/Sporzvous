@@ -32,7 +32,6 @@ const getEventStatus = (isEventOver) => {
 };
 
 function EventStatus({ isEventOver }: { isEventOver: number }) {
-  
   if (isEventOver === 2) {
     return (
       <View style={[styles.statusContainer, styles.completed]}>
@@ -66,7 +65,7 @@ const EventItem = ({ event }: { event: Event }) => {
       onPress={() =>
         router.push({
           pathname: "drawer/(myevents)/mainEventScreen",
-          params: { event: JSON.stringify(event)},
+          params: { event: JSON.stringify(event) },
         })
       }
       style={styles.card}
@@ -76,16 +75,28 @@ const EventItem = ({ event }: { event: Event }) => {
         <EventStatus isEventOver={event.isEventOver} />
       </View>
       <View style={styles.cardContent}>
-        <Text style={styles.eventDetail}>Organizer: {event.organizer.fullName}</Text>
+        <Text style={styles.eventDetail}>
+          Organizer: {event.organizer.fullName}
+        </Text>
         <Text style={styles.eventDetail}>Sport: {event.sport}</Text>
         <Text style={styles.eventDetail}>Date: {event.eventDate}</Text>
       </View>
       <View style={styles.cardFooter}>
         <TouchableOpacity>
-          <Feather name="upload" size={24} color="#FF5C00" style={styles.icon} />
+          <Feather
+            name="upload"
+            size={24}
+            color="#FF5C00"
+            style={styles.icon}
+          />
         </TouchableOpacity>
         <TouchableOpacity>
-          <AntDesign name="delete" size={24} color="#FF5C00" style={styles.icon} />
+          <AntDesign
+            name="delete"
+            size={24}
+            color="#FF5C00"
+            style={styles.icon}
+          />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -207,7 +218,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#32CD32",
   },
   OnGoing: {
-    backgroundColor: "lightblue"
+    backgroundColor: "lightblue",
   },
   statusText: {
     color: "white",

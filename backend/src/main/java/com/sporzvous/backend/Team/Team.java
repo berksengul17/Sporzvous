@@ -3,9 +3,12 @@ package com.sporzvous.backend.Team;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,7 +16,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,18 +24,17 @@ public class Team {
     private Integer teamCapacity;
 
     @ManyToMany(mappedBy = "teams")
-    private List<User> users;
+    private List<User> users = new ArrayList<>(); // Initialize the list
 
     @ManyToOne
     @JoinColumn(name="event_id", nullable=false)
     private Event event;
 
-
-
     public Team(String teamName, Event event, Integer teamCapacity) {
         this.teamName = teamName;
         this.event = event;
         this.teamCapacity = teamCapacity;
+        this.users = new ArrayList<>(); // Initialize the list in the constructor
     }
 
     @Override

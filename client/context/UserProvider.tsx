@@ -1,6 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { FriendRequest } from "./FriendProvider";
+import { Alert } from "react-native";
+import { router } from "expo-router";
+import { Event } from "./EventProvider";
 
 export type Rating = {
   [sportId: string]: number;
@@ -48,6 +51,7 @@ type UserProps = {
     successCallback: (response: AxiosResponse) => void
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
+  joinEvent: (event: Event) => Promise<string>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -226,6 +230,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
   };
+  const joinEvent = async (event: Event) => {
+    try {
+      return await axios.post(
+        `${API_URL}/${user.userId}/join/${event.eventId}`
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const value = {
     user,
@@ -236,6 +249,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     signUp,
     updateProfile,
+    joinEvent,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

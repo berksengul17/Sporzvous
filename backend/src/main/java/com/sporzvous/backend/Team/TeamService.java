@@ -16,6 +16,7 @@ public class TeamService {
         List<Team> teamList = event.getTeams();
         Team firstTeam = teamList.get(0);
         Team secondTeam = teamList.get(1);
+        //TODO Kullanıcılar az olan takıma eklensin
         if (firstTeam.getUsers().size() != firstTeam.getTeamCapacity()) {
             firstTeam.getUsers().add(user);
             teamRepository.save(firstTeam);

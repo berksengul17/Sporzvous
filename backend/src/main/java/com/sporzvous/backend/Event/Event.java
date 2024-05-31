@@ -1,6 +1,6 @@
 package com.sporzvous.backend.Event;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.UserEvent.UserEvent;
@@ -21,8 +21,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "eventId")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +51,7 @@ public class Event {
     private Integer maxParticipants;
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnore
     private List<UserEvent> eventParticipants;
 
     private Double latitude;

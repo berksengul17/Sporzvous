@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -18,10 +18,6 @@ const EventItem = ({ event }: { event: Event }) => {
   const { user } = useUserContext();
   const [imageUri, setImageUri] = useState("");
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
-
-  useEffect(() => {
-    setImageUri(user.image);
-  }, [user.image]);
 
   return (
     <TouchableOpacity
@@ -54,10 +50,19 @@ const EventItem = ({ event }: { event: Event }) => {
 };
 
 export default function HomeScreen() {
-  const { events } = useEventContext(); // Use events from context
+  const { events } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const route = useRoute();
   const { sport } = route.params;
+  console.log(events);
+
+  if (!events) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   const filteredEvents = events.filter(
     (event) =>
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
     bottom: 16,
     right: 16,
     backgroundColor: "#FF5C00",
-    borderRadius: 50, // Make the button circular
+    borderRadius: 50,
     padding: 16,
     alignItems: "center",
     justifyContent: "center",

@@ -1,14 +1,40 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useGlobalSearchParams } from 'expo-router';
-import { AirbnbRating } from 'react-native-ratings';
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  Alert,
+} from "react-native";
+import { useRouter, useGlobalSearchParams } from "expo-router";
+import { AirbnbRating } from "react-native-ratings";
+import axios from "axios";
+import { useUserContext } from "../../../context/UserProvider";
 
 export default function JoinEventScreen() {
   const router = useRouter();
   const { event } = useGlobalSearchParams();
+  const { user, joinEvent } = useUserContext();
+  const parsedEvent = JSON.parse(event as string);
 
-  const parsedEvent = JSON.parse(event);
+  const handleJoin = async () => {
+    console.log(event);
+    try {
+      const response = await joinEvent(parsedEvent);
+      if (response.status === 200) {
+        Alert.alert("Success", "You have successfully joined the event.");
+        // Optionally, navigate to another screen or update the state
+        router.back(); // Replace with your desired route
+      } else {
+        Alert.alert("Error", "Failed to join the event.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "An error occurred while trying to join the event.");
+      console.error(error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -23,30 +49,34 @@ export default function JoinEventScreen() {
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Location</Text>
-          <Text style={styles.value}>{parsedEvent.location}</Text>
+          <Text style={styles.value}>
+            {parsedEvent.locationCity}, {parsedEvent.locationDistrict}
+          </Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>People Count</Text>
-          <Text style={styles.value}>{parsedEvent.participants}/{parsedEvent.maxParticipants}</Text>
+          <Text style={styles.value}>
+            {parsedEvent.participants}/{parsedEvent.maxParticipants}
+          </Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Team Count</Text>
-          <Text style={styles.value}>{parsedEvent.teamCount}</Text>
+          <Text style={styles.value}>{parsedEvent.teamNumber}</Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Date</Text>
-          <Text style={styles.value}>{parsedEvent.date}</Text>
+          <Text style={styles.value}>{parsedEvent.eventDate}</Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Time</Text>
-          <Text style={styles.value}>{parsedEvent.time}</Text>
+          <Text style={styles.value}>{parsedEvent.eventTime}</Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Minimum Skill Level</Text>
           <AirbnbRating
             count={5}
             reviews={[]}
-            defaultRating={parsedEvent.skillLevel}
+            defaultRating={parsedEvent.skillRating}
             size={24}
             showRating={false}
             selectedColor="#ffcc00"
@@ -60,13 +90,7 @@ export default function JoinEventScreen() {
           >
             <Text style={styles.locationButtonText}>Choose Location</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.joinButton}
-            onPress={() => {
-              // Implement join functionality here
-              Alert.alert("Joined the event!");
-            }}
-          >
+          <TouchableOpacity style={styles.joinButton} onPress={handleJoin}>
             <Text style={styles.joinButtonText}>Join</Text>
           </TouchableOpacity>
         </View>

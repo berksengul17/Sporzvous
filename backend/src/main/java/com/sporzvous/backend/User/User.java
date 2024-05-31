@@ -1,7 +1,7 @@
 package com.sporzvous.backend.User;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
@@ -22,6 +22,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,6 +79,7 @@ public class User {
     private Set<FriendRequest> receivedRequests = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<UserEvent> eventsParticipated;
 
     public User(Long userId, String email, String username) {

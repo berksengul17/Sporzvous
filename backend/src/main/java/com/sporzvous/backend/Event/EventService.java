@@ -24,32 +24,45 @@ public class EventService {
         if (Objects.equals(event.getTitle(), "")) {
             throw new IllegalArgumentException("Title cannot be Empty");
 
-        }else if ((event.getTitle().length()) > 40) {
+        } else if ((event.getTitle().length()) > 40) {
             throw new IllegalArgumentException("Title cannot be longer than 40");
 
-        }else if (Objects.equals(event.getSport(), "")) {
+        } else if (Objects.equals(event.getSport(), "")) {
             throw new IllegalArgumentException("Sport cannot be empty");
 
-        }else if (Objects.equals(event.getLocationCity(), "")) {
+        } else if (Objects.equals(event.getLocationCity(), "")) {
             throw new IllegalArgumentException("LocationCity cannot be empty");
 
-        }else if (Objects.equals(event.getLocationDistrict(), "")) {
+        } else if (Objects.equals(event.getLocationDistrict(), "")) {
             throw new IllegalArgumentException("LocationDistrict cannot be empty");
 
-        }else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null  ) {
+        } else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null) {
             throw new IllegalArgumentException("Event with no participants cannot created");
 
-        }else if (event.getMaxParticipants() > 30)   {
+        } else if (event.getMaxParticipants() > 30) {
             throw new IllegalArgumentException("Event with this number of participants cannot created");
 
-        }else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
+        } else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Date can't be before the current date.");
-            
-        }else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
+
+        } else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
             throw new IllegalArgumentException("Time can't be before the current time.");
         }
 
-        return eventRepository.save(event);
+        Event eventObj = new Event(event.getTitle(), event.getSport(), event.getLocationCity(),
+                event.getLocationDistrict(), event.getParticipants(), event.getTeamNumber(), event.getEventDate(),
+                event.getEventTime(), event.getSkillRating(), event.getLocationIndex(), event.getIsEventOver(),
+                event.getOrganizer(), event.getUsers(), event.getMaxParticipants());
+
+
+        Team team1 = new Team("Team A", eventObj, eventObj.getMaxParticipants()/2);
+        Team team2 = new Team("Team B", eventObj, eventObj.getMaxParticipants()/2);
+        eventObj.getTeams().add(team1);
+        eventObj.getTeams().add(team2);
+        Event savedEvent = eventRepository.save(eventObj);
+        addUserToEvent(savedEvent.getEventId(),savedEvent.getOrganizer());
+
+        return savedEvent;
     }
 
     public List<Event> getMyEvents(Long userId) {
