@@ -3,7 +3,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { FriendRequest } from "./FriendProvider";
 
 export type Rating = {
-  [sportId: string]: number;
+  sportName: string;
+  rating: number;
+  user: User;
 };
 
 export type User = {

@@ -1,6 +1,4 @@
-import CustomButton from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
+import axios from "axios";
 import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -15,6 +13,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import CustomButton from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
 import { Sport } from "./setProfile4";
 
 const initialSportsData = [
@@ -54,14 +55,32 @@ const StepFive = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [ratings, setRatings] = useState(user.ratings || {});
 
+  const [errorRating, setErrorRating] = useState("");
+
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
     setModalVisible(true);
   };
 
+  const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/sportRating";
+
   const handleSave = async () => {
-    await updateProfile({ ...user, ratings });
-    setModalVisible(false);
+    try {
+      const response = await axios.post(
+        `${API_URL}updateSportRating/${user.userId}`,
+        ratings
+      );
+      setErrorRating("");
+    } catch (err) {
+      setErrorRating("An unexpected error occurred. Please try again.");
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.data && err.response.data.error) {
+          setErrorRating(err.response.data.error);
+        } else if (err instanceof Error) {
+          setErrorRating(err.response?.data);
+        }
+      }
+    }
   };
 
   const handleRatingCompleted = (rating: RatingType) => {

@@ -1,11 +1,9 @@
-import { useUserContext } from "@/context/UserProvider";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { useRouter } from "expo-router";
+
 import { Drawer } from "expo-router/drawer";
 import React, { useEffect, useState } from "react";
 import {

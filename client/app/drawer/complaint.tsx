@@ -49,7 +49,7 @@ export default function FeedbacksHomePage() {
         if (err.response && err.response.data && err.response.data.error) {
           setErrorFeedback(err.response.data.error);
         } else if (err instanceof Error) {
-          errorMessage = err.response?.data;
+          setErrorFeedback(err.response?.data);
         }
       }
     }

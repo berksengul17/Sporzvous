@@ -6,6 +6,7 @@ import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
 import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.SportRating.SportRating;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.UserEvent.UserEvent;
 import jakarta.persistence.*;
@@ -79,6 +80,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserEvent> eventsParticipated;
+
+    @OneToMany(mappedBy = "user")
+    private List<SportRating> sportRatings;
 
     public User(Long userId, String email, String username) {
         this.userId = userId;

@@ -70,7 +70,8 @@ public class UserService {
                     userInfo.getAge(),
                     userInfo.getGender(),
                     userInfo.getFavoriteSport(),
-                    receivedRequests
+                    receivedRequests,
+                    userInfo.getRatings()
             );
         }
 
