@@ -32,8 +32,8 @@ const initialSportsData = [
   { id: "5", label: "Baseball", value: "baseball" },
   { id: "6", label: "Badminton", value: "badminton" },
   { id: "7", label: "Handball", value: "handball" },
-  { id: "8", label: "Ice Hockey", value: "hockey-puck" },
-  { id: "9", label: "Paintball", value: "pistol" },
+  { id: "8", label: "Ice Hockey", value: "ice_hockey" }, // Corrected value
+  { id: "9", label: "Paintball", value: "paintball" }, // Corrected value
 ];
 
 const Profile = () => {
@@ -55,7 +55,13 @@ const Profile = () => {
   const [isImageSourceModalVisible, setImageSourceModalVisible] =
     useState(false);
 
-  const handleImagePick = async (source: "camera" | "gallery") => {
+  useEffect(() => {
+    if (user.image) {
+      setImageUri(user.image);
+    }
+  }, [user.image]);
+
+  const handleImagePick = async (source) => {
     let result;
     if (source === "camera") {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -92,20 +98,18 @@ const Profile = () => {
     setImageSourceModalVisible(false);
   };
 
-  useEffect(() => {
-    if (user.image) {
-      setImageUri(user.image);
-    }
-  }, [user.image]);
-
   const inputStyle = isProfileEditable
     ? { ...styles.input, borderColor: "#FF5C00", color: "#FF5C00" }
     : styles.input;
 
   const selectedRating =
-    user.ratings.find((rating: RatingType) => {
-      return rating.sportName.toLowerCase() === userSkillField;
+    user.ratings.find((rating) => {
+      return (
+        rating.sportName.toLowerCase().replace(/ /g, "_") === userSkillField
+      );
     })?.rating || 0;
+
+  console.log("Selected rating for field:", userSkillField, selectedRating); // Debugging output
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -166,10 +170,7 @@ const Profile = () => {
                 onPress={() => setImageSourceModalVisible(false)}
               >
                 <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  }}
+                  style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                 />
               </TouchableWithoutFeedback>
             }

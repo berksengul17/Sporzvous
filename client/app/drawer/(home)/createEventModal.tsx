@@ -24,7 +24,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps"; // Import MapView and Marker
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
-import { Rating } from "react-native-ratings";
+import Rating from "@/components/Rating";
 import CustomButton from "../../../components/CustomButton";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 
@@ -402,8 +402,8 @@ const Page = () => {
             </View>
             <View style={styles.ratingStars}>
               <Rating
-                type="star"
-                ratingCount={5}
+                customStyles={styles.ratingStars}
+                value={5}
                 onFinishRating={handleRatingCompleted}
               />
             </View>
@@ -423,7 +423,7 @@ const Page = () => {
 
         {isMapVisible && (
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={isMapVisible}
             onRequestClose={() => {
@@ -454,7 +454,7 @@ const Page = () => {
                   )}
               </MapView>
               <Pressable
-                style={[styles.button, styles.buttonClose]}
+                style={[styles.buttonConfirmLocation, styles.buttonClose]}
                 onPress={() => {
                   setIsMapVisible(!isMapVisible);
                 }}
@@ -655,6 +655,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+  },
+  buttonConfirmLocation: {
+    backgroundColor: "#FF5C00",
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 35,
+    position: "absolute",
+    bottom: 50,
+    alignSelf: "center",
   },
   buttonOpen: {
     backgroundColor: "#F194FF",
