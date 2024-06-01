@@ -11,9 +11,9 @@ import {
   Alert,
   Text,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import CustomText from "@/components/CustomText";
-import CustomButton from "@/components/CustomButton";
 import RNPickerSelect from "react-native-picker-select";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
@@ -63,9 +63,9 @@ const StepTwo = () => {
                 <TextInput
                   value={fullName}
                   onChangeText={setFullName}
-                  style={inputStyle}
+                  style={styles.inputs}
                   placeholder="Enter your full name"
-                  placeholderTextColor="#FF5C00"
+                  placeholderTextColor="#6F6F6F"
                 />
               </View>
               <View style={styles.userInfo}>
@@ -74,9 +74,9 @@ const StepTwo = () => {
                   value={age}
                   onChangeText={setAge}
                   keyboardType="numeric"
-                  style={inputStyle}
+                  style={styles.inputs}
                   placeholder="Enter your age"
-                  placeholderTextColor="#FF5C00"
+                  placeholderTextColor="#6F6F6F"
                 />
               </View>
               <View style={styles.userInfo}>
@@ -101,25 +101,28 @@ const StepTwo = () => {
                 </View>
               </View>
               <View style={styles.buttonContainer}>
-                <CustomButton
-                  title="<"
+                <TouchableOpacity
+                  style={[styles.button, styles.leftButton]}
                   onPress={() => router.back()}
-                  containerStyle={styles.button}
-                />
-                <CustomButton
-                  title=">"
+                >
+                  <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.rightButton]}
                   onPress={handleNext}
-                  containerStyle={styles.button}
-                />
+                >
+                  <Text style={[styles.buttonText, { color: "white" }]}>
+                    Next
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
               setModalVisible(!modalVisible);
             }}
           >
@@ -130,7 +133,7 @@ const StepTwo = () => {
                   style={[styles.errorButton, styles.buttonClose]}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <Text style={styles.textStyle}>{t("hide_modal")}</Text>
+                  <Text style={styles.textStyle}>Close</Text>
                 </Pressable>
               </View>
             </View>
@@ -205,7 +208,21 @@ const styles = StyleSheet.create({
     borderColor: "#FF5C00",
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 20,
+    color: "#6F6F6F",
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
+    }),
+  },
+  inputs: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#FF5C00",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    color: "#6F6F6F",
     fontFamily: Platform.select({
       android: "OpenSans_400Regular",
       ios: "OpenSans-Regular",
@@ -216,19 +233,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     marginTop: 40,
+    alignItems: "center",
   },
   button: {
-    width: "45%",
-    borderRadius: 10,
-    backgroundColor: "#FF5C00",
-    padding: 10,
+    width: 100,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#FF5C00",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    borderWidth: 2,
     elevation: 10,
+  },
+  leftButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "white",
+  },
+  rightButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "#FF5C00",
+  },
+  buttonText: {
+    color: "#FF5C00",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   centeredView: {
     flex: 1,
@@ -260,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#FF5C00",
   },
   textStyle: {
     color: "white",

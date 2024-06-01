@@ -141,11 +141,12 @@ const StepFive = () => {
               ))}
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton
-                title="<"
+              <TouchableOpacity
+                style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
-                containerStyle={styles.button}
-              />
+              >
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Ionicons name="checkmark" size={30} color="#fff" />
               </TouchableOpacity>
@@ -170,16 +171,20 @@ const StepFive = () => {
                   />
                 </View>
                 <View style={styles.modalButtons}>
-                  <CustomButton
-                    title="Close"
+                  <TouchableOpacity
+                    style={[styles.button, styles.leftButton]}
                     onPress={() => setModalVisible(false)}
-                    containerStyle={styles.modalButton}
-                  />
-                  <CustomButton
-                    title="Save"
+                  >
+                    <Text style={styles.buttonText}>Close</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.rightButton]}
                     onPress={handleRatingCompleted}
-                    containerStyle={styles.modalButton}
-                  />
+                  >
+                    <Text style={[styles.buttonText, { color: "white" }]}>
+                      Save
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -266,17 +271,26 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    width: "100%",
-    borderRadius: 10,
-    backgroundColor: "#FF5C00",
-    padding: 10,
+    width: 100,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#FF5C00",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    borderWidth: 2,
     elevation: 10,
+  },
+  leftButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "white",
+  },
+  rightButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "#FF5C00",
+  },
+  buttonText: {
+    color: "#FF5C00",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   saveButton: {
     width: 60,
@@ -290,6 +304,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 10,
+    position: "absolute",
+    bottom: 0,
+    right: 0,
   },
   modalContainer: {
     flex: 1,
@@ -320,20 +337,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     width: "100%",
     marginTop: 20,
-  },
-  modalButton: {
-    width: "100%",
-    borderRadius: 10,
-    backgroundColor: "#FF5C00",
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#FF5C00",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 10,
-    marginBottom: 10,
   },
   ratingStars: {
     padding: 7,

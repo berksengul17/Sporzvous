@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Pressable,
 } from "react-native";
 
 const StepThree = () => {
@@ -105,16 +106,20 @@ const StepThree = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton
-                title="<"
+              <TouchableOpacity
+                style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
-                containerStyle={styles.button}
-              />
-              <CustomButton
-                title=">"
+              >
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.rightButton]}
                 onPress={handleNext}
-                containerStyle={styles.button}
-              />
+              >
+                <Text style={[styles.buttonText, { color: "white" }]}>
+                  Next
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -256,19 +261,29 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     marginTop: 40,
+    alignItems: "center",
   },
   button: {
-    width: "100%",
-    borderRadius: 10,
-    backgroundColor: "#FF5C00",
-    padding: 10,
+    width: 100,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#FF5C00",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    borderWidth: 2,
     elevation: 10,
+  },
+  leftButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "white",
+  },
+  rightButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "#FF5C00",
+  },
+  buttonText: {
+    color: "#FF5C00",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,

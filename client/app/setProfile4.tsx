@@ -1,18 +1,20 @@
-import CustomButton from "@/components/CustomButton";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Modal,
+  Alert,
+  Pressable,
+} from "react-native";
 import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import {
-  ImageBackground,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
 
 const initialSportsData = [
   { id: "1", name: "Basketball", icon: "basketball" },
@@ -64,6 +66,7 @@ const SportCard = ({
 const StepFour = () => {
   const { user, updateProfile } = useUserContext();
   const [selectedSport, setSelectedSport] = useState<Sport>();
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
@@ -71,7 +74,7 @@ const StepFour = () => {
 
   const handleNext = async () => {
     if (!selectedSport) {
-      alert("Please select a favorite sport.");
+      setModalVisible(true);
       return;
     }
     await updateProfile({ ...user, favoriteSport: selectedSport.name });
@@ -103,18 +106,44 @@ const StepFour = () => {
               ))}
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton
-                title="<"
+              <TouchableOpacity
+                style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
-                containerStyle={styles.button}
-              />
-              <CustomButton
-                title=">"
+              >
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.rightButton]}
                 onPress={handleNext}
-                containerStyle={styles.button}
-              />
+              >
+                <Text style={[styles.buttonText, { color: "white" }]}>
+                  Next
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Please select a favorite sport.
+                </Text>
+                <Pressable
+                  style={[styles.errorButton, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
@@ -202,17 +231,67 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    width: "100%",
-    borderRadius: 10,
-    backgroundColor: "#FF5C00",
-    padding: 10,
+    width: 100,
+    height: 40,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#FF5C00",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    borderWidth: 2,
     elevation: 10,
+  },
+  leftButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "white",
+  },
+  rightButton: {
+    borderColor: "#FF5C00",
+    backgroundColor: "#FF5C00",
+  },
+  buttonText: {
+    color: "#FF5C00",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  errorButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: "#FF5C00",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });
 
