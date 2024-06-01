@@ -1,7 +1,9 @@
 package com.sporzvous.backend.User;
 
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
@@ -13,7 +15,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.Base64Utils;
 
 import java.util.Base64;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

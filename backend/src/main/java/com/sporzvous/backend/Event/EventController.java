@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/event")
@@ -50,7 +51,8 @@ public class EventController {
     @GetMapping("/get-my-events/{userId}")
     public ResponseEntity<?> getMyEvents(@PathVariable Long userId) {
         try {
-            return ResponseEntity.ok(eventService.getMyEvents(userId));
+            List<Event> myEvents = eventService.getMyEvents(userId);
+            return ResponseEntity.ok(myEvents);
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());

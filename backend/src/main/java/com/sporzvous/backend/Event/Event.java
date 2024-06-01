@@ -1,9 +1,6 @@
 package com.sporzvous.backend.Event;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.UserEvent.UserEvent;
@@ -42,6 +39,7 @@ public class Event {
     private int isEventOver;
     @ManyToOne
     @JoinColumn(name = "organizer_id", referencedColumnName = "userId", nullable = false)
+    //FIXME burası sorun çıkartabilir dikkat
     private User organizer;
 
     @ManyToMany(mappedBy = "events")

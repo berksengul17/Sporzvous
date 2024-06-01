@@ -7,6 +7,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -108,13 +109,26 @@ export default function MyEvents() {
   const { fetchMyEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const [myEvents, setMyEvents] = useState<Event[]>([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const getMyEvents = async () => {
+      console.log("fetching my events");
       setMyEvents(await fetchMyEvents());
+      console.log("fetched my events");
     };
-    getMyEvents();
-  }, [user]);
+    if (isFocused) {
+      getMyEvents();
+    }
+  }, [isFocused, user]);
+
+  useEffect(() => {
+    myEvents.forEach((event: Event) => {
+      console.log(event.eventId);
+      console.log(event.organizer.fullName);
+      console.log("----------------");
+    });
+  }, [myEvents]);
 
   const filteredEvents = myEvents.filter(
     (event) =>
