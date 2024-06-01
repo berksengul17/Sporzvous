@@ -17,7 +17,7 @@ import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import pa
 
 const EventItem = ({ event }: { event: Event }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
-  const { t } = useTranslation();
+  const { t } = useTranslation("homeScreen");
 
   return (
     <TouchableOpacity
@@ -96,7 +96,9 @@ export default function HomeScreen() {
       <Text
         style={[styles.heading, { color: isDarkMode ? "#FF5C00" : "#FF5C00" }]}
       >
-        {t("upcomingEvents", { sport: t(`sports.${sport.toLowerCase()}`) })}
+        {t("upcomingEvents", {
+          sport: t(`sports.${sport.toLowerCase().replace(/ /g, "_")}`),
+        })}
       </Text>
       <View
         style={[

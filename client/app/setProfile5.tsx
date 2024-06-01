@@ -5,7 +5,7 @@ import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   Keyboard,
@@ -55,18 +55,35 @@ const StepFive = () => {
   const [selectedSportRating, setSelectedSportRating] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [ratings, setRatings] = useState<RatingType[]>([]);
-
   const [errorRating, setErrorRating] = useState("");
-
-  const handleSelectSport = (sport: Sport) => {
-    setSelectedSport(sport);
-    setModalVisible(true);
-  };
 
   const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/sportRating";
 
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/getSportRatings/${user.userId}`
+        );
+        setRatings(response.data);
+      } catch (err) {
+        setErrorRating("Failed to fetch ratings. Please try again.");
+      }
+    };
+
+    fetchRatings();
+  }, []);
+
+  const handleSelectSport = (sport: Sport) => {
+    setSelectedSport(sport);
+    const sportRating = ratings.find((r) => r.sportName === sport.name);
+    setSelectedSportRating(sportRating ? sportRating.rating : 0);
+    setModalVisible(true);
+  };
+
   const handleSave = async () => {
     try {
+      console.log("Ratings to save:", ratings); // Debugging output
       const response = await axios.post(
         `${API_URL}/initializeSportRatings/${user.userId}`,
         ratings
@@ -88,15 +105,15 @@ const StepFive = () => {
   };
 
   const handleRatingCompleted = () => {
-    setRatings((prevRatings: RatingType[]) => [
-      ...prevRatings.filter(
-        (r: RatingType) => r.sportName !== selectedSport?.name
-      ),
+    const newRatings = [
+      ...ratings.filter((r) => r.sportName !== selectedSport?.name),
       {
         sportName: selectedSport?.name!,
         rating: selectedSportRating,
       },
-    ]);
+    ];
+    console.log("Updated ratings:", newRatings); // Debugging output
+    setRatings(newRatings);
     setModalVisible(false);
   };
 
@@ -148,6 +165,7 @@ const StepFive = () => {
                 <View style={styles.ratingStars}>
                   <Rating
                     customStyles={styles.ratingStars}
+                    value={selectedSportRating}
                     onFinishRating={(rating) => setSelectedSportRating(rating)}
                   />
                 </View>
@@ -304,7 +322,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalButton: {
-    width: "45%",
+    width: "100%",
     borderRadius: 10,
     backgroundColor: "#FF5C00",
     padding: 10,
