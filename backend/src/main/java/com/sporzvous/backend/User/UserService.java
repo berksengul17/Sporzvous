@@ -48,7 +48,12 @@ public class UserService {
         }
 
 
-        return userRepository.save(user);
+        return userRepository.save(new User(
+                user.getEmail(),
+                user.getPassword(),
+                user.getUsername(),
+                user.getCountry()
+        ));
     }
     @Transactional
     public UserDTO login(User userCredentials) {
@@ -89,7 +94,8 @@ public class UserService {
         if (event.getUsers().size() == event.getMaxParticipants()) {
             throw new IllegalStateException("Event " + eventId + " is already at full capacity.");
         }
-        userEventService.createUserEvent(user, event);
+
+        userEventService.createUserEvent(userId, eventId);
         return eventService.addUserToEvent(eventId, user);
     }
 

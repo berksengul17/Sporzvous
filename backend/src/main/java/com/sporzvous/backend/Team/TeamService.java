@@ -3,9 +3,12 @@ package com.sporzvous.backend.Team;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.User.User;
+import com.sporzvous.backend.User.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,11 +16,14 @@ import java.util.List;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final EventRepository eventRepository;
-    
+    private final UserRepository userRepository;
+
+    @Transactional
     public void addUserToTeam(Event event, User user) {
         List<Team> teamList = event.getTeams();
 
-        boolean isUserInTeam = (event.getTeams().get(0).getUsers().contains(user) & event.getTeams().get(1).getUsers().contains(user));
+        boolean isUserInTeam = (event.getTeams().get(0).getUsers().contains(user)
+                && event.getTeams().get(1).getUsers().contains(user));
 
         Team firstTeam = teamList.get(0);
         Team secondTeam = teamList.get(1);
@@ -25,11 +31,15 @@ public class TeamService {
             if (!isUserInTeam) {
                 if (firstTeam.getUsers().size() != firstTeam.getTeamCapacity() && firstTeam.getUsers().size() <= secondTeam.getUsers().size()) {
                     firstTeam.getUsers().add(user);
+                    user.getTeams().add(firstTeam);
                     teamRepository.save(firstTeam);
                 } else {
                     secondTeam.getUsers().add(user);
+                    user.getTeams().add(secondTeam);
                     teamRepository.save(secondTeam);
                 }
+
+                userRepository.save(user);
             }
     }
 

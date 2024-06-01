@@ -4,8 +4,11 @@ import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.Team.TeamService;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
+import com.sporzvous.backend.User.UserService;
+import com.sporzvous.backend.UserEvent.UserEventService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +21,9 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final TeamService teamService;
+    private final UserEventService userEventService;
 
+    @Transactional
     public Event saveEvent(Event event) {
 
         if (Objects.equals(event.getTitle(), "")) {
@@ -63,10 +68,7 @@ public class EventService {
         Team team2 = new Team("Team B", eventObj, eventObj.getMaxParticipants()/2);
         eventObj.getTeams().add(team1);
         eventObj.getTeams().add(team2);
-        Event savedEvent = eventRepository.save(eventObj);
-        addUserToEvent(savedEvent.getEventId(),savedEvent.getOrganizer());
-
-        return savedEvent;
+        return eventRepository.save(eventObj);
     }
 
     public List<Event> getMyEvents(Long userId) {
@@ -100,9 +102,12 @@ public class EventService {
         return event.getUsers();
     }
 
+    @Transactional
     public Event addUserToEvent(Long eventId, User user) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event with id" + eventId + "not found"));
+
+        event.setParticipants(event.getParticipants() + 1);
 
         teamService.addUserToTeam(event, user);
         return eventRepository.save(event);

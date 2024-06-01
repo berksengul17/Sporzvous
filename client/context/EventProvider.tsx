@@ -21,6 +21,7 @@ export type Event = {
   organizerImage?: string;
   latitude: number;
   longitude: number;
+  users: User[];
 };
 
 type CreateEvent = Omit<Event, "eventId">;

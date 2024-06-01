@@ -16,10 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @NoArgsConstructor
@@ -50,15 +47,15 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Feedback> feedbacks;
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Rating> ratings;
+    private List<Rating> ratings = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -66,7 +63,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
-    private List<User> friends;
+    private List<User> friends = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -74,7 +71,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "team_id")
     )
-    private List<Team> teams;
+    @JsonIgnore
+    private List<Team> teams = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
     private Set<FriendRequest> sentRequests = new HashSet<>();
@@ -84,10 +82,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<UserEvent> eventsParticipated;
+    private List<UserEvent> eventsParticipated = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<SportRating> sportRatings;
+    private List<SportRating> sportRatings = new ArrayList<>();
 
     public User(Long userId, String email, String username) {
         this.userId = userId;
@@ -95,10 +93,9 @@ public class User {
         this.username = username;
     }
 
-    public User(Long userId, String email, String fullName, String username, String country, int age, String gender,
-                String favoriteSport, int eventCount, int isVerified, UserStatus status, List<Event> events,
-                List<Feedback> feedbacks, List<Rating> ratings, List<User> friends, List<Team> teams,
-                Set<FriendRequest> sentRequests, Set<FriendRequest> receivedRequests) {
+    public User(Long userId, String email, String fullName,
+                String username, String country, int age, String gender,
+                String favoriteSport, int eventCount, int isVerified, UserStatus status) {
         this.userId = userId;
         this.email = email;
         this.fullName = fullName;
@@ -110,13 +107,6 @@ public class User {
         this.eventCount = eventCount;
         this.isVerified = isVerified;
         this.status = status;
-        this.events = events;
-        this.feedbacks = feedbacks;
-        this.ratings = ratings;
-        this.friends = friends;
-        this.teams = teams;
-        this.sentRequests = sentRequests;
-        this.receivedRequests = receivedRequests;
     }
 
     public User(Long userId, String email, String password, String fullName,
@@ -132,6 +122,13 @@ public class User {
         this.gender = gender;
         this.favoriteSport = favoriteSport;
         this.eventCount = eventCount;
+    }
+
+    public User(String email, String password, String username, String country) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.country = country;
     }
 
     public String getImageAsBase64() {

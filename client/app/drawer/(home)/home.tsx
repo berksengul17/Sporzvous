@@ -1,23 +1,31 @@
+import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 import { Event, useEventContext } from "@/context/EventProvider";
+import { User, useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TextInput,
-  Image,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTranslation } from "react-i18next";
-import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 
-const EventItem = ({ event }: { event: Event }) => {
+const EventItem = ({ event, user }: { event: Event; user: User }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
+<<<<<<< HEAD
   const { t } = useTranslation("homeScreen");
+=======
+  const { t } = useTranslation();
+  const isJoined = event.users.some(
+    (participant) => participant.userId === user.userId
+  );
+>>>>>>> 30e5d3c (create and join event)
 
   return (
     <TouchableOpacity
@@ -48,18 +56,33 @@ const EventItem = ({ event }: { event: Event }) => {
         <Text style={styles.capacity}>
           {event.participants}/{event.maxParticipants}
         </Text>
+        {isJoined && <Text>Joined</Text>}
       </View>
     </TouchableOpacity>
   );
 };
 
 export default function HomeScreen() {
-  const { events } = useEventContext();
+  const { user } = useUserContext();
+  const { events, fetchAllEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const route = useRoute();
   const { sport } = route.params;
   const { t } = useTranslation("homeScreen");
   const { isDarkMode } = useDarkMode();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const getAllEvents = async () => {
+      console.log("fetching my events");
+      await fetchAllEvents();
+      console.log("fetched my events");
+    };
+
+    if (isFocused) {
+      getAllEvents();
+    }
+  }, [isFocused]);
 
   if (!events) {
     return (
@@ -135,7 +158,7 @@ export default function HomeScreen() {
       </View>
       <FlatList
         data={filteredEvents}
-        renderItem={({ item }) => <EventItem event={item} />}
+        renderItem={({ item }) => <EventItem event={item} user={user} />}
         keyExtractor={(item) => item.eventId.toString()}
       />
     </View>

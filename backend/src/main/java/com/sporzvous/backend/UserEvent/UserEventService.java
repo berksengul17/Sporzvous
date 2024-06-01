@@ -6,6 +6,7 @@ import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 @Service
@@ -14,14 +15,17 @@ public class UserEventService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
-    public UserEvent createUserEvent(User user, Event event) {
-        userRepository.findById(user.getUserId())
+    @Transactional
+    public UserEvent createUserEvent(Long userId, Long eventId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        eventRepository.findById(event.getEventId())
+        Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         UserEvent userEvent = new UserEvent(user, event);
-        return userEventRepository.save(userEvent);
+        UserEvent savedUserEvent = userEventRepository.save(userEvent);
+        System.out.println("UserEvent saved: " + savedUserEvent);
+        return savedUserEvent;
     }
 }

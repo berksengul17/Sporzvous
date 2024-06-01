@@ -1,23 +1,27 @@
-import React from "react";
+import { Event } from "@/context/EventProvider";
+import { useGlobalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   Alert,
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useRouter, useGlobalSearchParams } from "expo-router";
+import MapView, { Marker } from "react-native-maps";
+import Modal from "react-native-modal/dist/modal";
 import { AirbnbRating } from "react-native-ratings";
-import axios from "axios";
 import { useUserContext } from "../../../context/UserProvider";
 
 export default function JoinEventScreen() {
   const router = useRouter();
   const { event } = useGlobalSearchParams();
-  const { user, joinEvent } = useUserContext();
-  const parsedEvent = JSON.parse(event as string);
+  const { joinEvent } = useUserContext();
+  const parsedEvent: Event = JSON.parse(event as string);
+  const [isMapVisible, setIsMapVisible] = useState<boolean>(false);
 
   const handleJoin = async () => {
     console.log(event);
@@ -86,14 +90,40 @@ export default function JoinEventScreen() {
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.locationButton}
-            onPress={() => router.push("drawer/(home)/map")}
+            onPress={() => setIsMapVisible(true)}
           >
-            <Text style={styles.locationButtonText}>Choose Location</Text>
+            <Text style={styles.locationButtonText}>See Location</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.joinButton} onPress={handleJoin}>
             <Text style={styles.joinButtonText}>Join</Text>
           </TouchableOpacity>
         </View>
+        <Modal isVisible={isMapVisible}>
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: parsedEvent.latitude, // Event latitude
+                longitude: parsedEvent.longitude, // Event longitude
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: parsedEvent.latitude,
+                  longitude: parsedEvent.longitude,
+                }}
+                title="Event Location"
+              />
+            </MapView>
+            <Button
+              title="Close"
+              onPress={() => setIsMapVisible(false)}
+              color="red"
+            />
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -186,5 +216,14 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  mapContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  map: {
+    width: "100%",
+    height: "80%",
   },
 });

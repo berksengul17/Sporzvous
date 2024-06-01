@@ -1,6 +1,7 @@
 package com.sporzvous.backend.Event;
 
 import com.sporzvous.backend.Team.TeamService;
+import com.sporzvous.backend.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,13 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final TeamService teamService;
+    private final UserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<String> createEvent(@RequestBody Event request) {
         try {
             Event newEvent = eventService.saveEvent(request);
+            userService.joinEvent(newEvent.getOrganizer().getUserId(), newEvent.getEventId());
             return ResponseEntity.ok(newEvent.getTitle() + " created successfully");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

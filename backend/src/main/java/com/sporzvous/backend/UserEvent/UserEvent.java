@@ -10,11 +10,9 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 @Entity
-
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Table(name="user_event")
 public class UserEvent {
     @Id

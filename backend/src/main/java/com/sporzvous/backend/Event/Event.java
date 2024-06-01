@@ -43,16 +43,16 @@ public class Event {
     private User organizer;
 
     @ManyToMany(mappedBy = "events")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Team> teams;
+    private List<Team> teams = new ArrayList<>();
     private Integer maxParticipants;
 
     @OneToMany(mappedBy = "event")
     @JsonIgnore
-    private List<UserEvent> eventParticipants;
+    private List<UserEvent> eventParticipants = new ArrayList<>();
 
     private Double latitude;
     private Double longitude;
