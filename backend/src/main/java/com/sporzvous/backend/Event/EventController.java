@@ -25,7 +25,7 @@ public class EventController {
                     .body(e.getMessage());
         }
     }
-    @PostMapping("/addScore/${eventId}")
+    @PostMapping("/addScore/{eventId}")
     public ResponseEntity<?> addScore(@PathVariable Long eventId, Integer firstTeamScore, Integer secondTeamScore) {
         try {
             teamService.addScore(eventId, firstTeamScore, secondTeamScore);
