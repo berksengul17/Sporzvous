@@ -11,8 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -105,29 +105,41 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
 
-        if (profileUpdateDto.getUsername() != null) {
+        if (profileUpdateDto.getUsername() != null && profileUpdateDto.getUsername().length() < 30 && profileUpdateDto.getUsername().length() > 2) {
             user.setUsername(profileUpdateDto.getUsername());
+        } else {
+            throw new IllegalArgumentException("User name should be between 2 and 30 characters while updating");
         }
 
-        if (profileUpdateDto.getFullName() != null) {
+        if (profileUpdateDto.getFullName() != null && (profileUpdateDto.getFullName().length() < 30 && profileUpdateDto.getFullName().length() > 2)) {
             user.setFullName(profileUpdateDto.getFullName());
+        } else {
+            throw new IllegalArgumentException("Fullname should be between 2 and 30 characters while updating");
         }
 
-        if (profileUpdateDto.getAge() != null) {
+        if (profileUpdateDto.getAge() != null && profileUpdateDto.getAge() >= 18 ) {
             user.setAge(profileUpdateDto.getAge());
+        } else {
+            throw new IllegalArgumentException("Age should be equal or higher than 18 while updating");
         }
 
-        if (profileUpdateDto.getGender() != null) {
+        if (!Objects.equals(profileUpdateDto.getGender(), "")) {
             user.setGender(profileUpdateDto.getGender());
+        } else {
+            throw new IllegalArgumentException("There is a problem with gender selection");
         }
 
-        if (profileUpdateDto.getFavoriteSport() != null) {
-            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
-        }
-
-        if (profileUpdateDto.getImage() != null) {
-            user.setImage(Base64.getDecoder().decode(profileUpdateDto.getImage()));
-        }
+//        if (profileUpdateDto.getFavoriteSport() != null)  {
+//            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
+//        } else {
+//            throw new IllegalArgumentException("Favorite sport is not chosen while updating");
+//        }
+//
+//        if (profileUpdateDto.getImage() != null) {
+//            user.setImage(Base64.getDecoder().decode(profileUpdateDto.getImage()));
+//        } else {
+//            throw new IllegalArgumentException("There is a problem with image loading while updating");
+//        }
 //        if (profileUpdateDto.getMultipartFile() != null && !profileUpdateDto.getMultipartFile().isEmpty()) {
 //            try {
 //                byte[] imageBytes = profileUpdateDto.getMultipartFile().getBytes();

@@ -217,18 +217,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         ratings: newUserInfo.ratings,
       });
       setUser((prevUser) => ({ ...prevUser, ...newUserInfo }));
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log("Error", error.message);
+    } catch (err: unknown) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          errorMessage = err.response.data.error; // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
         }
       }
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
     }
   };
   const joinEvent = async (event: Event) => {

@@ -7,109 +7,144 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Modal,
+  Alert,
+  Text,
+  Pressable,
 } from "react-native";
 import CustomText from "@/components/CustomText";
 import CustomButton from "@/components/CustomButton";
 import RNPickerSelect from "react-native-picker-select";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
+import { t } from "i18next";
 
 const StepTwo = () => {
   const { user, updateProfile } = useUserContext();
   const [fullName, setFullName] = useState<string>("");
   const [age, setAge] = useState<string>("");
   const [gender, setGender] = useState<string>("");
+  const [errorProfile, setErrorProfile] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const inputStyle = {
     ...styles.input,
   };
 
   const handleNext = async () => {
-    const ageNumber = parseInt(age, 10);
-    if (isNaN(ageNumber)) {
-      alert("Please enter a valid age.");
-      return;
+    const ageNumber = parseInt(age);
+    try {
+      await updateProfile({ ...user, fullName, age: ageNumber, gender });
+      setErrorProfile("");
+      router.navigate("setProfile3");
+    } catch (error) {
+      setErrorProfile((error as Error).message);
+      setModalVisible(true); // Show modal on error
     }
-    await updateProfile({ ...user, fullName, age: ageNumber, gender });
-    router.navigate("setProfile3");
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ImageBackground
-        source={require("../assets/images/sporzvouswp.png")}
-        style={styles.background}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.container}>
-            <View style={styles.headerContainer}>
-              <CustomText
-                customStyle={styles.headerText}
-                text="Fill in your personal details"
-              />
-            </View>
-            <View style={styles.userInfo}>
-              <CustomText text="Name/Surname" customStyle={styles.label} />
-              <TextInput
-                value={fullName}
-                onChangeText={setFullName}
-                style={inputStyle}
-                placeholder="Enter your full name"
-                placeholderTextColor="#FF5C00"
-              />
-            </View>
-            <View style={styles.userInfo}>
-              <CustomText text="Age" customStyle={styles.label} />
-              <TextInput
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-                style={inputStyle}
-                placeholder="Enter your age"
-                placeholderTextColor="#FF5C00"
-              />
-            </View>
-            <View style={styles.userInfo}>
-              <CustomText text="Gender" customStyle={styles.label} />
-              <View style={{ flex: 1 }}>
-                <RNPickerSelect
-                  onValueChange={(newGender) => setGender(newGender)}
-                  items={[
-                    { label: "Male", value: "male" },
-                    { label: "Female", value: "female" },
-                  ]}
-                  useNativeAndroidPickerStyle={false}
-                  style={{
-                    inputIOS: inputStyle,
-                    inputAndroid: inputStyle,
-                  }}
-                  placeholder={{
-                    label: "Select your gender...",
-                    value: null,
-                  }}
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("../assets/images/sporzvouswp.png")}
+          style={styles.background}
+        >
+          <View style={styles.overlay}>
+            <View style={styles.formContainer}>
+              <View style={styles.headerContainer}>
+                <CustomText
+                  customStyle={styles.headerText}
+                  text="Fill in your personal details"
+                />
+              </View>
+              <View style={styles.userInfo}>
+                <CustomText text="Name/Surname" customStyle={styles.label} />
+                <TextInput
+                  value={fullName}
+                  onChangeText={setFullName}
+                  style={inputStyle}
+                  placeholder="Enter your full name"
+                  placeholderTextColor="#FF5C00"
+                />
+              </View>
+              <View style={styles.userInfo}>
+                <CustomText text="Age" customStyle={styles.label} />
+                <TextInput
+                  value={age}
+                  onChangeText={setAge}
+                  keyboardType="numeric"
+                  style={inputStyle}
+                  placeholder="Enter your age"
+                  placeholderTextColor="#FF5C00"
+                />
+              </View>
+              <View style={styles.userInfo}>
+                <CustomText text="Gender" customStyle={styles.label} />
+                <View style={{ flex: 1 }}>
+                  <RNPickerSelect
+                    onValueChange={(newGender) => setGender(newGender)}
+                    items={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
+                    ]}
+                    useNativeAndroidPickerStyle={false}
+                    style={{
+                      inputIOS: inputStyle,
+                      inputAndroid: inputStyle,
+                    }}
+                    placeholder={{
+                      label: "Select your gender...",
+                      value: null,
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.buttonContainer}>
+                <CustomButton
+                  title="<"
+                  onPress={() => router.back()}
+                  containerStyle={styles.button}
+                />
+                <CustomButton
+                  title=">"
+                  onPress={handleNext}
+                  containerStyle={styles.button}
                 />
               </View>
             </View>
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                title="<"
-                onPress={() => router.back()}
-                containerStyle={styles.button}
-              />
-              <CustomButton
-                title=">"
-                onPress={handleNext}
-                containerStyle={styles.button}
-              />
-            </View>
           </View>
-        </View>
-      </ImageBackground>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>{errorProfile}</Text>
+                <Pressable
+                  style={[styles.errorButton, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>{t("hide_modal")}</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+        </ImageBackground>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   background: {
     flex: 1,
     resizeMode: "cover",
@@ -127,7 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  container: {
+  formContainer: {
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     padding: 20,
@@ -183,7 +218,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    width: "100%",
+    width: "45%",
     borderRadius: 10,
     backgroundColor: "#FF5C00",
     padding: 10,
@@ -194,6 +229,50 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  errorButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  error: {
+    color: "red",
   },
 });
 
