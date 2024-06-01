@@ -47,12 +47,16 @@ public class EventService {
 
         } else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
             throw new IllegalArgumentException("Time can't be before the current time.");
+        } else if (event.getLatitude() == 0) {
+            throw new IllegalArgumentException("Location is not chosen");
+        } else if (event.getLongitude() == 0) {
+            throw new IllegalArgumentException("Location is not chosen");
         }
 
         Event eventObj = new Event(event.getTitle(), event.getSport(), event.getLocationCity(),
                 event.getLocationDistrict(), event.getParticipants(), event.getTeamNumber(), event.getEventDate(),
                 event.getEventTime(), event.getSkillRating(), event.getLocationIndex(), event.getIsEventOver(),
-                event.getOrganizer(), event.getUsers(), event.getMaxParticipants());
+                event.getOrganizer(), event.getUsers(), event.getMaxParticipants(), event.getLatitude(), event.getLongitude());
 
 
         Team team1 = new Team("Team A", eventObj, eventObj.getMaxParticipants()/2);

@@ -74,7 +74,7 @@ const StepFive = () => {
       console.log(response.data);
       setErrorRating("");
       setUser({ ...user, ratings });
-      router.navigate("/drawer/(home)/home");
+      router.navigate("/drawer/(home)/sportsScreen");
     } catch (err) {
       setErrorRating("An unexpected error occurred. Please try again.");
       if (axios.isAxiosError(err)) {

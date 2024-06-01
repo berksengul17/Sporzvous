@@ -12,7 +12,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
@@ -70,7 +69,7 @@ public class Event {
             Integer teamNumber, LocalDate eventDate,
             LocalTime eventTime, Double skillRating,
             String locationIndex, int isEventOver, User organizer,
-            List<User> users, Integer maxParticipants) {
+            List<User> users, Integer maxParticipants, Double latitude, Double longitude) {
         this.title = title;
         this.sport = sport;
         this.locationCity = locationCity;
@@ -86,6 +85,9 @@ public class Event {
         this.users = users;
         this.maxParticipants = maxParticipants;
         this.teams = new ArrayList<>();
+        this.latitude = latitude;
+        this.longitude = longitude;
+
 
     }
 

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  Image,
   TouchableOpacity,
   View,
 } from "react-native";

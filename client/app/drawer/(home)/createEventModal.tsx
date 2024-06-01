@@ -56,7 +56,8 @@ const Page = () => {
   const [cities, setCities] = useState([]);
   const [villages, setVillages] = useState([]);
   const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
-  const [selectedLocation, setSelectedLocation] = useState(null); // State to store selected location
+  const [selectedLocationLatitude, setSelectedLatitude] = useState<number>(0); // State to store selected location
+  const [selectedLocationLongitude, setSelectedLongitude] = useState<number>(0); // State to store selected location
 
   useEffect(() => {
     // Fetch cities from GeoNames API
@@ -144,9 +145,10 @@ const Page = () => {
         locationIndex: "5",
         isEventOver: 0,
         organizer: { ...user, image: user.image?.split(",")[1] },
-        latitude: selectedLocation?.latitude, // Include latitude
-        longitude: selectedLocation?.longitude, // Include longitude
+        latitude: selectedLocationLatitude, // Include latitude
+        longitude: selectedLocationLongitude, // Include longitude
       });
+      console.log(selectedLocationLatitude);
       setErrorAddEvent("");
       router.back(); // Navigate back to the previous screen
     } catch (error) {
@@ -163,7 +165,8 @@ const Page = () => {
     nativeEvent: { coordinate: { latitude: any; longitude: any } };
   }) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    setSelectedLocation({ latitude, longitude });
+    setSelectedLatitude(latitude);
+    setSelectedLongitude(longitude);
   };
 
   return (
@@ -438,13 +441,17 @@ const Page = () => {
                 }}
                 onPress={handleMapPress}
               >
-                {selectedLocation && (
-                  <Marker
-                    coordinate={selectedLocation}
-                    title={t("selected_location")}
-                    description={t("chosen_location")}
-                  />
-                )}
+                {selectedLocationLatitude !== null &&
+                  selectedLocationLongitude !== null && (
+                    <Marker
+                      coordinate={{
+                        latitude: selectedLocationLatitude,
+                        longitude: selectedLocationLongitude,
+                      }}
+                      title={t("selected_location")}
+                      description={t("chosen_location")}
+                    />
+                  )}
               </MapView>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
