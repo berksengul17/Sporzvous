@@ -18,14 +18,10 @@ import {
 
 const EventItem = ({ event, user }: { event: Event; user: User }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
-<<<<<<< HEAD
   const { t } = useTranslation("homeScreen");
-=======
-  const { t } = useTranslation();
   const isJoined = event.users.some(
     (participant) => participant.userId === user.userId
   );
->>>>>>> 30e5d3c (create and join event)
 
   return (
     <TouchableOpacity
