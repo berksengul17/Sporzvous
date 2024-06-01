@@ -21,6 +21,11 @@ public class MessageController {
         return messageService.sendMessage(message);
     }
 
+    @MessageMapping("/read-receipt")
+    public void handleReadReceipt(@Payload ReadReceiptDTO readReceipt) {
+        messageService.processReadReceipt(readReceipt);
+    }
+
     @GetMapping("/messages")
     public ResponseEntity<?> getMessagesBetweenUsers(@RequestParam Long user1Id, @RequestParam Long user2Id) {
         try {
@@ -40,5 +45,17 @@ public class MessageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
+    }
+
+    @PostMapping("/users/{userId}/online")
+    public ResponseEntity<?> userOnline(@PathVariable Long userId) {
+        messageService.addUserOnline(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/users/{userId}/offline")
+    public ResponseEntity<?> userOffline(@PathVariable Long userId) {
+        messageService.removeUserOnline(userId);
+        return ResponseEntity.ok().build();
     }
 }

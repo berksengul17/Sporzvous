@@ -21,7 +21,7 @@ export type ChatMessage = {
   senderId: number;
   receiverId: number;
   timestamp: string;
-  readStatus: boolean;
+  readStatus: number;
 };
 
 let stompClient: Client | null = null;
@@ -34,10 +34,25 @@ const ChatScreen: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [connected, setConnected] = useState(false);
   const readMessages = useRef<Set<string>>(new Set());
+  const flatlist = useRef<FlatList>(null);
 
   useEffect(() => {
-    console.log("messages", messages);
-  }, [messages]);
+    const userId = user.userId;
+
+    axios
+      .post(`${process.env.EXPO_PUBLIC_API_URL}/users/${userId}/online`)
+      .then(() => console.log(`User ${userId} is online`))
+      .catch((error) => console.error("Error marking user as online", error));
+
+    return () => {
+      axios
+        .post(`${process.env.EXPO_PUBLIC_API_URL}/users/${userId}/offline`)
+        .then(() => console.log(`User ${userId} is offline`))
+        .catch((error) =>
+          console.error("Error marking user as offline", error)
+        );
+    };
+  }, [user.userId]);
 
   useEffect(() => {
     console.log("Initializing WebSocket connection...");
@@ -80,12 +95,9 @@ const ChatScreen: React.FC = () => {
 
         const newReadMessages = new Set(readMessages.current);
         fetchedMessages.forEach((message: ChatMessage) => {
-          if (
-            message.receiverId === user.userId &&
-            message.readStatus != true
-          ) {
+          if (message.receiverId === user.userId && message.readStatus != 2) {
             newReadMessages.add(message.id);
-            message.readStatus = true;
+            message.readStatus = 2;
 
             // Mark the message as read on the server
             axios
@@ -138,8 +150,22 @@ const ChatScreen: React.FC = () => {
       `/user/${user.userId}/read-status`,
       onReadStatusUpdate
     );
+    stompClient?.subscribe(
+      `/user/${user.userId}/read-receipt`,
+      onReadReceiptReceived
+    );
     setConnected(true);
     userJoin();
+  };
+
+  const onReadReceiptReceived = (message: any) => {
+    const { messageId } = JSON.parse(message.body);
+
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === messageId ? { ...msg, readStatus: 2 } : msg
+      )
+    );
   };
 
   const onStompError = (frame: any) => {
@@ -173,22 +199,42 @@ const ChatScreen: React.FC = () => {
   const onSend = () => {
     if (newMessage.trim()) {
       if (connected && stompClient) {
+        let id = 1;
+        if (messages.length > 0) {
+          id = parseInt(messages[messages.length - 1].id) + 1;
+        }
         const newMsg: ChatMessage = {
-          id: (messages.length + 1).toString(),
+          id: id.toString(),
           content: newMessage,
           senderId: user.userId,
           receiverId: parseInt(receiverId as string),
           timestamp: new Date().toISOString(),
-          readStatus: false,
+          readStatus: 0,
         };
 
         stompClient.publish({
           destination: "/app/private-message",
           body: JSON.stringify(newMsg),
         });
+
         console.log("Message sent:", newMsg);
         setNewMessage("");
         setMessages((prevMessages) => [...prevMessages, newMsg]);
+
+        // Simulate read receipt if receiver is online
+        if (connected) {
+          stompClient.publish({
+            destination: `/app/read-receipt/${receiverId}`,
+            body: JSON.stringify({ messageId: newMsg.id }),
+          });
+
+          // Update the read status locally
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.id === newMsg.id ? { ...msg, readStatus: 2 } : msg
+            )
+          );
+        }
       }
     }
   };
@@ -215,9 +261,16 @@ const ChatScreen: React.FC = () => {
         });
 
       readMessages.current.add(payloadData.id);
-    }
 
-    console.log("Payload data", payloadData);
+      // Send read receipt back to the sender
+      stompClient?.publish({
+        destination: `/app/read-receipt`,
+        body: JSON.stringify({
+          messageId: payloadData.id,
+          senderId: payloadData.senderId,
+        }),
+      });
+    }
 
     setMessages((prevMessages) => [...prevMessages, payloadData]);
   };
@@ -225,25 +278,14 @@ const ChatScreen: React.FC = () => {
   const onReadStatusUpdate = (message: any) => {
     const payloadData = JSON.parse(message.body);
 
-    // setMessages((prevMessages) =>
-    //   prevMessages.map((msg) =>
-    //     msg.id === payloadData.id
-    //       ? { ...msg, readStatus: payloadData.readStatus }
-    //       : msg
-    //   )
-    // );
-
-    const newMessages = [...messages];
-
-    messages.map((msg) =>
-      msg.id == payloadData.id
-        ? { ...msg, readStatus: payloadData.readStatus }
-        : msg
+    // Create a new array with the updated read status
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === payloadData.id
+          ? { ...msg, readStatus: payloadData.readStatus }
+          : msg
+      )
     );
-
-    setMessages(newMessages);
-
-    console.log("Read status updated for message:", payloadData.id);
   };
 
   const formatTime = (timestamp: string) => {
@@ -268,36 +310,42 @@ const ChatScreen: React.FC = () => {
         <Text style={styles.headerTitle}>{receiverId}</Text>
       </View>
       <FlatList
+        ref={flatlist}
+        onContentSizeChange={() =>
+          flatlist.current?.scrollToEnd({ animated: true })
+        }
+        onLayout={() => flatlist.current?.scrollToEnd({ animated: true })}
         data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.messageContainer,
-              item.senderId === user.userId
-                ? styles.messageRight
-                : styles.messageLeft,
-            ]}
-          >
-            <Text
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => {
+          // console.log("Rendering message:", item);
+          return (
+            <View
               style={[
+                styles.messageContainer,
                 item.senderId === user.userId
-                  ? styles.messageContentRight
-                  : styles.messageContentLeft,
+                  ? styles.messageRight
+                  : styles.messageLeft,
               ]}
             >
-              {item.content}
-            </Text>
-            <Text
-              style={[
-                item.senderId === user.userId
-                  ? styles.messageTimestampRight
-                  : styles.messageTimestampLeft,
-              ]}
-            >
-              {formatTime(item.timestamp)}
-            </Text>
-            {item.senderId === user.userId && (
+              <Text
+                style={[
+                  item.senderId === user.userId
+                    ? styles.messageContentRight
+                    : styles.messageContentLeft,
+                ]}
+              >
+                {item.content}
+              </Text>
+              <Text
+                style={[
+                  item.senderId === user.userId
+                    ? styles.messageTimestampRight
+                    : styles.messageTimestampLeft,
+                ]}
+              >
+                {formatTime(item.timestamp)}
+              </Text>
               <Text
                 style={{
                   marginLeft: 5,
@@ -307,10 +355,11 @@ const ChatScreen: React.FC = () => {
               >
                 {item.readStatus.toString()}
               </Text>
-            )}
-          </View>
-        )}
+            </View>
+          );
+        }}
       />
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}

@@ -7,7 +7,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +18,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final Set<Long> onlineUsers = new HashSet<>();
 
     public MessageDTO sendMessage(MessageDTO messageDTO) {
         User receiver = userRepository.findById(messageDTO.getReceiverId())
@@ -23,19 +26,24 @@ public class MessageService {
         User sender = userRepository.findById(messageDTO.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
-        Message message = new Message(sender, receiver, messageDTO.getContent(), LocalDateTime.now());
-        message = messageRepository.save(message);
+        Message message = new Message(sender, receiver, messageDTO.getContent(), LocalDateTime.now(), 0);
 
         MessageDTO responseDTO = new MessageDTO(
                 message.getId(),
                 message.getSender().getUserId(),
                 message.getReceiver().getUserId(),
                 message.getContent(),
-                message.isReadStatus(),
+                message.getReadStatus(),
                 message.getTimestamp()
         );
 
-        simpMessagingTemplate.convertAndSendToUser(receiver.getUserId().toString(), "/private", responseDTO);
+        if (isUserOnline(receiver.getUserId())) {
+            message.setReadStatus(1);
+            simpMessagingTemplate.convertAndSendToUser(receiver.getUserId().toString(), "/private", responseDTO);
+        }
+
+        messageRepository.save(message);
+
         return responseDTO;
     }
 
@@ -53,17 +61,17 @@ public class MessageService {
                         message.getSender().getUserId(),
                         message.getReceiver().getUserId(),
                         message.getContent(),
-                        message.isReadStatus(),
+                        message.getReadStatus(),
                         message.getTimestamp()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void markMessagesAsRead(List<Long> messageIds) {
         messageIds.forEach(messageId -> {
             Message message = messageRepository.findById(messageId)
                     .orElseThrow(() -> new IllegalArgumentException("Message not found"));
-            message.setReadStatus(true);
+            message.setReadStatus(2);
             messageRepository.save(message);
 
             // Notify the receiver about the read status update
@@ -72,7 +80,7 @@ public class MessageService {
                     message.getSender().getUserId(),
                     message.getReceiver().getUserId(),
                     message.getContent(),
-                    message.isReadStatus(),
+                    message.getReadStatus(),
                     message.getTimestamp()
             );
             simpMessagingTemplate.convertAndSendToUser(
@@ -82,4 +90,44 @@ public class MessageService {
             );
         });
     }
+
+    public void processReadReceipt(ReadReceiptDTO readReceiptDTO) {
+        Message message = messageRepository.findById(readReceiptDTO.getMessageId())
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+
+        // Only mark the message as read if the receiver is online
+        if (isUserOnline(message.getReceiver().getUserId())) {
+            message.setReadStatus(2);
+            messageRepository.save(message);
+
+            // Notify the sender about the read status update
+            MessageDTO messageDTO = new MessageDTO(
+                    message.getId(),
+                    message.getSender().getUserId(),
+                    message.getReceiver().getUserId(),
+                    message.getContent(),
+                    message.getReadStatus(),
+                    message.getTimestamp()
+            );
+            simpMessagingTemplate.convertAndSendToUser(
+                    readReceiptDTO.getSenderId().toString(),
+                    "/read-status",
+                    messageDTO
+            );
+        }
+    }
+
+
+    public void addUserOnline(Long userId) {
+        onlineUsers.add(userId);
+    }
+
+    public void removeUserOnline(Long userId) {
+        onlineUsers.remove(userId);
+    }
+
+    public boolean isUserOnline(Long userId) {
+        return onlineUsers.contains(userId);
+    }
+
 }

@@ -27,13 +27,14 @@ public class Message {
 
     private String content;
     private LocalDateTime timestamp;
-    private boolean readStatus;
+    private int readStatus;
     private MessageStatus status;
 
-    public Message(User sender, User receiver, String content, LocalDateTime timestamp) {
+    public Message(User sender, User receiver, String content, LocalDateTime timestamp, int readStatus) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = timestamp;
+        this.readStatus = readStatus;
     }
 }
