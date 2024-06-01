@@ -8,30 +8,35 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public Message sendMessage(MessageDTO message) {
-        User receiver = userRepository.findById(message.getReceiverId())
+    public MessageDTO sendMessage(MessageDTO messageDTO) {
+        User receiver = userRepository.findById(messageDTO.getReceiverId())
                 .orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
-        User sender = userRepository.findById(message.getSenderId())
+        User sender = userRepository.findById(messageDTO.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
-        message.setTimestamp(LocalDateTime.now());
-        simpMessagingTemplate.convertAndSendToUser(receiver.getUserId().toString(), "/private", message);
-        return messageRepository.save(new Message(sender, receiver, message.getContent(), message.getTimestamp()));
-    }
+        Message message = new Message(sender, receiver, messageDTO.getContent(), LocalDateTime.now());
+        message = messageRepository.save(message);
 
-    public List<Message> getMessagesByReceiverId(Long receiverId) {
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return messageRepository.findByReceiver(receiver)
-                .orElseThrow(() -> new IllegalArgumentException("No messages found related with the receiver" + receiverId));
+        MessageDTO responseDTO = new MessageDTO(
+                message.getId(),
+                message.getSender().getUserId(),
+                message.getReceiver().getUserId(),
+                message.getContent(),
+                message.isReadStatus(),
+                message.getTimestamp()
+        );
+
+        simpMessagingTemplate.convertAndSendToUser(receiver.getUserId().toString(), "/private", responseDTO);
+        return responseDTO;
     }
 
     public List<MessageDTO> getMessagesBetweenUsers(Long user1Id, Long user2Id) {
@@ -43,10 +48,15 @@ public class MessageService {
         List<Message> messages = messageRepository.findMessagesBetweenUsers(user1, user2);
 
         return messages.stream()
-                        .map(message -> new MessageDTO(message.getId(), message.getSender().getUserId(),
-                                message.getReceiver().getUserId(), message.getContent(), message.isReadStatus(),
-                                message.getTimestamp()))
-                        .toList();
+                .map(message -> new MessageDTO(
+                        message.getId(),
+                        message.getSender().getUserId(),
+                        message.getReceiver().getUserId(),
+                        message.getContent(),
+                        message.isReadStatus(),
+                        message.getTimestamp()
+                ))
+                .collect(Collectors.toList());
     }
 
     public void markMessagesAsRead(List<Long> messageIds) {
@@ -55,6 +65,21 @@ public class MessageService {
                     .orElseThrow(() -> new IllegalArgumentException("Message not found"));
             message.setReadStatus(true);
             messageRepository.save(message);
+
+            // Notify the receiver about the read status update
+            MessageDTO messageDTO = new MessageDTO(
+                    message.getId(),
+                    message.getSender().getUserId(),
+                    message.getReceiver().getUserId(),
+                    message.getContent(),
+                    message.isReadStatus(),
+                    message.getTimestamp()
+            );
+            simpMessagingTemplate.convertAndSendToUser(
+                    message.getReceiver().getUserId().toString(),
+                    "/read-status",
+                    messageDTO
+            );
         });
     }
 }

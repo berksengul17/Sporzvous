@@ -4,6 +4,7 @@ import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class FriendRequestService {
     private UserRepository userRepository;
 
 
+    @Transactional
     public List<FriendRequestDTO> getFriendRequests(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -26,9 +28,11 @@ public class FriendRequestService {
         return requests.stream()
                 .map(req -> new FriendRequestDTO(req.getFriendRequestId(), req.getSender().getUserId(),
                         req.getSender().getFullName(), req.getFriendRequestStatus()))
+                .filter(req -> req.getFriendRequestStatus().equals(FriendRequestStatus.PENDING))
                 .toList();
     }
 
+    @Transactional
     public FriendRequest sendFriendRequest(String senderUsername, String receiverUsername) {
         User sender = userRepository.findByUsername(senderUsername)
                 .orElseThrow(() -> new IllegalArgumentException("There does not exist such a user "));
@@ -43,6 +47,7 @@ public class FriendRequestService {
         return friendRequestRepository.save(friendRequest);
     }
 
+    @Transactional
     public FriendRequest respondToFriendRequest(Long requestId, FriendRequestStatus status) {
 
         FriendRequest friendRequest = friendRequestRepository.findById(requestId)

@@ -36,6 +36,10 @@ const ChatScreen: React.FC = () => {
   const readMessages = useRef<Set<string>>(new Set());
 
   useEffect(() => {
+    console.log("messages", messages);
+  }, [messages]);
+
+  useEffect(() => {
     console.log("Initializing WebSocket connection...");
     stompClient = new Client();
     stompClient.configure({
@@ -82,6 +86,21 @@ const ChatScreen: React.FC = () => {
           ) {
             newReadMessages.add(message.id);
             message.readStatus = true;
+
+            // Mark the message as read on the server
+            axios
+              .put(`${process.env.EXPO_PUBLIC_API_URL}/messages/mark-read`, [
+                message.id,
+              ])
+              .then(() => {
+                console.log(
+                  "Message marked as read on the server:",
+                  message.id
+                );
+              })
+              .catch((error) => {
+                console.error("Error marking message as read:", error);
+              });
           }
         });
 
@@ -115,6 +134,10 @@ const ChatScreen: React.FC = () => {
   const onConnected = () => {
     console.log("Connected to STOMP server");
     stompClient?.subscribe(`/user/${user.userId}/private`, onPrivateMessage);
+    stompClient?.subscribe(
+      `/user/${user.userId}/read-status`,
+      onReadStatusUpdate
+    );
     setConnected(true);
     userJoin();
   };
@@ -177,13 +200,50 @@ const ChatScreen: React.FC = () => {
       payloadData.receiverId == user.userId &&
       payloadData.readStatus != true
     ) {
-      readMessages.current.add(payloadData.id);
       payloadData.readStatus = true;
+
+      // Mark the message as read on the server
+      axios
+        .put(`${process.env.EXPO_PUBLIC_API_URL}/messages/mark-read`, [
+          payloadData.id,
+        ])
+        .then(() => {
+          console.log("Message marked as read on the server:", payloadData.id);
+        })
+        .catch((error) => {
+          console.error("Error marking message as read:", error);
+        });
+
+      readMessages.current.add(payloadData.id);
     }
 
     console.log("Payload data", payloadData);
 
     setMessages((prevMessages) => [...prevMessages, payloadData]);
+  };
+
+  const onReadStatusUpdate = (message: any) => {
+    const payloadData = JSON.parse(message.body);
+
+    // setMessages((prevMessages) =>
+    //   prevMessages.map((msg) =>
+    //     msg.id === payloadData.id
+    //       ? { ...msg, readStatus: payloadData.readStatus }
+    //       : msg
+    //   )
+    // );
+
+    const newMessages = [...messages];
+
+    messages.map((msg) =>
+      msg.id == payloadData.id
+        ? { ...msg, readStatus: payloadData.readStatus }
+        : msg
+    );
+
+    setMessages(newMessages);
+
+    console.log("Read status updated for message:", payloadData.id);
   };
 
   const formatTime = (timestamp: string) => {
@@ -245,7 +305,7 @@ const ChatScreen: React.FC = () => {
                   color: "#fff",
                 }}
               >
-                {item.readStatus ? "Read" : "Sent"}
+                {item.readStatus.toString()}
               </Text>
             )}
           </View>

@@ -143,6 +143,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public List<FriendDTO> getFriends(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
