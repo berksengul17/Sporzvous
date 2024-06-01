@@ -19,10 +19,12 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 export default function FriendsScreen() {
   const { user } = useUserContext();
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("friends"); // Initialize useTranslation
 
   const [searchText, setSearchText] = useState("");
   const [friendName, setFriendName] = useState("");
@@ -46,8 +48,8 @@ export default function FriendsScreen() {
           },
         }
       );
-    } catch (err: unknown) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
+    } catch (err) {
+      let errorMessage = t("unexpectedError");
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
           errorMessage = err.response.data.error;
@@ -55,6 +57,7 @@ export default function FriendsScreen() {
           errorMessage = err.response?.data;
         }
       }
+      alert(errorMessage);
     }
   };
 
@@ -74,7 +77,7 @@ export default function FriendsScreen() {
           onBackdropPress={() => setModalVisible(false)}
           style={[
             styles.modal,
-            { backgroundColor: isDarkMode ? "#444" : "white" },
+            { backgroundColor: isDarkMode ? "#333" : "white" },
           ]}
         >
           <View style={{ flex: 1 }}>
@@ -84,7 +87,7 @@ export default function FriendsScreen() {
                 { color: isDarkMode ? "#FF5C00" : "#FF5C00" },
               ]}
             >
-              Add Friend
+              {t("addFriend")}
             </Text>
             <TextInput
               value={friendName}
@@ -96,21 +99,21 @@ export default function FriendsScreen() {
                   color: isDarkMode ? "#fff" : "#000",
                 },
               ]}
-              placeholder="Search"
+              placeholder={t("search")}
               placeholderTextColor={isDarkMode ? "#888" : "#6F6F6F"}
             />
             <View style={styles.buttons}>
               <CustomButton
-                title="Cancel"
+                title={t("cancel")}
                 onPress={toggleModal}
                 containerStyle={{
                   width: 80,
-                  backgroundColor: isDarkMode ? "#444" : "#fff",
+                  backgroundColor: isDarkMode ? "#333" : "#fff",
                 }}
                 textStyle={{ color: isDarkMode ? "#fff" : "#FF5C00" }}
               />
               <CustomButton
-                title="Send Request"
+                title={t("sendRequest")}
                 onPress={sendRequest}
                 containerStyle={{ width: 130 }}
                 backgroundColor={isDarkMode ? "#FF5C00" : "#FF5C00"}
@@ -123,7 +126,7 @@ export default function FriendsScreen() {
       <View
         style={[
           styles.header,
-          { backgroundColor: isDarkMode ? "#444" : "white" },
+          { backgroundColor: isDarkMode ? "#333" : "white" },
         ]}
       >
         <View
@@ -142,7 +145,7 @@ export default function FriendsScreen() {
               styles.searchText,
               { color: isDarkMode ? "#fff" : "#6F6F6F" },
             ]}
-            placeholder="Search"
+            placeholder={t("search")}
             placeholderTextColor={isDarkMode ? "#888" : "#6F6F6F"}
             value={searchText}
             onChangeText={setSearchText}
@@ -165,7 +168,12 @@ export default function FriendsScreen() {
           />
         </TouchableOpacity>
       </View>
-      <View style={[styles.friendListContainer, { backgroundColor: "black" }]}>
+      <View
+        style={[
+          styles.friendListContainer,
+          { backgroundColor: isDarkMode ? "#000" : "white" },
+        ]}
+      >
         <FriendList />
       </View>
     </SafeAreaView>

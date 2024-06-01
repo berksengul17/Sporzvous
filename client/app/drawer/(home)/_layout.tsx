@@ -3,6 +3,8 @@ import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Image } from "react-native";
+import { useTranslation } from "react-i18next";
+import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
 
 export const unstable_settings = {
   initialRouteName: "join_event",
@@ -10,6 +12,8 @@ export const unstable_settings = {
 
 const _layout = () => {
   const { user, isProfileEditable, setProfileEditable } = useUserContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("homeLayout");
   const [imageUri, setImageUri] = useState("");
 
   const getImageUri = () => {
@@ -56,14 +60,23 @@ const _layout = () => {
   }, [user.image]);
 
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+        },
+        headerTitleStyle: {
+          color: "#FF5C00",
+          fontWeight: "bold",
+        },
+      }}
+    >
       <Stack.Screen name="sportsScreen" options={{ headerShown: false }} />
       <Stack.Screen
         name="home"
         options={{
           presentation: "fullScreenModal",
-          headerTitle: "Sporzvous",
-          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerTitle: t("sporzvous"),
           headerLeft: () => (
             <Entypo
               name="cross"
@@ -99,8 +112,7 @@ const _layout = () => {
         name="createEventModal"
         options={{
           presentation: "fullScreenModal",
-          headerTitle: "Create a new event",
-          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerTitle: t("createEvent"),
           headerLeft: () => (
             <Entypo
               name="cross"
@@ -115,8 +127,7 @@ const _layout = () => {
         name="filterModal"
         options={{
           presentation: "modal",
-          headerTitle: "Filter",
-          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerTitle: t("filter"),
           headerLeft: () => (
             <Entypo
               name="cross"
@@ -131,8 +142,7 @@ const _layout = () => {
         name="(profile)"
         options={{
           presentation: "modal",
-          headerTitle: "Profile",
-          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerTitle: t("profile"),
           headerLeft: () => (
             <Entypo
               name="cross"
@@ -157,8 +167,7 @@ const _layout = () => {
         name="join_event"
         options={{
           presentation: "modal",
-          headerTitle: "Join Event",
-          headerTitleStyle: { color: "#FF5C00", fontWeight: "bold" },
+          headerTitle: t("joinEvent"),
           headerLeft: () => (
             <Entypo
               name="cross"

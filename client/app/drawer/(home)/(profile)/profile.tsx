@@ -1,9 +1,4 @@
-import Button from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
-import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Image,
   Keyboard,
@@ -14,10 +9,20 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Text,
 } from "react-native";
-import ImageViewer from "react-native-image-zoom-viewer";
-import Modal from "react-native-modal";
 import RNPickerSelect from "react-native-picker-select";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import ImageViewing from "react-native-image-viewing";
+import Modal from "react-native-modal";
+import { useTranslation } from "react-i18next";
+import Button from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
+import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
+import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
+import { router } from "expo-router";
 
 const initialSportsData = [
   { id: "1", label: "Basketball", value: "basketball" },
@@ -34,20 +39,57 @@ const initialSportsData = [
 const Profile = () => {
   const { user, isProfileEditable, setProfileEditable, updateProfile } =
     useUserContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("profile");
 
   const [username, setUsername] = useState(user.username);
   const [fullName, setFullName] = useState(user.fullName);
   const [age, setAge] = useState(user.age.toString());
   const [gender, setGender] = useState(user.gender);
   const [favoriteSport, setFavoriteSport] = useState(user.favoriteSport);
-  const [imageUri, setImageUri] = useState("");
+  const [imageUri, setImageUri] = useState(user.image || "");
   const [userSkillByOthersField, setUserSkillByOthersField] = useState("");
   const [userSkillField, setUserSkillField] = useState("");
   const [overallField, setOverallField] = useState("");
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isImageViewerVisible, setImageViewerVisible] = useState(false);
+  const [isImageSourceModalVisible, setImageSourceModalVisible] =
+    useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const handleImagePick = async (source: "camera" | "gallery") => {
+    let result;
+    if (source === "camera") {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        alert(t("cameraPermission"));
+        return;
+      }
+      result = await ImagePicker.launchCameraAsync({
+        cameraType: ImagePicker.CameraType.front,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true,
+      });
+    } else {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert(t("galleryPermission"));
+        return;
+      }
+      result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        base64: true,
+      });
+    }
+
+    if (!result.canceled && result.assets.length > 0) {
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setImageUri(base64Image);
+    }
+    setImageSourceModalVisible(false);
   };
 
   useEffect(() => {
@@ -62,116 +104,297 @@ const Profile = () => {
 
   const selectedRating =
     user.ratings.find((rating: RatingType) => {
-      console.log("rating", rating.sportName, userSkillField);
       return rating.sportName.toLowerCase() === userSkillField;
     })?.rating || 0;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView style={{ backgroundColor: "#fff", height: "100%" }}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={toggleModal}>
-            <Image
-              source={{
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#333" : "white" },
+        ]}
+      >
+        <View
+          style={[
+            styles.header,
+            { borderBottomColor: isDarkMode ? "#333" : "#E0E0E0" },
+          ]}
+        >
+          <View style={styles.imageContainer}>
+            <TouchableOpacity onPress={() => setImageViewerVisible(true)}>
+              <Image
+                source={{
+                  uri:
+                    imageUri ||
+                    Image.resolveAssetSource(
+                      require("../../../../assets/images/default-profile-photo.jpg")
+                    ).uri,
+                }}
+                style={styles.profileImage}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+            {isProfileEditable && (
+              <TouchableOpacity
+                style={styles.cameraIconContainer}
+                onPress={() => setImageSourceModalVisible(true)}
+              >
+                <Ionicons name="camera" size={20} color="#fff" />
+              </TouchableOpacity>
+            )}
+          </View>
+          <ImageViewing
+            images={[
+              {
                 uri:
                   imageUri ||
                   Image.resolveAssetSource(
                     require("../../../../assets/images/default-profile-photo.jpg")
                   ).uri,
-              }}
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: 100,
-                borderWidth: 1,
-              }}
-            />
-          </TouchableOpacity>
-          <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-            <ImageViewer
-              imageUrls={[
-                {
-                  url:
-                    imageUri ||
-                    Image.resolveAssetSource(
-                      require("../../../../assets/images/default-profile-photo.jpg")
-                    ).uri,
-                },
+              },
+            ]}
+            imageIndex={0}
+            visible={isImageViewerVisible}
+            onRequestClose={() => setImageViewerVisible(false)}
+          />
+          <Modal
+            animationIn="fadeIn"
+            isVisible={isImageSourceModalVisible}
+            customBackdrop={
+              <TouchableWithoutFeedback
+                onPress={() => setImageSourceModalVisible(false)}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  }}
+                />
+              </TouchableWithoutFeedback>
+            }
+          >
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: isDarkMode ? "#333" : "white" },
               ]}
-            />
+            >
+              <View
+                style={[
+                  styles.modalView,
+                  { backgroundColor: isDarkMode ? "#333" : "white" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.modalTitle,
+                    { color: isDarkMode ? "#fff" : "#333" },
+                  ]}
+                >
+                  {t("selectImageSource")}
+                </Text>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick("camera")}
+                >
+                  <Ionicons name="camera" size={24} color="#FF5C00" />
+                  <Text
+                    style={[
+                      styles.modalOptionText,
+                      { color: isDarkMode ? "#fff" : "#333" },
+                    ]}
+                  >
+                    {t("takePhoto")}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => handleImagePick("gallery")}
+                >
+                  <MaterialIcons
+                    name="photo-library"
+                    size={24}
+                    color="#FF5C00"
+                  />
+                  <Text
+                    style={[
+                      styles.modalOptionText,
+                      { color: isDarkMode ? "#fff" : "#333" },
+                    ]}
+                  >
+                    {t("chooseFromGallery")}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalOption}
+                  onPress={() => setImageSourceModalVisible(false)}
+                >
+                  <Ionicons name="arrow-back" size={24} color="#FF5C00" />
+                  <Text
+                    style={[
+                      styles.modalOptionText,
+                      { color: isDarkMode ? "#fff" : "#333" },
+                    ]}
+                  >
+                    {t("cancel")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </Modal>
           <View style={{ alignItems: "center" }}>
             <CustomText
-              text="Verified"
-              customStyle={{ alignSelf: "flex-start", marginBottom: 10 }}
+              text={t("verified")}
+              customStyle={[
+                { alignSelf: "flex-start", marginBottom: 10 },
+                { color: isDarkMode ? "#fff" : "#333" },
+              ]}
             />
             <CustomText text="" customStyle={styles.headerRectangle} />
           </View>
           <View style={{ alignItems: "center" }}>
-            <CustomText text="Event Count" customStyle={{ marginBottom: 10 }} />
-            <CustomText text="107" customStyle={styles.headerRectangle} />
+            <CustomText
+              text={t("eventCount")}
+              customStyle={[
+                { marginBottom: 10 },
+                { color: isDarkMode ? "#fff" : "#333" },
+              ]}
+            />
+            <CustomText
+              text="107"
+              customStyle={[
+                styles.headerRectangle,
+                { color: isDarkMode ? "#fff" : "#333" },
+              ]}
+            />
           </View>
           <View style={{ alignSelf: "flex-end" }}>
             <Button
-              title="Comments >"
+              title={`${t("comments")} >`}
               onPress={() => router.push("drawer/(home)/(profile)/comments")}
               containerStyle={{ paddingVertical: 7, paddingHorizontal: 4 }}
             />
           </View>
         </View>
-        <View style={styles.userInfoContainer}>
+        <View
+          style={[
+            styles.userInfoContainer,
+            { backgroundColor: isDarkMode ? "#333" : "white" },
+          ]}
+        >
           <View style={styles.userInfo}>
-            <CustomText text="Username" customStyle={styles.label} />
+            <CustomText
+              text={t("username")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <TextInput
               value={username}
               onChangeText={setUsername}
               editable={isProfileEditable}
-              style={inputStyle}
+              style={[
+                inputStyle,
+                {
+                  backgroundColor: isDarkMode ? "#333" : "#fff",
+                  color: isDarkMode ? "#fff" : "#333",
+                },
+              ]}
             />
           </View>
           <View style={styles.userInfo}>
-            <CustomText text="Name/Surname" customStyle={styles.label} />
+            <CustomText
+              text={t("nameSurname")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <TextInput
               value={fullName}
               onChangeText={setFullName}
               editable={isProfileEditable}
-              style={inputStyle}
+              style={[
+                inputStyle,
+                {
+                  backgroundColor: isDarkMode ? "#333" : "#fff",
+                  color: isDarkMode ? "#fff" : "#333",
+                },
+              ]}
             />
           </View>
           <View style={styles.userInfo}>
-            <CustomText text="Age" customStyle={styles.label} />
+            <CustomText
+              text={t("age")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <TextInput
               value={age}
               onChangeText={setAge}
               editable={isProfileEditable}
-              style={inputStyle}
+              style={[
+                inputStyle,
+                {
+                  backgroundColor: isDarkMode ? "#333" : "#fff",
+                  color: isDarkMode ? "#fff" : "#333",
+                },
+              ]}
             />
           </View>
           <View style={styles.userInfo}>
-            <CustomText text="Gender" customStyle={styles.label} />
+            <CustomText
+              text={t("gender")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
                 value={gender}
                 onValueChange={(newGender) => setGender(newGender)}
                 items={[
-                  { label: "Male", value: "male" },
-                  { label: "Female", value: "female" },
+                  { label: t("male"), value: "male" },
+                  { label: t("female"), value: "female" },
                 ]}
                 useNativeAndroidPickerStyle={false}
                 style={{
-                  inputIOS: inputStyle,
-                  inputAndroid: inputStyle,
+                  inputIOS: [
+                    inputStyle,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
+                  inputAndroid: [
+                    inputStyle,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
                 }}
                 disabled={!isProfileEditable}
                 placeholder={{
-                  label: "Select your gender...",
+                  label: t("selectGender"),
                   value: null,
                 }}
               />
             </View>
           </View>
           <View style={styles.userInfo}>
-            <CustomText text="Favorite Sport" customStyle={styles.label} />
+            <CustomText
+              text={t("favoriteSport")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
                 value={favoriteSport.toLowerCase()}
@@ -182,12 +405,24 @@ const Profile = () => {
                 }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
-                  inputIOS: inputStyle,
-                  inputAndroid: inputStyle,
+                  inputIOS: [
+                    inputStyle,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
+                  inputAndroid: [
+                    inputStyle,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
                 }}
                 disabled={!isProfileEditable}
                 placeholder={{
-                  label: "Select your favorite sport...",
+                  label: t("selectFavoriteSport"),
                   value: null,
                 }}
               />
@@ -197,8 +432,11 @@ const Profile = () => {
         <View style={{ padding: 10, rowGap: 10 }}>
           <View style={styles.ratingContainer}>
             <CustomText
-              text="User skills by others"
-              customStyle={{ ...styles.label, width: "20%" }}
+              text={t("userSkillsByOthers")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
+              ]}
             />
             <View>
               <RNPickerSelect
@@ -209,12 +447,24 @@ const Profile = () => {
                 }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
-                  inputIOS: styles.input,
-                  inputAndroid: styles.input,
+                  inputIOS: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
+                  inputAndroid: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
                   placeholder: { color: styles.input.color },
                 }}
                 placeholder={{
-                  label: "Choose",
+                  label: t("choose"),
                   value: null,
                 }}
               />
@@ -223,8 +473,11 @@ const Profile = () => {
           </View>
           <View style={styles.ratingContainer}>
             <CustomText
-              text="User skills"
-              customStyle={{ ...styles.label, width: "20%" }}
+              text={t("userSkills")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
+              ]}
             />
             <View>
               <RNPickerSelect
@@ -235,12 +488,24 @@ const Profile = () => {
                 }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
-                  inputIOS: styles.input,
-                  inputAndroid: styles.input,
+                  inputIOS: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
+                  inputAndroid: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
                   placeholder: { color: styles.input.color },
                 }}
                 placeholder={{
-                  label: "Choose",
+                  label: t("choose"),
                   value: null,
                 }}
               />
@@ -249,8 +514,11 @@ const Profile = () => {
           </View>
           <View style={styles.ratingContainer}>
             <CustomText
-              text="Overall"
-              customStyle={{ ...styles.label, width: "20%" }}
+              text={t("overall")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
+              ]}
             />
             <View>
               <RNPickerSelect
@@ -261,12 +529,24 @@ const Profile = () => {
                 }))}
                 useNativeAndroidPickerStyle={false}
                 style={{
-                  inputIOS: styles.input,
-                  inputAndroid: styles.input,
+                  inputIOS: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
+                  inputAndroid: [
+                    styles.input,
+                    {
+                      backgroundColor: isDarkMode ? "#333" : "#fff",
+                      color: isDarkMode ? "#fff" : "#333",
+                    },
+                  ],
                   placeholder: { color: styles.input.color },
                 }}
                 placeholder={{
-                  label: "Choose",
+                  label: t("choose"),
                   value: null,
                 }}
               />
@@ -274,13 +554,19 @@ const Profile = () => {
             <Rating />
           </View>
           <View style={styles.ratingContainer}>
-            <CustomText text="Organization skills" customStyle={styles.label} />
+            <CustomText
+              text={t("organizationSkills")}
+              customStyle={[
+                styles.label,
+                { color: isDarkMode ? "#fff" : "#6F6F6F" },
+              ]}
+            />
             <Rating />
           </View>
         </View>
         {isProfileEditable && (
           <Button
-            title="Save"
+            title={t("save")}
             containerStyle={{
               margin: 15,
             }}
@@ -288,7 +574,7 @@ const Profile = () => {
               updateProfile({
                 username,
                 fullName,
-                image: user.image || "",
+                image: imageUri,
                 age: parseInt(age),
                 gender,
                 favoriteSport,
@@ -305,12 +591,16 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#fff",
+    height: "100%",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
     margin: 10,
-    shadowColor: "#000",
+    shadowColor: "#333",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
@@ -333,7 +623,6 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     paddingHorizontal: 10,
     paddingVertical: 20,
-    backgroundColor: "#fff",
   },
   userInfo: {
     flexDirection: "row",
@@ -368,12 +657,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
   },
-  field: {
-    color: "#828282",
+  imageContainer: {
+    position: "relative",
+  },
+  profileImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 35, // Circular shape
     borderWidth: 1,
     borderColor: "#E0E0E0",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+  },
+  cameraIconContainer: {
+    position: "absolute",
+    bottom: -5,
+    right: -5,
+    backgroundColor: "#FF5C00",
+    borderRadius: 12,
+    padding: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  modalOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    width: "100%",
+  },
+  modalOptionText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#FF5C00",
   },
 });

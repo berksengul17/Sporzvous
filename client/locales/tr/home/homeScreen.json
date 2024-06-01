@@ -1,0 +1,18 @@
+{
+    "sports": {
+      "basketball": "Basketbol",
+      "football": "Futbol",
+      "volleyball": "Voleybol",
+      "tennis": "Tenis",
+      "baseball": "Beyzbol",
+      "badminton": "Badminton",
+      "handball": "Hentbol",
+      "ice_hockey": "Buz Hokeyi",
+      "paintball": "Paintball"
+    },
+
+      "loading": "Yükleniyor...",
+      "upcomingEvents": "Yaklaşan {{sport}} Etkinlikleri",
+      "search": "Ara"
+  }
+  

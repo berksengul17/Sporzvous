@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 
 const FriendRequestItem = ({
   friendRequest,
@@ -37,18 +38,12 @@ const FriendRequestItem = ({
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log("Error", error.message);
         }
       }
@@ -64,7 +59,6 @@ const FriendRequestItem = ({
         style={styles.picAndName}
         onPress={() => console.log("Profile clicked!")}
       >
-        {/* <Image source={user.profilePicUrl} style={styles.profilePic} /> */}
         <CustomText
           customStyle={styles.name}
           text={friendRequest.senderFullName}
@@ -102,6 +96,8 @@ const FriendRequestItem = ({
 const FriendsRequestsScreen = () => {
   const { user } = useUserContext();
   const { fetchFriends } = useFriendContext();
+  const { isDarkMode } = useDarkMode();
+
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
 
   useEffect(() => {
@@ -131,18 +127,12 @@ const FriendsRequestsScreen = () => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log("Error", error.message);
         }
       }
@@ -157,7 +147,12 @@ const FriendsRequestsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#333" : "white" },
+      ]}
+    >
       <FlatList
         data={friendRequests}
         renderItem={({ item }) => (
@@ -182,7 +177,6 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    backgroundColor: "white",
   },
   requestItem: {
     flexDirection: "row",
@@ -229,11 +223,11 @@ const styles = StyleSheet.create({
     height: 40,
   },
   acceptButton: {
-    backgroundColor: "#FF5C00", // Orange
+    backgroundColor: "#FF5C00",
     shadowColor: "#FF5C00",
   },
   rejectButton: {
-    backgroundColor: "#6F6F6F", // Grey
+    backgroundColor: "#6F6F6F",
     shadowColor: "#6F6F6F",
   },
   icon: {

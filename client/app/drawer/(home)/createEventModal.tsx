@@ -1,5 +1,6 @@
 import { useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
+import { useDarkMode } from "@/context/DarkModeContext"; // Import DarkModeContext
 import axios from "axios";
 import { useRouter } from "expo-router";
 import moment from "moment";
@@ -25,11 +26,15 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select"; // Import the Picker
 import { Rating } from "react-native-ratings";
 import CustomButton from "../../../components/CustomButton";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const Page = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { addEvent } = useEventContext();
+  const { t } = useTranslation("createEvent"); // Initialize translation hook
+  const { isDarkMode } = useDarkMode(); // Get dark mode state
+
   const [modalVisible, setModalVisible] = useState(false);
   const [errorAddEvent, setErrorAddEvent] = useState("");
 
@@ -163,25 +168,44 @@ const Page = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.createEventContainer}>
+      <SafeAreaView
+        style={[
+          styles.createEventContainer,
+          isDarkMode && styles.darkModeBackground,
+        ]}
+      >
         <View style={styles.eventInformationContainer}>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Title</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("title")}
+              </Text>
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
                 value={title}
                 onChangeText={setTitle}
-                placeholder="Title"
+                placeholder={t("title")}
                 placeholderTextColor={"#6F6F6F"}
-                style={styles.inputBox}
+                style={[styles.inputBox, isDarkMode && styles.darkModeInput]}
               />
             </View>
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Sport</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("sport")}
+              </Text>
             </View>
             <View style={{ flex: 1 }}>
               <View style={{ flex: 1 }}>
@@ -189,24 +213,30 @@ const Page = () => {
                   useNativeAndroidPickerStyle={false}
                   onValueChange={(sport) => setSport(sport)}
                   items={[
-                    { label: "Basketball", value: "Basketball" },
-                    { label: "Football", value: "Football" },
-                    { label: "Volleyball", value: "Volleyball" },
-                    { label: "Tennis", value: "Tennis" },
-                    { label: "Baseball", value: "Baseball" },
-                    { label: "Badminton", value: "Badminton" },
-                    { label: "Handball", value: "Handball" },
-                    { label: "Ice Hockey", value: "Ice Hockey" },
-                    { label: "Paintball", value: "Paintball" },
+                    { label: t("basketball"), value: "Basketball" },
+                    { label: t("football"), value: "Football" },
+                    { label: t("volleyball"), value: "Volleyball" },
+                    { label: t("tennis"), value: "Tennis" },
+                    { label: t("baseball"), value: "Baseball" },
+                    { label: t("badminton"), value: "Badminton" },
+                    { label: t("handball"), value: "Handball" },
+                    { label: t("ice_hockey"), value: "Ice Hockey" },
+                    { label: t("paintball"), value: "Paintball" },
                   ]}
                   placeholder={{
-                    label: "Select a sport",
+                    label: t("select_sport"),
                     value: null,
                     color: "#9EA0A4",
                   }}
                   style={{
-                    inputAndroid: styles.pickerStyles,
-                    inputIOS: styles.pickerStyles,
+                    inputAndroid: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
+                    inputIOS: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
                   }}
                 />
               </View>
@@ -214,7 +244,14 @@ const Page = () => {
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Location</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("location")}
+              </Text>
             </View>
             <View style={{ flex: 1, flexDirection: "row" }}>
               <View style={{ flex: 1 }}>
@@ -227,13 +264,19 @@ const Page = () => {
                   }}
                   items={cities}
                   placeholder={{
-                    label: "City",
+                    label: t("city"),
                     value: null,
                     color: "#9EA0A4",
                   }}
                   style={{
-                    inputAndroid: styles.pickerStyles,
-                    inputIOS: styles.pickerStyles,
+                    inputAndroid: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
+                    inputIOS: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
                   }}
                 />
               </View>
@@ -243,13 +286,19 @@ const Page = () => {
                   onValueChange={setLocationVillage}
                   items={villages}
                   placeholder={{
-                    label: "Village",
+                    label: t("village"),
                     value: null,
                     color: "#9EA0A4",
                   }}
                   style={{
-                    inputAndroid: styles.pickerStyles,
-                    inputIOS: styles.pickerStyles,
+                    inputAndroid: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
+                    inputIOS: [
+                      styles.pickerStyles,
+                      isDarkMode && styles.darkModePicker,
+                    ],
                   }}
                   disabled={!selectedCity}
                 />
@@ -258,27 +307,46 @@ const Page = () => {
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Max Player</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("max_player")}
+              </Text>
             </View>
             <View style={styles.eventInformationInput}>
               <TextInput
                 value={playerCapacity}
                 onChangeText={setpPlayerCapacity}
-                placeholder="Player Capacity"
+                placeholder={t("player_capacity")}
                 placeholderTextColor={"#6F6F6F"}
-                style={styles.inputBox}
+                style={[styles.inputBox, isDarkMode && styles.darkModeInput]}
               />
             </View>
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Date</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("date")}
+              </Text>
             </View>
             <TouchableOpacity
               onPress={showDatePicker}
-              style={styles.eventTimeInput}
+              style={[
+                styles.eventTimeInput,
+                isDarkMode && styles.darkModeInput,
+              ]}
             >
-              <Text style={styles.dateBox}>{date || "Choose Date"}</Text>
+              <Text style={[styles.dateBox, isDarkMode && styles.darkModeText]}>
+                {date || t("choose_date")}
+              </Text>
 
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
@@ -290,13 +358,25 @@ const Page = () => {
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text style={styles.eventInformationTitleFonts}>Time</Text>
+              <Text
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("time")}
+              </Text>
             </View>
             <TouchableOpacity
               onPress={showTimePicker}
-              style={styles.eventTimeInput}
+              style={[
+                styles.eventTimeInput,
+                isDarkMode && styles.darkModeInput,
+              ]}
             >
-              <Text style={styles.dateBox}>{time || "Choose Time"}</Text>
+              <Text style={[styles.dateBox, isDarkMode && styles.darkModeText]}>
+                {time || t("choose_time")}
+              </Text>
               <DateTimePickerModal
                 isVisible={isTimePickerVisible}
                 mode="time"
@@ -307,16 +387,20 @@ const Page = () => {
           </View>
           <View style={styles.eventInformationRow}>
             <View style={styles.eventInformationTitle}>
-              <Text numberOfLines={2} style={styles.eventInformationTitleFonts}>
-                Minimum Skill Level
+              <Text
+                numberOfLines={2}
+                style={[
+                  styles.eventInformationTitleFonts,
+                  isDarkMode && styles.darkModeText,
+                ]}
+              >
+                {t("min_skill_level")}
               </Text>
             </View>
             <View style={styles.ratingStars}>
               <Rating
                 type="star"
                 ratingCount={5}
-                imageSize={30}
-                style={styles.ratingStars}
                 onFinishRating={handleRatingCompleted}
               />
             </View>
@@ -324,11 +408,11 @@ const Page = () => {
         </View>
         <View style={styles.buttonContainer}>
           <Button
-            title="Choose Location"
+            title={t("choose_location")}
             onPress={handleChooseLocation}
             color="green"
           />
-          <CustomButton title="Create" onPress={handleAddEvent} />
+          <CustomButton title={t("create")} onPress={handleAddEvent} />
         </View>
         <View style={styles.wave}>
           <Image source={require("../../../assets/images/Waves.png")} />
@@ -357,8 +441,8 @@ const Page = () => {
                 {selectedLocation && (
                   <Marker
                     coordinate={selectedLocation}
-                    title="Selected Location"
-                    description="This is the chosen location"
+                    title={t("selected_location")}
+                    description={t("chosen_location")}
                   />
                 )}
               </MapView>
@@ -368,7 +452,7 @@ const Page = () => {
                   setIsMapVisible(!isMapVisible);
                 }}
               >
-                <Text style={styles.textStyle}>Confirm Location</Text>
+                <Text style={styles.textStyle}>{t("confirm_location")}</Text>
               </Pressable>
             </View>
           </Modal>
@@ -390,7 +474,7 @@ const Page = () => {
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}
               >
-                <Text style={styles.textStyle}>Hide Modal</Text>
+                <Text style={styles.textStyle}>{t("hide_modal")}</Text>
               </Pressable>
             </View>
           </View>
@@ -407,12 +491,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flex: 1,
   },
-
+  darkModeBackground: {
+    backgroundColor: "#222",
+  },
   eventInformationContainer: {
     flex: 1,
     justifyContent: "center",
   },
-
   eventInformationRow: {
     flexDirection: "row",
     flex: 1,
@@ -425,7 +510,6 @@ const styles = StyleSheet.create({
     flex: 0.9,
     flexDirection: "row",
   },
-
   inputBox: {
     flexDirection: "row",
     borderRadius: 10,
@@ -436,19 +520,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 45,
   },
-
+  darkModeInput: {
+    backgroundColor: "#424242",
+    color: "white",
+  },
   dateBox: {
     fontSize: 18,
     fontWeight: "200",
   },
-
   eventInformationInput: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
     paddingHorizontal: 2,
   },
-
   eventTimeInput: {
     borderRadius: 10,
     borderStyle: "solid",
@@ -458,32 +543,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   skillLevelContainer: {
     flexDirection: "row",
     padding: 20,
   },
-
   buttonContainer: {
     flexDirection: "row",
     padding: 20,
     justifyContent: "space-evenly",
     alignItems: "center",
   },
-
   locationButton: {
     borderRadius: 10,
     borderStyle: "solid",
     borderColor: "green",
   },
-
   eventInformationTitleFonts: {
     fontSize: 20,
     width: "90%",
     fontWeight: "600",
   },
+  darkModeText: {
+    color: "white",
+  },
   ratingStars: {
-    padding: 7,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    padding: 10,
+    rowGap: 10,
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: "white",
+    backgroundColor: "white",
   },
   wave: {
     position: "static",
@@ -500,7 +593,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
-
   userLocationInfo: {
     flexDirection: "row",
     flex: 1,
@@ -510,7 +602,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     margin: 5,
   },
-
   pickerStyles: {
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -523,13 +614,15 @@ const styles = StyleSheet.create({
       ios: "OpenSans-Regular",
     }),
   },
-
+  darkModePicker: {
+    borderColor: "#424242",
+    color: "white",
+  },
   label: {
     color: "#6F6F6F",
     width: "35%",
     fontSize: 16,
   },
-
   centeredView: {
     flex: 1,
     justifyContent: "center",

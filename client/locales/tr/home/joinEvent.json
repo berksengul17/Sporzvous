@@ -1,0 +1,17 @@
+{
+    "success": "Başarılı",
+    "joinSuccess": "Etkinliğe başarıyla katıldınız.",
+    "error": "Hata",
+    "joinFailure": "Etkinliğe katılma başarısız oldu.",
+    "joinError": "Etkinliğe katılmaya çalışırken bir hata oluştu.",
+    "organizer": "Organizatör",
+    "sport": "Spor",
+    "location": "Konum",
+    "peopleCount": "Kişi Sayısı",
+    "teamCount": "Takım Sayısı",
+    "date": "Tarih",
+    "time": "Saat",
+    "minSkillLevel": "Minimum Beceri Seviyesi",
+    "chooseLocation": "Konum Seç",
+    "join": "Katıl"
+  }

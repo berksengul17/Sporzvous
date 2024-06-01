@@ -5,16 +5,18 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
+import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 
 const EventItem = ({ event }: { event: Event }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -39,7 +41,9 @@ const EventItem = ({ event }: { event: Event }) => {
         </Text>
       </View>
       <View style={styles.eventInfo}>
-        <Text style={styles.sport}>{event.sport}</Text>
+        <Text style={styles.sport}>
+          {t(`sports.${event.sport.toLowerCase().replace(/ /g, "_")}`)}
+        </Text>
         <Text style={styles.capacity}>
           {event.participants}/{event.maxParticipants}
         </Text>
@@ -53,12 +57,20 @@ export default function HomeScreen() {
   const [searchText, setSearchText] = useState("");
   const route = useRoute();
   const { sport } = route.params;
-  console.log(events);
+  const { t } = useTranslation("homeScreen");
+  const { isDarkMode } = useDarkMode();
 
   if (!events) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#333" : "white" },
+        ]}
+      >
+        <Text style={{ color: isDarkMode ? "#fff" : "#000" }}>
+          {t("loading")}
+        </Text>
       </View>
     );
   }
@@ -74,14 +86,35 @@ export default function HomeScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Upcoming {sport} Events</Text>
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#6F6F6F" />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#333" : "white" },
+      ]}
+    >
+      <Text
+        style={[styles.heading, { color: isDarkMode ? "#FF5C00" : "#FF5C00" }]}
+      >
+        {t("upcomingEvents", { sport: t(`sports.${sport.toLowerCase()}`) })}
+      </Text>
+      <View
+        style={[
+          styles.searchContainer,
+          { backgroundColor: isDarkMode ? "#555" : "#F0F0F0" },
+        ]}
+      >
+        <Ionicons
+          name="search"
+          size={20}
+          color={isDarkMode ? "#888" : "#6F6F6F"}
+        />
         <TextInput
-          style={styles.searchText}
-          placeholder="Search"
-          placeholderTextColor="#6F6F6F"
+          style={[
+            styles.searchText,
+            { color: isDarkMode ? "#fff" : "#6F6F6F" },
+          ]}
+          placeholder={t("search")}
+          placeholderTextColor={isDarkMode ? "#888" : "#6F6F6F"}
           value={searchText}
           onChangeText={setSearchText}
         />
@@ -139,14 +172,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     margin: 10,
-    backgroundColor: "#F0F0F0",
     borderRadius: 10,
     marginTop: 15,
   },
   searchText: {
     flex: 1,
     marginLeft: 10,
-    color: "#6F6F6F",
   },
   filterButton: {
     justifyContent: "center",

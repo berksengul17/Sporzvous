@@ -1,0 +1,27 @@
+{
+      "cameraPermission": "Sorry, we need camera permissions to make this work!",
+      "galleryPermission": "Sorry, we need gallery permissions to make this work!",
+      "selectImageSource": "Select Image Source",
+      "takePhoto": "Take Photo",
+      "chooseFromGallery": "Choose from Gallery",
+      "cancel": "Cancel",
+      "verified": "Verified",
+      "eventCount": "Event Count",
+      "comments": "Comments",
+      "username": "Username",
+      "nameSurname": "Name/Surname",
+      "age": "Age",
+      "gender": "Gender",
+      "selectGender": "Select your gender...",
+      "male": "Male",
+      "female": "Female",
+      "favoriteSport": "Favorite Sport",
+      "selectFavoriteSport": "Select your favorite sport...",
+      "userSkillsByOthers": "User skills by others",
+      "userSkills": "User skills",
+      "overall": "Overall",
+      "organizationSkills": "Organization skills",
+      "choose": "Choose",
+      "save": "Save"
+  }
+  

@@ -1,0 +1,18 @@
+{
+      "success": "Success",
+      "joinSuccess": "You have successfully joined the event.",
+      "error": "Error",
+      "joinFailure": "Failed to join the event.",
+      "joinError": "An error occurred while trying to join the event.",
+      "organizer": "Organizer",
+      "sport": "Sport",
+      "location": "Location",
+      "peopleCount": "People Count",
+      "teamCount": "Team Count",
+      "date": "Date",
+      "time": "Time",
+      "minSkillLevel": "Minimum Skill Level",
+      "chooseLocation": "Choose Location",
+      "join": "Join"
+  }
+  

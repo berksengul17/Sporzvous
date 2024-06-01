@@ -1,0 +1,19 @@
+{
+    "sports": {
+      "basketball": "Basketball",
+      "football": "Football",
+      "volleyball": "Volleyball",
+      "tennis": "Tennis",
+      "baseball": "Baseball",
+      "badminton": "Badminton",
+      "handball": "Handball",
+      "ice_hockey": "Ice Hockey",
+      "paintball": "Paintball"
+    },
+
+      "loading": "Loading...",
+      "upcomingEvents": "Upcoming {{sport}} Events",
+      "search": "Search"
+
+  }
+  
