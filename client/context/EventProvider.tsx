@@ -40,6 +40,11 @@ type EventContextType = {
     date: string,
     rating: number
   ) => Promise<void>;
+  addScore: (
+    eventId: number,
+    firstTeamScore: string,
+    secondTeamScore: string
+  ) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/event";
@@ -159,6 +164,36 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addScore = async (
+    eventId: number,
+    teamAScore: string,
+    teamBScore: string
+  ) => {
+    try {
+      const formData = new FormData();
+      formData.append("firstTeamScore", teamAScore);
+      formData.append("secondTeamScore", teamBScore);
+
+      await axios.post(`${API_URL}/addScore/${eventId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+      }
+    }
+  };
+
   const value = {
     events,
     setEvents,
@@ -169,6 +204,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     updateEvent,
     removeEvent,
     filterEvents,
+    addScore,
   };
 
   return (

@@ -1,9 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { FriendRequest } from "./FriendProvider";
-import { Alert } from "react-native";
-import { router } from "expo-router";
 import { Event } from "./EventProvider";
+import { FriendRequest } from "./FriendProvider";
 
 export type Rating = {
   sportName: string;
@@ -53,7 +51,7 @@ type UserProps = {
     successCallback: (response: AxiosResponse) => void
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
-  joinEvent: (event: Event) => Promise<string>;
+  joinEvent: (event: Event) => Promise<AxiosResponse>;
   logout: () => void;
 };
 
