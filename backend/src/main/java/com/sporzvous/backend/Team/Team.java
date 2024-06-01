@@ -22,6 +22,7 @@ public class Team {
     private Long teamId;
     private String teamName;
     private Integer teamCapacity;
+    private Integer score;
 
     @ManyToMany(mappedBy = "teams")
     private List<User> users = new ArrayList<>(); // Initialize the list

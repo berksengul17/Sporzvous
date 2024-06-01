@@ -1,6 +1,7 @@
 package com.sporzvous.backend.Team;
 
 import com.sporzvous.backend.Event.Event;
+import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.User.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,28 +12,47 @@ import java.util.List;
 @AllArgsConstructor
 public class TeamService {
     private final TeamRepository teamRepository;
+    private final EventRepository eventRepository;
     
     public void addUserToTeam(Event event, User user) {
         List<Team> teamList = event.getTeams();
+
+        boolean isUserInTeam = (event.getTeams().get(0).getUsers().contains(user) & event.getTeams().get(1).getUsers().contains(user));
+
         Team firstTeam = teamList.get(0);
         Team secondTeam = teamList.get(1);
-        //TODO Kullanıcılar az olan takıma eklensin
-        if (firstTeam.getUsers().size() != firstTeam.getTeamCapacity()) {
-            firstTeam.getUsers().add(user);
-            teamRepository.save(firstTeam);
-        } else {
-            secondTeam.getUsers().add(user);
-            teamRepository.save(secondTeam);
-        }
+
+            if (!isUserInTeam) {
+                if (firstTeam.getUsers().size() != firstTeam.getTeamCapacity() && firstTeam.getUsers().size() <= secondTeam.getUsers().size()) {
+                    firstTeam.getUsers().add(user);
+                    teamRepository.save(firstTeam);
+                } else {
+                    secondTeam.getUsers().add(user);
+                    teamRepository.save(secondTeam);
+                }
+            }
     }
 
     public void changeTeam(Team currentTeam, Team otherTeam, User user) {
         // Remove user from the current team and add to the other team
-        currentTeam.getUsers().remove(user);
-        otherTeam.getUsers().add(user);
-
-        // Save the changes
+        try {
+            currentTeam.getUsers().remove(user);
+            otherTeam.getUsers().add(user);
+        }catch (Exception e )
+        {
+            throw new IllegalStateException("User could not found while changing teams");
+        }
         teamRepository.save(currentTeam);
         teamRepository.save(otherTeam);
+    }
+
+    public void addScore(Long eventId, Integer firstTeamScore, Integer secondTeamScore) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(()-> new IllegalArgumentException("Event could not found during scoring"));
+
+        event.getTeams().get(0).setScore(firstTeamScore);
+        event.getTeams().get(1).setScore(secondTeamScore);
+
+        eventRepository.save(event);
     }
 }

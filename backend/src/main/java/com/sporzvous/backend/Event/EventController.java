@@ -1,5 +1,6 @@
 package com.sporzvous.backend.Event;
 
+import com.sporzvous.backend.Team.TeamService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final TeamService teamService;
 
     @PostMapping("/create")
     public ResponseEntity<String> createEvent(@RequestBody Event request) {
@@ -19,6 +21,17 @@ public class EventController {
             Event newEvent = eventService.saveEvent(request);
             return ResponseEntity.ok(newEvent.getTitle() + " created successfully");
         } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+    @PostMapping("/addScore/${eventId}")
+    public ResponseEntity<?> addScore(@PathVariable Long eventId, Integer firstTeamScore, Integer secondTeamScore) {
+        try {
+            teamService.addScore(eventId, firstTeamScore, secondTeamScore);
+
+            return ResponseEntity.ok("Team scores added to event with eventId" + eventId);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
