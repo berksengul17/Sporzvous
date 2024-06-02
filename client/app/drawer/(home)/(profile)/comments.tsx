@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,6 +13,9 @@ import { AntDesign } from "@expo/vector-icons";
 import CommentItem from "@/components/CommentItem";
 import { router } from "expo-router";
 import CustomText from "@/components/CustomText";
+import { useCommentContext } from "@/context/CommentProvider";
+import { useUserContext } from "@/context/UserProvider";
+import { useIsFocused } from "@react-navigation/native";
 
 const parseDate = (dateStr) => {
   const today = new Date();
@@ -42,84 +45,24 @@ const parseDate = (dateStr) => {
 };
 
 const Page = () => {
+  const { fetchComments } = useCommentContext();
+  const { user } = useUserContext();
   const [selectedType, setSelectedType] = useState("All");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSport, setSelectedSport] = useState("");
-  const [commentData, setCommentData] = useState([
-    {
-      id: "1",
-      type: "Organization",
-      rating: "5",
-      commentor: "Çağan Özsir",
-      commentDate: "24/05/2024",
-      commentPreview: "Harika bir organizasyondu eline sağlık.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "2",
-      type: "Football",
-      rating: "4",
-      commentor: "Emre Erol",
-      commentDate: "22/05/2024",
-      commentPreview: "Çok iyi futbol oynuyorsun.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "3",
-      type: "Basketball",
-      rating: "2",
-      commentor: "Berk Şengül",
-      commentDate: "22/05/2024",
-      commentPreview: "Adam bütün maç leş attı.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "4",
-      type: "Tennis",
-      rating: "5",
-      commentor: "Emrecan Çuhadar",
-      commentDate: "20/05/2024",
-      commentPreview: "Bu adamla oynaması aşırı keyifli.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "5",
-      type: "Volleyball",
-      rating: "1",
-      commentor: "Çağlar Özsir",
-      commentDate: "15/05/2024",
-      commentPreview: "Daha manşet atmayı bilmiyor.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "6",
-      type: "Table Tennis",
-      rating: "5",
-      commentor: "Emrecan Çuhadar",
-      commentDate: "18/04/2024",
-      commentPreview: "Yine bu adama yenildim.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "7",
-      type: "Baseball",
-      rating: "1",
-      commentor: "Çağlar Özsir",
-      commentDate: "12/05/2024",
-      commentPreview: "Türkiyede beyzbol mu oynanır aq.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-    {
-      id: "8",
-      type: "Football",
-      rating: "4",
-      commentor: "Kylian Mbappe",
-      commentDate: "12/03/2024",
-      commentPreview:
-        "Ben de Sporzvous kullanıyorum, bu uygulama harika dostum.",
-      profilePicUrl: "https://via.placeholder.com/48",
-    },
-  ]);
+  const isFocused = useIsFocused();
+  const [commentData, setCommentData] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    const getMyEvents = async () => {
+      console.log("fetching my events");
+      setCommentData(await fetchComments());
+      console.log("fetched my events");
+    };
+    if (isFocused) {
+      getMyEvents();
+    }
+  }, [isFocused, user]);
 
   const sortedComments = useMemo(() => {
     return commentData
