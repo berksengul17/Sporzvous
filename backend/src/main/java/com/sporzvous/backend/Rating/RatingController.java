@@ -82,7 +82,15 @@ public class RatingController {
                     .body(e.getMessage());
         }
     }
-
-
+    @GetMapping("/getOrganizationRating/{userId}")
+    public ResponseEntity<?> getOrganizationRating(@PathVariable Long userId) {
+        try {
+            Map<SportField, Double> organizationRating = ratingService.getOrganizationRating(userId);
+            return ResponseEntity.ok(organizationRating);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 
 }

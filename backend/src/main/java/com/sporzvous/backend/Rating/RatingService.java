@@ -47,17 +47,20 @@ public class RatingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User could not be found for getting rating by others"));
 
-        // Fetch other users' ratings
+        // Fetch other users' ratings and filter by SPORT category
         Map<SportField, Double> otherUsersAverageRatings = user.getRatings().stream()
+                .filter(rating -> rating.getCategory() == RatingCategory.SPORT)
                 .collect(Collectors.groupingBy(Rating::getSportField,
                         Collectors.averagingDouble(Rating::getRating)));
 
-        // Fetch self-ratings
+        // Fetch self-ratings and filter by SPORT category
         Map<SportField, Double> selfRatings = user.getSportRatings().stream()
                 .collect(Collectors.groupingBy(SportRating::getSportField,
                         Collectors.averagingDouble(SportRating::getRating)));
 
         // Combine ratings
+
+
         return otherUsersAverageRatings.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -68,5 +71,17 @@ public class RatingService {
                             return 0.6 * otherUsersAverage + 0.4 * selfRating;
                         }
                 ));
+    }
+
+    public Map<SportField, Double> getOrganizationRating(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User could not be found for getting rating by others"));
+
+        // Fetch ratings and filter by ORGANIZATION category
+
+        return user.getRatings().stream()
+                .filter(rating -> rating.getCategory() == RatingCategory.ORGANIZATION)
+                .collect(Collectors.groupingBy(Rating::getSportField,
+                        Collectors.averagingDouble(Rating::getRating)));
     }
 }
