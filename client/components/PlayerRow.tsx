@@ -86,11 +86,11 @@ const PlayerRow = ({
               Are you sure you want to kick {player.username}?
             </Text>
             <View style={styles.buttonContainer}>
-              <Button title="Yes" onPress={kickPlayer} />
               <Button
                 title="No"
                 onPress={() => setLeaveEventPopupVisible(false)}
               />
+              <Button title="Yes" onPress={kickPlayer} />
             </View>
           </View>
         </View>
