@@ -4,6 +4,7 @@
       "search": "Search",
       "cancel": "Cancel",
       "sendRequest": "Send Request",
+      "sendRequestConfirm": "Friend request sent successfully!",
       "unexpectedError": "An unexpected error occurred. Please try again."
 
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { Rating as RNRating } from "react-native-ratings";
+import { useDarkMode } from "@/context/DarkModeContext";
 
 const Rating = ({
   value,
@@ -13,6 +14,8 @@ const Rating = ({
   customStyles?: StyleProp<ViewStyle>;
   onFinishRating?: (rating: number) => void;
 }) => {
+  const { isDarkMode } = useDarkMode();
+
   return (
     <RNRating
       type="custom"
@@ -22,14 +25,12 @@ const Rating = ({
       imageSize={30}
       ratingColor="#ffc978"
       ratingBackgroundColor="#d9d9d9"
-      style={[styles.rating, customStyles]}
+      style={[styles.rating, customStyles, isDarkMode && styles.darkModeRating]}
       tintColor="#fff"
       onFinishRating={onFinishRating}
     />
   );
 };
-
-export default Rating;
 
 const styles = StyleSheet.create({
   rating: {
@@ -46,4 +47,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6.27,
     elevation: 10,
   },
+  darkModeRating: {
+    shadowColor: "#fff",
+  },
 });
+
+export default Rating;

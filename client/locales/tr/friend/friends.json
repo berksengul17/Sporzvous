@@ -3,6 +3,7 @@
       "search": "Ara",
       "cancel": "İptal",
       "sendRequest": "İstek Gönder",
+      "sendRequestConfirm": "Arkadaşlık isteği başarıyla gönderildi!",
       "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin."
   }
   

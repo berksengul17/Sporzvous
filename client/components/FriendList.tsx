@@ -1,36 +1,56 @@
-import { Friend, useFriendContext } from "@/context/FriendProvider";
-import { useUserContext } from "@/context/UserProvider";
-import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useFriendContext, Friend } from "@/context/FriendProvider";
+import { useUserContext } from "@/context/UserProvider";
+import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
 import CustomText from "./CustomText";
 
 const FriendItem = ({
   friend,
   onPress,
+  isDarkMode,
+  t,
 }: {
   friend: Friend;
   onPress: (userId: number) => void;
+  isDarkMode: boolean;
+  t: (key: string) => string;
 }) => (
-  <View style={styles.friendContainer}>
-    {/* <Image source={friend.imageUri} style={styles.profileImage} /> */}
+  <View
+    style={[
+      styles.friendContainer,
+      isDarkMode && styles.darkModeFriendContainer,
+    ]}
+  >
     <View style={styles.friendInfo}>
       <CustomText
-        customStyle={styles.friendName}
+        customStyle={[
+          styles.friendName,
+          isDarkMode && styles.darkModeFriendName,
+        ]}
         text={friend.fullName}
         isBold={true}
       />
       <CustomText
-        customStyle={styles.friendLastSeen}
-        text={`Last seen: Yesterday`}
+        customStyle={[
+          styles.friendLastSeen,
+          isDarkMode && styles.darkModeFriendLastSeen,
+        ]}
+        text={t("last_seen")}
       />
     </View>
     <TouchableOpacity
       style={styles.iconButton}
       onPress={() => onPress(friend.userId)}
     >
-      <AntDesign name="message1" size={24} color="#FF5C00" />
+      <AntDesign
+        name="message1"
+        size={24}
+        color={isDarkMode ? "#FF5C00" : "#FF5C00"}
+      />
     </TouchableOpacity>
   </View>
 );
@@ -38,6 +58,8 @@ const FriendItem = ({
 const FriendList = () => {
   const { user } = useUserContext();
   const { friends } = useFriendContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("friendList"); // Initialize the translation hook
 
   const handlePress = (receiverId: number) => {
     router.push({
@@ -51,10 +73,15 @@ const FriendList = () => {
       <FlatList
         data={friends}
         renderItem={({ item }) => (
-          <FriendItem friend={item} onPress={handlePress} />
+          <FriendItem
+            friend={item}
+            onPress={handlePress}
+            isDarkMode={isDarkMode}
+            t={t} // Pass t function as a prop
+          />
         )}
         keyExtractor={(item) => item.userId.toString()}
-        style={styles.list}
+        style={[styles.list, isDarkMode && styles.darkModeList]}
       />
     </>
   );
@@ -67,7 +94,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-
+  darkModeList: {
+    backgroundColor: "#222",
+  },
   friendContainer: {
     flexDirection: "row",
     padding: 15,
@@ -84,16 +113,27 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginVertical: 5,
   },
+  darkModeFriendContainer: {
+    backgroundColor: "#333",
+    borderBottomColor: "#444",
+  },
   friendInfo: {
     flex: 1,
   },
   friendName: {
     fontWeight: "bold",
     fontSize: 18,
+    color: "#000",
+  },
+  darkModeFriendName: {
+    color: "#FFF",
   },
   friendLastSeen: {
     color: "#6F6F6F",
     fontSize: 14,
+  },
+  darkModeFriendLastSeen: {
+    color: "#AAA",
   },
   iconButton: {
     padding: 8,

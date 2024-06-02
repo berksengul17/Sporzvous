@@ -399,13 +399,11 @@ const Page = () => {
                 {t("min_skill_level")}
               </Text>
             </View>
-            <View style={styles.ratingStars}>
-              <Rating
-                customStyles={styles.ratingStars}
-                value={5}
-                onFinishRating={handleRatingCompleted}
-              />
-            </View>
+            <Rating
+              customStyles={[styles.ratingStars]}
+              value={5}
+              onFinishRating={handleRatingCompleted}
+            />
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -524,7 +522,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   darkModeBackground: {
-    backgroundColor: "#222",
+    backgroundColor: "#333",
   },
   eventInformationContainer: {
     flex: 1,
