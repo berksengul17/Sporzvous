@@ -13,9 +13,10 @@ import { AntDesign } from "@expo/vector-icons";
 import CommentItem from "@/components/CommentItem";
 import { router } from "expo-router";
 import CustomText from "@/components/CustomText";
-import { useCommentContext } from "@/context/CommentProvider";
+
 import { useUserContext } from "@/context/UserProvider";
 import { useIsFocused } from "@react-navigation/native";
+import { useCommentContext } from "@/context/CommentProvider";
 
 const parseDate = (dateStr) => {
   const today = new Date();
@@ -50,22 +51,23 @@ const Page = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSport, setSelectedSport] = useState("");
+  const [myComments, setMyComments] = useState<Comment[]>([]);
+
   const isFocused = useIsFocused();
-  const [commentData, setCommentData] = useState<Comment[]>([]);
 
   useEffect(() => {
-    const getMyEvents = async () => {
-      console.log("fetching my events");
-      setCommentData(await fetchComments());
-      console.log("fetched my events");
+    const getMyComments = async () => {
+      console.log("fetching my comments");
+      setMyComments(await fetchComments());
+      console.log("fetched my comments");
     };
     if (isFocused) {
-      getMyEvents();
+      getMyComments();
     }
   }, [isFocused, user]);
 
   const sortedComments = useMemo(() => {
-    return commentData
+    return myComments
       .map((comment) => ({
         ...comment,
         readableDate: parseDate(comment.commentDate),

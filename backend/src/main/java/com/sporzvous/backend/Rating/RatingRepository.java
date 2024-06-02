@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface RatingRepository extends JpaRepository<Rating, Long>, RatingRepositoryCustom{
     Optional<List<Rating>> findByCategory(RatingCategory category);
     List<Rating> getRatingsBySenderAndEvent(User sender, Event event);
+    Optional<List<Rating>> findByReceiver(User receiver);
 }

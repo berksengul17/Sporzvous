@@ -55,6 +55,16 @@ public class RatingService {
                                 .toList();
     }
 
+    public List<Rating> getComments(Long userId) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User could not be found for " +
+                                "getting ratings given by user for event"));
+
+        return ratingRepository.findByReceiver(receiver)
+                .orElseThrow(() -> new IllegalArgumentException("Ratings could not found"));
+    }
+
     public Map<SportField, Double> getRatingByOthers(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User could not found by getting rating by others"));

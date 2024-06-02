@@ -1,20 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { User } from "./UserProvider";
+import { User, useUserContext } from "./UserProvider";
 
 type Comment = {
   id: number;
   type: string;
+  sportField: string;
   rating: number;
-  commentor: User;
-  commentDate: string;
   commentPreview: string;
-  profilePicUrl: string;
+  commentDate: string;
+  event: Event;
+  commentor: User;
+  receiver: User;
 };
 
 type CommentProps = {
   comments: Comment[];
-  fetchComments: () => void;
+  fetchComments: () => Promise<Comment[]>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/ratings";
@@ -26,22 +28,23 @@ export const CommentProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { user } = useUserContext();
   const [comments, setComments] = useState<Comment[]>([]);
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`${API_URL}/get-all-comments`);
+      const response = await axios.get(
+        `${API_URL}/get-all-comments/${user.userId}`
+      );
       console.log("RESPONSE", response.data);
 
       const comments = response.data.map((comment: Comment) => {
         console.log("Processing event:", comment);
         return {
           ...comment,
-          commentDate: new Date(comment.commentDate).toLocaleDateString(),
+          commentDate: comment.commentDate.slice(0, 5),
         };
       });
-
-      console.log("MY Comments", comments);
 
       return comments;
     } catch (error) {
