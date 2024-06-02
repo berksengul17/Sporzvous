@@ -290,13 +290,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
+
       if (axios.isAxiosError(error)) {
         if (
           error.response &&
           error.response.data &&
           error.response.data.error
         ) {
-          errorMessage = error.response.data.error;
+          errorMessage = error.response.data.message;
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }

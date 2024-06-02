@@ -26,24 +26,12 @@ const VerificationCode = () => {
   const onSubmitVerificationCode = async () => {
     try {
       await verifyCode(email as string, verificationCode);
-      setModalMessage("Code verified. Please enter your new password.");
-      setModalVisible(true);
-      router.push({ pathname: "setNewPassword" });
+      router.push({
+        pathname: "setNewPassword",
+        params: { email, verificationCode },
+      });
     } catch (error) {
       setModalMessage("Incorrect verification code. Please try again.");
-      setModalVisible(true);
-    }
-  };
-
-  const onResendVerificationCode = async () => {
-    try {
-      await resetPassword(email as string, verificationCode, newPassword);
-      setModalMessage(
-        "Password reset successfully. You can now log in with your new password."
-      );
-      setModalVisible(true);
-    } catch (error) {
-      setModalMessage("Failed to reset password. Please try again.");
       setModalVisible(true);
     }
   };
@@ -74,7 +62,8 @@ const VerificationCode = () => {
                 <AuthHeader />
                 <CustomText
                   customStyle={styles.infoText}
-                  text="Please enter the verification code sent to your email."
+                  text="A verification code has been sent to your email if 
+                  there is an account associated with the email."
                 />
                 <TextInput
                   style={styles.input}

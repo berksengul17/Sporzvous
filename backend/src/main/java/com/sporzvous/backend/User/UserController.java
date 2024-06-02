@@ -45,7 +45,7 @@ public class UserController {
             userService.createTokenForUser(newUser, token);
 //            mailSenderService.sendVerificationEmail(request, token, newUser);
             return ResponseEntity.ok(newUser);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
@@ -54,7 +54,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User request) {
         UserDTO loggedInUser = userService.login(request);
-        if(loggedInUser != null) {
+        if (loggedInUser != null) {
             return ResponseEntity.ok(loggedInUser);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -102,16 +102,10 @@ public class UserController {
 
     @PostMapping("/resetPassword")
     public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String code, @RequestParam String newPassword) {
-        if (userService.verifyCode(email, code)) {
-            User user = userService.findUserByEmail(email);
-            userService.changeUserPassword(user, newPassword);
-            return ResponseEntity.ok("Password reset successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
-        }
+        User user = userService.findUserByEmail(email);
+        userService.changeUserPassword(user, newPassword);
+        return ResponseEntity.ok("Password reset successfully");
     }
-
-
 
     @PostMapping("/addFeedback")
     public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {
@@ -159,10 +153,9 @@ public class UserController {
         try {
             if (content.length() < 10 || content.length() > 100) {
                 return ResponseEntity.badRequest().body("Content capacity is exceeded");
-            }
-            else {
+            } else {
                 Rating rating = ratingService.createRating(category, userRating, sportField,
-                                                            content, eventId, senderId, receiverId);
+                        content, eventId, senderId, receiverId);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Rating with ID" + rating.getRatingId() + "created successfully");
             }
         } catch (Exception e) {
@@ -181,6 +174,7 @@ public class UserController {
                     .body(e.getMessage());
         }
     }
+
     @DeleteMapping("{userId}/leave/{eventId}")
     public ResponseEntity<?> leaveEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
@@ -202,7 +196,6 @@ public class UserController {
                     .body(e.getMessage());
         }
     }
-
 
 
 //    @PostMapping("/createEvent")

@@ -1,40 +1,57 @@
 import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { router } from "expo-router";
+import { useUserContext } from "@/context/UserProvider";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ImageBackground,
   Keyboard,
+  Modal,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  Modal,
-  Pressable,
 } from "react-native";
 
 const SetNewPassword = () => {
+  const { email, verificationCode } = useLocalSearchParams();
   const [password, setPassword] = useState("");
+  const { resetPassword } = useUserContext();
   const [confirmPassword, setConfirmPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const onSetNewPassword = () => {
+  const onSetNewPassword = async () => {
     if (password !== confirmPassword) {
       setModalMessage("Passwords do not match. Please try again.");
       setModalVisible(true);
     } else {
-      // Simulate setting the new password
-      setModalMessage("Your password has been successfully set.");
-      setModalVisible(true);
-      router.navigate("/index.tsx");
+      try {
+        await resetPassword(
+          email as string,
+          verificationCode as string,
+          password
+        );
+        setModalMessage(
+          "Password reset successfully. You can now log in with your new password."
+        );
+        setModalVisible(true);
+      } catch (error: any) {
+        // setModalMessage("Failed to reset password. Please try again.");
+        setModalMessage(error.message);
+        setModalVisible(true);
+      }
     }
   };
 
   const onCloseModal = () => {
     setModalVisible(false);
-    if (modalMessage === "Your password has been successfully set.") {
+    if (
+      modalMessage ===
+      "Password reset successfully. You can now log in with your new password."
+    ) {
       router.dismissAll();
     }
   };

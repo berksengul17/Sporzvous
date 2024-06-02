@@ -1,8 +1,8 @@
 import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
+import { t } from "i18next";
 import React, { useState } from "react";
 import {
   ImageBackground,
@@ -10,6 +10,7 @@ import {
   Modal,
   Pressable,
   StyleSheet,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -19,14 +20,17 @@ const Forgotpw = () => {
   const { requestPasswordReset } = useUserContext();
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [errorResetRequest, setErrorResetRequest] = useState("");
 
   const onRequestPasswordReset = async () => {
     try {
       await requestPasswordReset(email);
+      setErrorResetRequest("");
       router.push({ pathname: "verificationCode", params: { email } });
     } catch (error) {
       // Handle error
-      console.error(error);
+      setErrorResetRequest((error as Error).message);
+      setModalVisible(true); // Show error modal
     }
   };
 
@@ -70,20 +74,16 @@ const Forgotpw = () => {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.overlay}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <CustomText
-                  customStyle={styles.modalText}
-                  text={`An email is sent for password reset if account exists.`}
-                />
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <CustomText customStyle={styles.textStyle} text="Close" />
-                </Pressable>
-              </View>
+          <View style={styles.centeredView}>
+            <View style={styles.overlay} />
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{errorResetRequest}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>{t("hide_modal")}</Text>
+              </Pressable>
             </View>
           </View>
         </Modal>

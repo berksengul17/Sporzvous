@@ -42,12 +42,18 @@ public class EventService {
     }
 
 
-    public void changeStatus(Long eventId, int status) {
+    public Event changeStatus(Long eventId, int status) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         event.setIsEventOver(status);
-        eventRepository.save(event);
+
+        if (status == 2) {
+            for (User user : event.getUsers()) {
+                user.setEventCount(user.getEventCount() + 1);
+            }
+        }
+        return eventRepository.save(event);
     }
 
     public List<Event> getMyEvents(Long userId) {
@@ -62,8 +68,7 @@ public class EventService {
                 .map(event -> {
                     LocalDateTime eventDateTime = LocalDateTime.of(event.getEventDate(), event.getEventTime());
                     if (LocalDateTime.now().isAfter(eventDateTime.plusHours(6))) {
-                        event.setIsEventOver(2);
-                        return eventRepository.save(event);
+                        return changeStatus(event.getEventId(), 2);
                     } else if (LocalDateTime.now().withSecond(1).withNano(0)
                             .isAfter(eventDateTime.withSecond(0).withNano(0)) &&
                             event.getIsEventOver() != 2) {
