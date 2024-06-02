@@ -62,18 +62,56 @@ public class UserController {
         }
     }
 
-    @PostMapping("/resetPassword")
-    public ResponseEntity<String> resetPassword(HttpServletRequest request,
-                                                @RequestParam String email) {
-        User user = userService.findUserByEmail(email);
-        if (user == null) {
-            throw new IllegalArgumentException("User with email" + email + "is not found");
+//    @PostMapping("/resetPassword")
+//    public ResponseEntity<String> resetPassword(HttpServletRequest request,
+//                                                @RequestParam String email) {
+//        try {
+//            User user = userService.findUserByEmail(email);
+//            if (user == null) {
+//                throw new IllegalArgumentException("User with email" + email + "is not found");
+//            }
+//            String token = UUID.randomUUID().toString();
+//            userService.createTokenForUser(user, token);
+//            mailSenderService.sendResetTokenEmail(request, token, user);
+//            return ResponseEntity.ok("You should receive a password reset email shortly");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Error " + e.getMessage());
+//        }
+//    }
+
+    @PostMapping("/requestPasswordReset")
+    public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
+        try {
+            User user = userService.findUserByEmail(email);
+            userService.sendVerificationCode(user);
+            return ResponseEntity.ok("Verification code sent to email");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
-        String token = UUID.randomUUID().toString();
-        userService.createTokenForUser(user, token);
-        mailSenderService.sendResetTokenEmail(request, token, user);
-        return ResponseEntity.ok("You should receive a password reset email shortly");
     }
+
+    @PostMapping("/verifyCode")
+    public ResponseEntity<String> verifyCode(@RequestParam String email, @RequestParam String code) {
+        if (userService.verifyCode(email, code)) {
+            return ResponseEntity.ok("Code verified successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String code, @RequestParam String newPassword) {
+        if (userService.verifyCode(email, code)) {
+            User user = userService.findUserByEmail(email);
+            userService.changeUserPassword(user, newPassword);
+            return ResponseEntity.ok("Password reset successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid code");
+        }
+    }
+
+
 
     @PostMapping("/addFeedback")
     public ResponseEntity<?> addFeedback(@RequestBody Feedback request) {

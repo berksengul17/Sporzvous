@@ -4,7 +4,7 @@ import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.Event.EventService;
 import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
-import com.sporzvous.backend.Team.Team;
+import com.sporzvous.backend.MailSender.MailSenderService;
 import com.sporzvous.backend.Token.Token;
 import com.sporzvous.backend.Token.TokenRepository;
 import com.sporzvous.backend.UserEvent.UserEventService;
@@ -12,10 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -27,6 +25,9 @@ public class UserService {
     private final EventService eventService;
     private final EventRepository eventRepository;
     private final UserEventService userEventService;
+    private final SecureRandom random = new SecureRandom();
+    private final Map<String, String> verificationCodes = new HashMap<>();
+    private final MailSenderService mailSenderService;
 
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -233,5 +234,26 @@ public class UserService {
         }
 
         return hasNumber && hasSymbol;
+    }
+
+    // Generates a random 6-digit code
+    private String generateVerificationCode() {
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
+    }
+
+    public void sendVerificationCode(User user) {
+        String code = generateVerificationCode();
+        verificationCodes.put(user.getEmail(), code);
+        mailSenderService.sendVerificationCodeEmail(user, code);
+    }
+
+    public boolean verifyCode(String email, String code) {
+        String storedCode = verificationCodes.get(email);
+        if (storedCode != null && storedCode.equals(code)) {
+            verificationCodes.remove(email);
+            return true;
+        }
+        return false;
     }
 }

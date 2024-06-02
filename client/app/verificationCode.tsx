@@ -2,6 +2,7 @@ import AuthHeader from "@/components/AuthHeader";
 import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -16,25 +17,36 @@ import {
 } from "react-native";
 
 const VerificationCode = () => {
+  const { query } = URLSearchParams();
+  const { verifyCode, resetPassword } = useUserContext();
   const [verificationCode, setVerificationCode] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const email = query.email;
 
-  const onSubmitVerificationCode = () => {
-    // Simulate verification code check
-    const isValidCode = verificationCode === "123456"; // Replace with actual verification logic
-    if (isValidCode) {
-      router.navigate("setNewPassword");
-    } else {
+  const onSubmitVerificationCode = async () => {
+    try {
+      await verifyCode(email, verificationCode);
+      setModalMessage("Code verified. Please enter your new password.");
+      setModalVisible(true);
+    } catch (error) {
       setModalMessage("Incorrect verification code. Please try again.");
       setModalVisible(true);
     }
   };
 
-  const onResendVerificationCode = () => {
-    // Simulate resending verification code
-    setModalMessage("A new verification code has been sent to your email.");
-    setModalVisible(true);
+  const onResendVerificationCode = async () => {
+    try {
+      await resetPassword(email, verificationCode, newPassword);
+      setModalMessage(
+        "Password reset successfully. You can now log in with your new password."
+      );
+      setModalVisible(true);
+    } catch (error) {
+      setModalMessage("Failed to reset password. Please try again.");
+      setModalVisible(true);
+    }
   };
 
   return (

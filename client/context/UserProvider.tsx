@@ -61,6 +61,13 @@ type UserProps = {
     userId: number
   ) => Promise<void>;
   logout: () => void;
+  resetPassword: (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => Promise<void>;
+  verifyCode: (email: string, code: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -212,6 +219,74 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const requestPasswordReset = async (email: string) => {
+    try {
+      await axios.post(`${API_URL}/requestPasswordReset`, { email });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
+  const verifyCode = async (email: string, code: string) => {
+    try {
+      await axios.post(`${API_URL}/verifyCode`, { email, code });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
+  const resetPassword = async (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => {
+    try {
+      await axios.post(`${API_URL}/resetPassword`, {
+        email,
+        code,
+        newPassword,
+      });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
   const updateProfile = async (newUserInfo: UpdateUser) => {
     try {
       console.log(`${API_URL}/${user.userId}/edit-profile`);
@@ -334,6 +409,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     leaveEvent,
     addComment,
     logout,
+    requestPasswordReset,
+    verifyCode,
+    resetPassword,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
