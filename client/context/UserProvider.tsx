@@ -52,12 +52,13 @@ type UserProps = {
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
   joinEvent: (event: Event) => Promise<AxiosResponse>;
-  leaveEvent: (eventId: number) => Promise<void>;
+  leaveEvent: (eventId: number, userId: number) => Promise<void>;
   addComment: (
     category: string,
     sport: string,
     userRating: number,
     content: string,
+    eventId: number,
     userId: number
   ) => Promise<void>;
   logout: () => void;
@@ -324,9 +325,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const leaveEvent = async (eventId: number) => {
+  const leaveEvent = async (eventId: number, userId: number) => {
     try {
-      await axios.delete(`${API_URL}/${user.userId}/leave/${eventId}`);
+      await axios.delete(`${API_URL}/${userId}/leave/${eventId}`);
     } catch (err) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -347,6 +348,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     sport: string,
     userRating: number,
     content: string,
+    eventId: number,
     receiverId: number
   ) => {
     try {
@@ -355,6 +357,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       formData.append("sportField", sport.toUpperCase());
       formData.append("userRating", userRating.toString());
       formData.append("content", content);
+      formData.append("eventId", eventId.toString());
       formData.append("senderId", user.userId.toString());
       formData.append("receiverId", receiverId.toString());
 

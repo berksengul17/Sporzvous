@@ -153,6 +153,7 @@ public class UserController {
                                         @RequestParam("sportField") SportField sportField,
                                         @RequestParam("userRating") Double userRating,
                                         @RequestParam("content") String content,
+                                        @RequestParam("eventId") Long eventId,
                                         @RequestParam("senderId") Long senderId,
                                         @RequestParam("receiverId") Long receiverId) {
         try {
@@ -161,7 +162,7 @@ public class UserController {
             }
             else {
                 Rating rating = ratingService.createRating(category, userRating, sportField,
-                                                            content, senderId, receiverId);
+                                                            content, eventId, senderId, receiverId);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Rating with ID" + rating.getRatingId() + "created successfully");
             }
         } catch (Exception e) {

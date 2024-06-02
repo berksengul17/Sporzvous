@@ -6,6 +6,7 @@ import RatingModal from "@/components/RatingModal";
 import { Event, useEventContext } from "@/context/EventProvider";
 import { User, useUserContext } from "@/context/UserProvider";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -60,16 +61,39 @@ const MainEventScreen = () => {
   const [ratePlayer, setRatePlayer] = useState<User | null>(null);
   const [mvp, setMvp] = useState("Mvp");
   const [isMapVisible, setIsMapVisible] = useState(false);
+  const [ratingReceiverIds, setRatingReceiverIds] = useState<number[]>([]);
 
-  const buttonDisabled = isButtonDisabled(
-    eventData.eventDate,
-    eventData.eventTime
-  );
+  const buttonDisabled =
+    isButtonDisabled(eventData.eventDate, eventData.eventTime) ||
+    ratingReceiverIds.includes(eventData.organizer.userId);
 
   useEffect(() => {
     setTeamA(eventData.teams[0].users);
     setTeamB(eventData.teams[1].users);
+    (async () => {
+      await fetchRatingReceiverIds();
+    })();
   }, []);
+
+  useEffect(() => {
+    console.log("IDS", ratingReceiverIds);
+  }, [ratingReceiverIds]);
+
+  const fetchRatingReceiverIds = async () => {
+    try {
+      console.log(
+        "URL",
+        `${process.env.EXPO_PUBLIC_API_URL}/api/ratings/get-event-ratings/${eventData.eventId}/${user.userId}`
+      );
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/ratings/get-event-ratings/${eventData.eventId}/${user.userId}`
+      );
+      console.log("RESPONSE", response.data);
+      setRatingReceiverIds(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePlayerPress = (player: User) => {
     console.log("Navigate to player profile:", player.fullName);
@@ -95,19 +119,26 @@ const MainEventScreen = () => {
   ) => {
     try {
       console.log("saving comment");
-      await addComment(category, sport, userRating, content, userId);
+      await addComment(
+        category,
+        sport,
+        userRating,
+        content,
+        eventData.eventId,
+        userId
+      );
+      await fetchRatingReceiverIds();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleLeaveEvent = async () => {
+  const handleLeaveEvent = async (userId: number, msg: string) => {
     try {
-      await leaveEvent(eventData.eventId);
+      await leaveEvent(eventData.eventId, userId);
       setShowLeaveEventPopup(false);
       // TODO değişecek
-      Alert.alert("Success", "You have successfully left the event.");
-      router.back();
+      Alert.alert("Success", msg);
     } catch (error) {
       setLeaveEventError((error as Error).message);
       setShowLeaveEventError(true);
@@ -194,6 +225,15 @@ const MainEventScreen = () => {
             <PlayerRow
               player={item}
               event={eventData}
+              isSelf={item.userId === user.userId}
+              isOrganizer={user.userId === eventData.organizer.userId}
+              commentDisabled={ratingReceiverIds.includes(item.userId)}
+              handleKickPlayer={() =>
+                handleLeaveEvent(
+                  item.userId,
+                  `You have successfully kicked ${item.username}.`
+                )
+              }
               handlePlayerPress={handlePlayerPress}
               handleRatePress={handleRatePress}
             />
@@ -207,6 +247,15 @@ const MainEventScreen = () => {
             <PlayerRow
               player={item}
               event={eventData}
+              isSelf={item.userId === user.userId}
+              isOrganizer={user.userId === eventData.organizer.userId}
+              commentDisabled={ratingReceiverIds.includes(item.userId)}
+              handleKickPlayer={() =>
+                handleLeaveEvent(
+                  item.userId,
+                  `You have successfully kicked ${item.username}.`
+                )
+              }
               handlePlayerPress={handlePlayerPress}
               handleRatePress={handleRatePress}
             />
@@ -303,7 +352,16 @@ const MainEventScreen = () => {
       <Modal visible={showLeaveEventPopup} animationType="slide">
         <View>
           <Text>Are you sure you want to leave the event?</Text>
-          <Button title="Yes" onPress={handleLeaveEvent} />
+          <Button
+            title="Yes"
+            onPress={() => {
+              handleLeaveEvent(
+                user.userId,
+                "You have successfully left the event."
+              );
+              router.back();
+            }}
+          />
           <Button title="No" onPress={() => setShowLeaveEventPopup(false)} />
         </View>
       </Modal>
