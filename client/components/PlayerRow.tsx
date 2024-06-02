@@ -28,10 +28,17 @@ const PlayerRow = ({
   handleRatePress,
 }: PlayerRowProps) => {
   const [isLeaveEventPopupVisible, setLeaveEventPopupVisible] = useState(false);
+  const [isKickedModalVisible, setKickedModalVisible] = useState(false);
   const isPlayerOrganizer = event.organizer.userId === player.userId;
   const isEventStarted = event.isEventOver !== 0;
   const isEventOver = event.isEventOver === 2;
   const { isDarkMode } = useDarkMode();
+
+  const kickPlayer = () => {
+    handleKickPlayer();
+    setLeaveEventPopupVisible(false);
+    setKickedModalVisible(true);
+  };
 
   return (
     <>
@@ -67,12 +74,38 @@ const PlayerRow = ({
           </TouchableOpacity>
         )}
       </View>
-      {/* TODO stil lazım */}
-      <Modal visible={isLeaveEventPopupVisible} animationType="slide">
-        <View>
-          <Text>Are you sure you want to kick {player.username}?</Text>
-          <Button title="Yes" onPress={handleKickPlayer} />
-          <Button title="No" onPress={() => setLeaveEventPopupVisible(false)} />
+      <Modal
+        visible={isLeaveEventPopupVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setLeaveEventPopupVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              Are you sure you want to kick {player.username}?
+            </Text>
+            <View style={styles.buttonContainer}>
+              <Button title="Yes" onPress={kickPlayer} />
+              <Button
+                title="No"
+                onPress={() => setLeaveEventPopupVisible(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={isKickedModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setKickedModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{player.username} kicked</Text>
+            <Button title="OK" onPress={() => setKickedModalVisible(false)} />
+          </View>
         </View>
       </Modal>
     </>
@@ -80,8 +113,6 @@ const PlayerRow = ({
 };
 
 export default PlayerRow;
-
-// styles.js
 
 const styles = StyleSheet.create({
   playerRow: {
@@ -99,5 +130,36 @@ const styles = StyleSheet.create({
   },
   deletePlayer: {
     marginHorizontal: 4,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
   },
 });
