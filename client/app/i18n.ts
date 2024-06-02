@@ -19,6 +19,7 @@ import enCreateEvent from '@/locales/en/home/createEvent.json'
 import enMyeventsLayout from '@/locales/en/myevents/myeventsLayout.json'
 import enFilterEvents from "@/locales/en/myevents/filterEvents.json"
 import enMyeventsPage from "@/locales/en/myevents/myeventsPage.json"
+import enMainEventScreen from '@/locales/en/myevents/mainEventScreen.json'
 
 import trDrawer from '@/locales/tr/drawer.json';
 import trHomeLayout from '@/locales/tr/home/homeLayout.json'
@@ -37,6 +38,8 @@ import trCreateEvent from '@/locales/tr/home/createEvent.json'
 import trMyeventsLayout from '@/locales/tr/myevents/myeventsLayout.json'
 import trFilterEvents from "@/locales/tr/myevents/filterEvents.json"
 import trMyeventsPage from "@/locales/tr/myevents/myeventsPage.json"
+import trMainEventScreen from '@/locales/tr/myevents/mainEventScreen.json'
+import MainEventScreen from './drawer/(myevents)/mainEventScreen';
 
 i18n
   .use(initReactI18next)
@@ -60,7 +63,8 @@ i18n
         createEvent: enCreateEvent,
         myeventsLayout: enMyeventsLayout,
         filterEvents: enFilterEvents,
-        myeventsPage: enMyeventsPage
+        myeventsPage: enMyeventsPage,
+        mainEventScreen: enMainEventScreen
       },
       tr: {
         drawer: trDrawer,
@@ -79,13 +83,14 @@ i18n
         createEvent: trCreateEvent,
         myeventsLayout: trMyeventsLayout,
         filterEvents: trFilterEvents,
-        myeventsPage: trMyeventsPage
+        myeventsPage: trMyeventsPage,
+        mainEventScreen: trMainEventScreen
       },
     },
     lng: I18nManager.isRTL ? 'tr' : 'en',
     fallbackLng: 'en',
     ns: ['drawer', 'settings', 'sportsScreen', 'faq', 'complaint', 'profile', 'profileLayout', 'homeLayout', 'settingsLayout', 'friendLayout', 'friends', 'joinEvent', 'homeScreen',
-      'createEvent', 'myeventsLayout', 'filterEvents', "myeventsPage"
+      'createEvent', 'myeventsLayout', 'filterEvents', 'myeventsPage', 'mainEventScreen'
      ],
     defaultNS: 'drawer',
     interpolation: {

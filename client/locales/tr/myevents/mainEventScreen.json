@@ -1,0 +1,25 @@
+{
+    "location": "Konum",
+    "leaveEvent": "Etkinlikten Ayrıl",
+    "finish": "Bitir",
+    "evaluateEvent": "Etkinliği Değerlendir",
+    "rateOrganizer": "Organizatörü Değerlendir",
+    "rate": "Değerlendir",
+    "playersA": "Oyuncular A",
+    "playersB": "Oyuncular B",
+    "leaveEventConfirm": "Etkinlikten ayrılmak istediğinizden emin misiniz?",
+    "no": "Hayır",
+    "yes": "Evet",
+    "leaveEventSuccess": "Etkinlikten başarıyla ayrıldınız.",
+    "ok": "Tamam",
+    "basketball": "Basketbol",
+    "football": "Futbol",
+    "volleyball": "Voleybol",
+    "tennis": "Tenis",
+    "baseball": "Beyzbol",
+    "badminton": "Badminton",
+    "handball": "Hentbol",
+    "ice_hockey": "Buz Hokeyi",
+    "paintball": "Paintball"
+  }
+  

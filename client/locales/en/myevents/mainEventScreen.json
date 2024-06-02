@@ -1,0 +1,25 @@
+{
+    "location": "Location",
+    "leaveEvent": "Leave Event",
+    "finish": "Finish",
+    "evaluateEvent": "Evaluate Event",
+    "rateOrganizer": "Rate Organizer",
+    "rate": "Rate",
+    "playersA": "Players A",
+    "playersB": "Players B",
+    "leaveEventConfirm": "Are you sure you want to leave the event?",
+    "no": "No",
+    "yes": "Yes",
+    "leaveEventSuccess": "You have successfully left the event.",
+    "ok": "OK",
+    "basketball": "Basketball",
+    "football": "Football",
+    "volleyball": "Volleyball",
+    "tennis": "Tennis",
+    "baseball": "Baseball",
+    "badminton": "Badminton",
+    "handball": "Handball",
+    "ice_hockey": "Ice Hockey",
+    "paintball": "Paintball"
+  }
+  

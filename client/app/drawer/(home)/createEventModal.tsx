@@ -1,6 +1,6 @@
 import { useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
-import { useDarkMode } from "@/context/DarkModeContext"; // Import DarkModeContext
+import { useDarkMode } from "@/context/DarkModeContext";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import moment from "moment";
@@ -21,22 +21,23 @@ import {
   View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import MapView, { Marker } from "react-native-maps"; // Import MapView and Marker
+import MapView, { Marker } from "react-native-maps";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import RNPickerSelect from "react-native-picker-select"; // Import the Picker
+import RNPickerSelect from "react-native-picker-select";
 import Rating from "@/components/Rating";
 import CustomButton from "../../../components/CustomButton";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
 
 const Page = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { addEvent } = useEventContext();
-  const { t } = useTranslation("createEvent"); // Initialize translation hook
-  const { isDarkMode } = useDarkMode(); // Get dark mode state
+  const { t } = useTranslation("createEvent");
+  const { isDarkMode } = useDarkMode();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [errorAddEvent, setErrorAddEvent] = useState("");
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const [time, setTime] = useState("");
   const [date, setDate] = useState<string>("");
@@ -55,12 +56,11 @@ const Page = () => {
 
   const [cities, setCities] = useState([]);
   const [villages, setVillages] = useState([]);
-  const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
-  const [selectedLocationLatitude, setSelectedLatitude] = useState<number>(0); // State to store selected location
-  const [selectedLocationLongitude, setSelectedLongitude] = useState<number>(0); // State to store selected location
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [selectedLocationLatitude, setSelectedLatitude] = useState<number>(0);
+  const [selectedLocationLongitude, setSelectedLongitude] = useState<number>(0);
 
   useEffect(() => {
-    // Fetch cities from GeoNames API
     axios
       .get(
         `http://api.geonames.org/searchJSON?username=emreerol0&country=TR&featureClass=P&maxRows=83`
@@ -79,7 +79,6 @@ const Page = () => {
   }, []);
 
   const fetchVillages = (city: string) => {
-    // Fetch villages based on selected city from GeoNames API
     axios
       .get(
         `http://api.geonames.org/searchJSON?username=emreerol0&q=${city}&maxRows=60&featureClass=P`
@@ -145,15 +144,15 @@ const Page = () => {
         locationIndex: "5",
         isEventOver: 0,
         organizer: { ...user, image: user.image?.split(",")[1] },
-        latitude: selectedLocationLatitude, // Include latitude
-        longitude: selectedLocationLongitude, // Include longitude
+        latitude: selectedLocationLatitude,
+        longitude: selectedLocationLongitude,
       });
       console.log(selectedLocationLatitude);
       setErrorAddEvent("");
-      router.back(); // Navigate back to the previous screen
+      setSuccessModalVisible(true); // Show success modal
     } catch (error) {
       setErrorAddEvent((error as Error).message);
-      setModalVisible(true); // Show modal on error
+      setModalVisible(true); // Show error modal
     }
   };
 
@@ -466,7 +465,7 @@ const Page = () => {
         )}
 
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
@@ -475,6 +474,7 @@ const Page = () => {
           }}
         >
           <View style={styles.centeredView}>
+            <View style={styles.overlay} />
             <View style={styles.modalView}>
               <Text style={styles.modalText}>{errorAddEvent}</Text>
               <Pressable
@@ -482,6 +482,31 @@ const Page = () => {
                 onPress={() => setModalVisible(!modalVisible)}
               >
                 <Text style={styles.textStyle}>{t("hide_modal")}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={successModalVisible}
+          onRequestClose={() => {
+            setSuccessModalVisible(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.overlay} />
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{t("create_success")}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  setSuccessModalVisible(false);
+                  router.back();
+                }}
+              >
+                <Text style={styles.textStyle}>OK</Text>
               </Pressable>
             </View>
           </View>
@@ -546,7 +571,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     backgroundColor: "#F0F0F0",
     marginRight: 40,
-    padding: 10, // Adjust padding for better spacing
+    padding: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -634,7 +659,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalView: {
     margin: 20,
@@ -642,6 +670,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
+    alignSelf: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -669,7 +698,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#FF5C00",
   },
   textStyle: {
     color: "white",

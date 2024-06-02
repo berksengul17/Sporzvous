@@ -1,3 +1,4 @@
+import { useDarkMode } from "@/context/DarkModeContext";
 import { Event } from "@/context/EventProvider";
 import { User } from "@/context/UserProvider";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
@@ -22,13 +23,17 @@ const PlayerRow = ({
   const canRatePlayer =
     player.userId !== event.organizer.userId && !isOrganizer && !isEventOver;
 
+  const isDarkMode = useDarkMode();
+
   return (
     <View style={styles.playerRow}>
       <TouchableOpacity
         style={styles.playerName}
         onPress={() => handlePlayerPress(player)}
       >
-        <Text style={{ fontSize: 20 }}>{player.fullName}</Text>
+        <Text style={[{ fontSize: 20 }, isDarkMode && { color: "#fff" }]}>
+          {player.fullName}
+        </Text>
       </TouchableOpacity>
       {isOrganizer && isEventOver && canRatePlayer && (
         <TouchableOpacity style={styles.deletePlayer}>
