@@ -3,7 +3,13 @@ import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
 import { useUserContext } from "@/context/UserProvider";
+import {
+  useOrganizationRatings,
+  useOverallRatings,
+  useRatingsByOtherUsers,
+} from "@/hooks/useRatings";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -51,15 +57,43 @@ const Profile = () => {
   const [userSkillByOthersField, setUserSkillByOthersField] = useState("");
   const [userSkillField, setUserSkillField] = useState("");
   const [overallField, setOverallField] = useState("");
+  const [organizationField, setOrganizationField] = useState("");
   const [isImageViewerVisible, setImageViewerVisible] = useState(false);
   const [isImageSourceModalVisible, setImageSourceModalVisible] =
     useState(false);
+  const { otherUsersRatings, getRatingsByOthers } = useRatingsByOtherUsers(
+    user.userId
+  );
+  const { overallRatings, getOverallRating } = useOverallRatings(user.userId);
+  const { organizationRatings, getOrganizationRatings } =
+    useOrganizationRatings(user.userId);
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     if (user.image) {
       setImageUri(user.image);
     }
   }, [user.image]);
+
+  useEffect(() => {
+    console.log("otherUsersRatings changed", otherUsersRatings);
+    console.log("-----");
+  }, [otherUsersRatings]);
+
+  useEffect(() => {
+    console.log("overallRatings changed field", userSkillByOthersField);
+  }, [userSkillByOthersField]);
+
+  useEffect(() => {
+    (async () => {
+      console.log("fetching ratings...");
+      await getRatingsByOthers();
+      await getOverallRating();
+      await getOrganizationRatings();
+      console.log("fetched ratings");
+    })();
+  }, [isFocused]);
 
   const handleImagePick = async (source) => {
     let result;
@@ -109,7 +143,11 @@ const Profile = () => {
       );
     })?.rating || 0;
 
-  console.log("Selected rating for field:", userSkillField, selectedRating); // Debugging output
+  console.log(
+    "Selected rating for field:",
+    userSkillByOthersField,
+    otherUsersRatings.get(userSkillByOthersField.toUpperCase())
+  ); // Debugging output
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -250,27 +288,28 @@ const Profile = () => {
           <View style={{ alignItems: "center" }}>
             <CustomText
               text={t("verified")}
-              customStyle={[
-                { alignSelf: "flex-start", marginBottom: 10 },
-                { color: isDarkMode ? "#fff" : "#333" },
-              ]}
+              customStyle={{
+                alignSelf: "flex-start",
+                marginBottom: 10,
+                color: isDarkMode ? "#fff" : "#333",
+              }}
             />
             <CustomText text="" customStyle={styles.headerRectangle} />
           </View>
           <View style={{ alignItems: "center" }}>
             <CustomText
               text={t("eventCount")}
-              customStyle={[
-                { marginBottom: 10 },
-                { color: isDarkMode ? "#fff" : "#333" },
-              ]}
+              customStyle={{
+                marginBottom: 10,
+                color: isDarkMode ? "#fff" : "#333",
+              }}
             />
             <CustomText
               text="107"
-              customStyle={[
-                styles.headerRectangle,
-                { color: isDarkMode ? "#fff" : "#333" },
-              ]}
+              customStyle={{
+                ...styles.headerRectangle,
+                color: isDarkMode ? "#fff" : "#333",
+              }}
             />
           </View>
           <View style={{ alignSelf: "flex-end" }}>
@@ -290,10 +329,10 @@ const Profile = () => {
           <View style={styles.userInfo}>
             <CustomText
               text={t("username")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
             <TextInput
               value={username}
@@ -311,10 +350,10 @@ const Profile = () => {
           <View style={styles.userInfo}>
             <CustomText
               text={t("nameSurname")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
             <TextInput
               value={fullName}
@@ -332,10 +371,10 @@ const Profile = () => {
           <View style={styles.userInfo}>
             <CustomText
               text={t("age")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
             <TextInput
               value={age}
@@ -353,10 +392,10 @@ const Profile = () => {
           <View style={styles.userInfo}>
             <CustomText
               text={t("gender")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
@@ -394,10 +433,10 @@ const Profile = () => {
           <View style={styles.userInfo}>
             <CustomText
               text={t("favoriteSport")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
             <View style={{ flex: 1 }}>
               <RNPickerSelect
@@ -437,13 +476,15 @@ const Profile = () => {
           <View style={styles.ratingContainer}>
             <CustomText
               text={t("userSkillsByOthers")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+                width: "20%",
+              }}
             />
             <View>
               <RNPickerSelect
+                value={userSkillByOthersField}
                 onValueChange={(field) => setUserSkillByOthersField(field)}
                 items={initialSportsData.map((sport) => ({
                   label: sport.label,
@@ -473,18 +514,27 @@ const Profile = () => {
                 }}
               />
             </View>
-            <Rating />
+            <Rating
+              isEditable={false}
+              value={
+                otherUsersRatings.has(userSkillByOthersField.toUpperCase())
+                  ? otherUsersRatings.get(userSkillByOthersField.toUpperCase())
+                  : 0
+              }
+            />
           </View>
           <View style={styles.ratingContainer}>
             <CustomText
               text={t("userSkills")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+                width: "20%",
+              }}
             />
             <View>
               <RNPickerSelect
+                value={userSkillField}
                 onValueChange={(field) => setUserSkillField(field)}
                 items={initialSportsData.map((sport) => ({
                   label: sport.label,
@@ -519,13 +569,15 @@ const Profile = () => {
           <View style={styles.ratingContainer}>
             <CustomText
               text={t("overall")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F", width: "20%" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+                width: "20%",
+              }}
             />
             <View>
               <RNPickerSelect
+                value={overallField}
                 onValueChange={(field) => setOverallField(field)}
                 items={initialSportsData.map((sport) => ({
                   label: sport.label,
@@ -555,17 +607,61 @@ const Profile = () => {
                 }}
               />
             </View>
-            <Rating />
+            <Rating
+              isEditable={false}
+              value={
+                overallRatings.has(overallField.toUpperCase())
+                  ? overallRatings.get(overallField.toUpperCase())
+                  : 0
+              }
+            />
           </View>
           <View style={styles.ratingContainer}>
             <CustomText
               text={t("organizationSkills")}
-              customStyle={[
-                styles.label,
-                { color: isDarkMode ? "#fff" : "#6F6F6F" },
-              ]}
+              customStyle={{
+                ...styles.label,
+                color: isDarkMode ? "#fff" : "#6F6F6F",
+              }}
             />
-            <Rating />
+            <RNPickerSelect
+              value={organizationField}
+              onValueChange={(field) => setOrganizationField(field)}
+              items={initialSportsData.map((sport) => ({
+                label: sport.label,
+                value: sport.value,
+              }))}
+              useNativeAndroidPickerStyle={false}
+              style={{
+                inputIOS: [
+                  styles.input,
+                  {
+                    backgroundColor: isDarkMode ? "#333" : "#fff",
+                    color: isDarkMode ? "#fff" : "#333",
+                  },
+                ],
+                inputAndroid: [
+                  styles.input,
+                  {
+                    backgroundColor: isDarkMode ? "#333" : "#fff",
+                    color: isDarkMode ? "#fff" : "#333",
+                  },
+                ],
+                placeholder: { color: styles.input.color },
+              }}
+              placeholder={{
+                label: t("choose"),
+                value: null,
+              }}
+            />
+            <Rating
+              isEditable={false}
+              value={
+                organizationRatings.has(organizationField.toUpperCase())
+                  ? organizationRatings.get(organizationField.toUpperCase())
+                  : 0
+              }
+            />
           </View>
         </View>
         {isProfileEditable && (
