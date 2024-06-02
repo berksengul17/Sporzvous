@@ -279,10 +279,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     newPassword: string
   ) => {
     try {
-      await axios.post(`${API_URL}/resetPassword`, {
-        email,
-        code,
-        newPassword,
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("code", code);
+      formData.append("newPassword", newPassword);
+      await axios.post(`${API_URL}/resetPassword`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";

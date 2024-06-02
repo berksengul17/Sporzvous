@@ -17,7 +17,7 @@ import {
 
 const VerificationCode = () => {
   const { email } = useLocalSearchParams();
-  const { verifyCode, resetPassword } = useUserContext();
+  const { verifyCode, resetPassword, requestPasswordReset } = useUserContext();
   const [verificationCode, setVerificationCode] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -28,6 +28,7 @@ const VerificationCode = () => {
       await verifyCode(email as string, verificationCode);
       setModalMessage("Code verified. Please enter your new password.");
       setModalVisible(true);
+      router.push({ pathname: "setNewPassword" });
     } catch (error) {
       setModalMessage("Incorrect verification code. Please try again.");
       setModalVisible(true);
@@ -43,6 +44,18 @@ const VerificationCode = () => {
       setModalVisible(true);
     } catch (error) {
       setModalMessage("Failed to reset password. Please try again.");
+      setModalVisible(true);
+    }
+  };
+
+  const onResendCode = async () => {
+    try {
+      setModalMessage("We sent you an another code. Stay with us :)");
+      setModalVisible(true);
+      await requestPasswordReset(email as string);
+    } catch (error) {
+      // Handle error
+      setModalMessage("Failed to resend Code. Please try again.");
       setModalVisible(true);
     }
   };
@@ -77,7 +90,7 @@ const VerificationCode = () => {
                   containerStyle={styles.submitButton}
                 />
                 <CustomButton
-                  onPress={onResendVerificationCode}
+                  onPress={onResendCode}
                   title="Resend Code"
                   containerStyle={styles.resendButton}
                 />

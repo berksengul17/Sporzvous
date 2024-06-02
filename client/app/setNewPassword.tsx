@@ -28,6 +28,7 @@ const SetNewPassword = () => {
       // Simulate setting the new password
       setModalMessage("Your password has been successfully set.");
       setModalVisible(true);
+      router.navigate("/index.tsx");
     }
   };
 

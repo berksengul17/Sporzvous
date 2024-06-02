@@ -201,6 +201,9 @@ public class UserService {
         tokenRepository.save(new Token(token, user));
     }
     public void changeUserPassword(User user, String password) {
+        if (!isValidPassword(password)) {
+            throw new IllegalArgumentException("Password must start with an uppercase letter, include a number and a symbol, and be between 8 and 16 characters long");
+        }
         user.setPassword(password);
         userRepository.save(user);
     }
