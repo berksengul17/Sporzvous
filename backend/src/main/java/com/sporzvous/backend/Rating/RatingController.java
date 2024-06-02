@@ -61,6 +61,18 @@ public class RatingController {
         return ResponseEntity.ok("Filters cleared");
     }
 
+    @GetMapping("/get-event-ratings/{eventId}/{userId}")
+    public ResponseEntity<?> getRatingsGivenByUserForEvent(@PathVariable Long userId,
+                                                           @PathVariable Long eventId) {
+        try {
+            List<Long> userIds = ratingService.getRatingsGivenByUserForEvent(userId, eventId);
+            return ResponseEntity.ok(userIds);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/getRatingByOthers/{userId}")
     public ResponseEntity<?> getRatingByOthers(@PathVariable Long userId) {
         try {

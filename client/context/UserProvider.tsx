@@ -52,15 +52,23 @@ type UserProps = {
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
   joinEvent: (event: Event) => Promise<AxiosResponse>;
-  leaveEvent: (eventId: number) => Promise<void>;
+  leaveEvent: (eventId: number, userId: number) => Promise<void>;
   addComment: (
     category: string,
     sport: string,
     userRating: number,
     content: string,
+    eventId: number,
     userId: number
   ) => Promise<void>;
   logout: () => void;
+  resetPassword: (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => Promise<void>;
+  verifyCode: (email: string, code: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/user";
@@ -212,6 +220,87 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const requestPasswordReset = async (email: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      await axios.post(`${API_URL}/requestPasswordReset`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
+  const verifyCode = async (email: string, code: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("code", code);
+      await axios.post(`${API_URL}/verifyCode`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
+  const resetPassword = async (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => {
+    try {
+      await axios.post(`${API_URL}/resetPassword`, {
+        email,
+        code,
+        newPassword,
+      });
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
   const updateProfile = async (newUserInfo: UpdateUser) => {
     try {
       console.log(`${API_URL}/${user.userId}/edit-profile`);
@@ -249,9 +338,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const leaveEvent = async (eventId: number) => {
+  const leaveEvent = async (eventId: number, userId: number) => {
     try {
-      await axios.delete(`${API_URL}/${user.userId}/leave/${eventId}`);
+      await axios.delete(`${API_URL}/${userId}/leave/${eventId}`);
     } catch (err) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -272,6 +361,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     sport: string,
     userRating: number,
     content: string,
+    eventId: number,
     receiverId: number
   ) => {
     try {
@@ -280,6 +370,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       formData.append("sportField", sport.toUpperCase());
       formData.append("userRating", userRating.toString());
       formData.append("content", content);
+      formData.append("eventId", eventId.toString());
       formData.append("senderId", user.userId.toString());
       formData.append("receiverId", receiverId.toString());
 
@@ -334,6 +425,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     leaveEvent,
     addComment,
     logout,
+    requestPasswordReset,
+    verifyCode,
+    resetPassword,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

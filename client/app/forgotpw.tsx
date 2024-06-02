@@ -1,30 +1,33 @@
 import AuthHeader from "@/components/AuthHeader";
-import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   ImageBackground,
   Keyboard,
+  Modal,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  TouchableOpacity,
-  Text,
-  Modal,
-  Pressable,
 } from "react-native";
 
 const Forgotpw = () => {
+  const { requestPasswordReset } = useUserContext();
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
-  const onRequestPasswordReset = () => {
-    // Simulate sending password reset email
-    //setModalVisible(true);
-    router.navigate("verificationCode");
+  const onRequestPasswordReset = async () => {
+    try {
+      await requestPasswordReset(email);
+      router.push({ pathname: "verificationCode", params: { email } });
+    } catch (error) {
+      // Handle error
+      console.error(error);
+    }
   };
 
   return (

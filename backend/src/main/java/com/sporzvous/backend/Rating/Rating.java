@@ -1,5 +1,6 @@
 package com.sporzvous.backend.Rating;
 
+import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class Rating {
     private String content;
     private LocalDate publishDate;
     @ManyToOne
+    @JoinColumn(name = "event_id", referencedColumnName = "eventId")
+    public Event event;
+    @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "userId")
     private User sender;
     @ManyToOne
@@ -35,12 +39,13 @@ public class Rating {
 
 
     public Rating(RatingCategory category, double rating, SportField sportField,
-                  String content, User sender, User receiver) {
+                  String content, Event event, User sender, User receiver) {
         this.category = category;
         this.rating = rating;
         this.sportField = sportField;
         this.content = content;
         this.publishDate = LocalDate.now(ZoneId.of("Europe/Istanbul"));
+        this.event = event;
         this.sender = sender;
         this.receiver = receiver;
     }

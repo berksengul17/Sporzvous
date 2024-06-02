@@ -1,5 +1,7 @@
 package com.sporzvous.backend.Rating;
 
+import com.sporzvous.backend.Event.Event;
+import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.SportRating.SportRating;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     public List<Rating> filterRatings(FilterState filterState) {
         return ratingRepository.filterRatings(
@@ -25,13 +28,31 @@ public class RatingService {
         );
     }
     public Rating createRating(RatingCategory category, Double userRating, SportField sportField,
-                               String content, Long senderId, Long receiverId) {
+                               String content, Long eventId, Long senderId, Long receiverId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Rating rating = new Rating(category, userRating, sportField, content, sender, receiver);
+        Rating rating = new Rating(category, userRating, sportField, content, event, sender, receiver);
         return ratingRepository.save(rating);
+    }
+
+    public List<Long> getRatingsGivenByUserForEvent(Long userId, Long eventId) {
+        User sender = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User could not be found for " +
+                                "getting ratings given by user for event"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() ->
+                                new IllegalArgumentException("Event could not be found for " +
+                                "getting ratings given by user for event"));
+
+        return ratingRepository.getRatingsBySenderAndEvent(sender, event)
+                                .stream()
+                                .map(rating -> rating.getReceiver().getUserId())
+                                .toList();
     }
 
     public Map<SportField, Double> getRatingByOthers(Long userId) {

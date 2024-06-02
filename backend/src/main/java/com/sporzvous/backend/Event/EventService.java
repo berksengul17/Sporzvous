@@ -34,8 +34,8 @@ public class EventService {
                 event.getOrganizer(), event.getUsers(), event.getMaxParticipants(), event.getLatitude(), event.getLongitude());
 
 
-        Team team1 = new Team("Team A", eventObj, eventObj.getMaxParticipants()/2);
-        Team team2 = new Team("Team B", eventObj, eventObj.getMaxParticipants()/2);
+        Team team1 = new Team("Team A", eventObj, eventObj.getMaxParticipants() / 2);
+        Team team2 = new Team("Team B", eventObj, eventObj.getMaxParticipants() / 2);
         eventObj.getTeams().add(team1);
         eventObj.getTeams().add(team2);
         return eventRepository.save(eventObj);
@@ -61,11 +61,13 @@ public class EventService {
                 // FIXME bu kısım daha genel bir yerde olmalı sanırım
                 .map(event -> {
                     LocalDateTime eventDateTime = LocalDateTime.of(event.getEventDate(), event.getEventTime());
-                        if (LocalDateTime.now().withSecond(0).withNano(0).equals(eventDateTime.withSecond(0).withNano(0))) {
-                        event.setIsEventOver(1);
-                        return eventRepository.save(event);
-                    } else if(LocalDateTime.now().isAfter(eventDateTime.plusHours(6))) {
+                    if (LocalDateTime.now().isAfter(eventDateTime.plusHours(6))) {
                         event.setIsEventOver(2);
+                        return eventRepository.save(event);
+                    } else if (LocalDateTime.now().withSecond(1).withNano(0)
+                            .isAfter(eventDateTime.withSecond(0).withNano(0)) &&
+                            event.getIsEventOver() != 2) {
+                        event.setIsEventOver(1);
                         return eventRepository.save(event);
                     }
 
@@ -85,7 +87,7 @@ public class EventService {
     public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
                                     LocalDate startDate, LocalDate endDate, int isEventOver, Long userId, double minRating) {
         return eventRepository.filterEvents(sport, locationCity, locationDistrict,
-                startDate, endDate, isEventOver, userId, minRating)
+                        startDate, endDate, isEventOver, userId, minRating)
                 .stream()
                 .filter(event -> event.getIsEventOver() == 0 &&
                         !Objects.equals(event.getOrganizer().getUserId(), userId))

@@ -15,17 +15,28 @@ public class MailSenderService {
     private final JavaMailSender mailSender;
     private final Environment env;
 
-    public void sendVerificationEmail(HttpServletRequest request, String token, User user) {
-        mailSender.send(constructVerificationEmail(getAppUrl(request), token, user));
+    public void sendVerificationCodeEmail(User user, String code) {
+        mailSender.send(constructVerificationCodeEmail(code, user));
     }
+//    public void sendVerificationEmail(HttpServletRequest request, String token, User user) {
+//        mailSender.send(constructVerificationEmail(getAppUrl(request), token, user));
+//    }
+
+
 
     public void sendResetTokenEmail(HttpServletRequest request, String token, User user) {
         mailSender.send(constructResetTokenEmail(getAppUrl(request), token, user));
     }
 
-    private SimpleMailMessage constructVerificationEmail(String appUrl, String token, User user) {
-        String url = appUrl + "/security/user/verify?token=" + token;
-        return constructEmail("Verify your account", "Verify your account \r\n" + url, user);
+
+//    private SimpleMailMessage constructVerificationEmail(String appUrl, String token, User user) {
+//        String url = appUrl + "/security/user/verify?token=" + token;
+//        return constructEmail("Verify your account", "Verify your account \r\n" + url, user);
+//    }
+
+    private SimpleMailMessage constructVerificationCodeEmail(String code, User user) {
+        String body = "Your verification code is: " + code;
+        return constructEmail("Verification Code", body, user);
     }
 
     public SimpleMailMessage constructResetTokenEmail(
