@@ -65,7 +65,7 @@ const StepTwo = () => {
                   onChangeText={setFullName}
                   style={styles.inputs}
                   placeholder="Enter your full name"
-                  placeholderTextColor="#6F6F6F"
+                  placeholderTextColor="#c1bbbb"
                 />
               </View>
               <View style={styles.userInfo}>
@@ -76,7 +76,7 @@ const StepTwo = () => {
                   keyboardType="numeric"
                   style={styles.inputs}
                   placeholder="Enter your age"
-                  placeholderTextColor="#6F6F6F"
+                  placeholderTextColor="#c1bbbb"
                 />
               </View>
               <View style={styles.userInfo}>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 20,
-    color: "#6F6F6F",
+    color: "#494747",
     fontFamily: Platform.select({
       android: "OpenSans_400Regular",
       ios: "OpenSans-Regular",
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: "#6F6F6F",
+    color: "#494747",
     fontFamily: Platform.select({
       android: "OpenSans_400Regular",
       ios: "OpenSans-Regular",

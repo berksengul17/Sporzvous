@@ -75,11 +75,9 @@ const StepFive = () => {
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
+    const formattedSportName = sport.name.replace(" ", "_").toUpperCase();
     const sportRating = ratings.find(
-      (r) =>
-        r.sportField.charAt(0).toUpperCase() +
-          r.sportField.slice(1).toLowerCase() ===
-        sport.name
+      (r) => r.sportField.replace(" ", "_").toUpperCase() === formattedSportName
     );
     setSelectedSportRating(sportRating ? sportRating.rating : 0);
     setModalVisible(true);
@@ -109,15 +107,16 @@ const StepFive = () => {
   };
 
   const handleRatingCompleted = () => {
+    const formattedSportName = selectedSport?.name
+      .replace(" ", "_")
+      .toUpperCase();
     const newRatings = [
       ...ratings.filter(
         (r) =>
-          r.sportField.charAt(0).toUpperCase() +
-            r.sportField.slice(1).toLowerCase() !==
-          selectedSport?.name
+          r.sportField.replace(" ", "_").toUpperCase() !== formattedSportName
       ),
       {
-        sportField: selectedSport?.name.toUpperCase()!,
+        sportField: formattedSportName,
         rating: selectedSportRating,
       },
     ];
