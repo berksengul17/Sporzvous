@@ -37,6 +37,7 @@ type Filter = {
   location: string;
   date: string;
   rating: number;
+  userId: number;
 };
 
 // Define the type for the context
@@ -72,6 +73,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     location: "All",
     date: "All",
     rating: 0,
+    userId: 0,
   });
 
   const fetchAllEvents = async () => {
@@ -179,6 +181,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
           startDate,
           endDate,
           minRating: filter.rating,
+          userId: user.userId,
         },
       });
 
