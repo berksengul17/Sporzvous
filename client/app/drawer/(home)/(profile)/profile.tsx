@@ -105,7 +105,7 @@ const Profile = () => {
   const selectedRating =
     user.ratings.find((rating) => {
       return (
-        rating.sportName.toLowerCase().replace(/ /g, "_") === userSkillField
+        rating.sportField.toLowerCase().replace(/ /g, "_") === userSkillField
       );
     })?.rating || 0;
 

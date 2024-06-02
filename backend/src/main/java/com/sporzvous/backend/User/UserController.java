@@ -112,17 +112,18 @@ public class UserController {
 
     @PostMapping("/addRating")
     public ResponseEntity<?> addComment(@RequestParam("category") RatingCategory category,
-                                        @RequestParam("sportField")SportField sportField,
-                                        @RequestParam("userRating")Double userRating,
-                                        @RequestParam("content")String content,
-                                        @RequestParam("userId")Long userId) {
+                                        @RequestParam("sportField") SportField sportField,
+                                        @RequestParam("userRating") Double userRating,
+                                        @RequestParam("content") String content,
+                                        @RequestParam("senderId") Long senderId,
+                                        @RequestParam("receiverId") Long receiverId) {
         try {
-            if (content.length() < 20 || content.length() > 100) {
+            if (content.length() < 10 || content.length() > 100) {
                 return ResponseEntity.badRequest().body("Content capacity is exceeded");
             }
             else {
-                Rating rating = ratingService.createRating(category, userRating,
-                                                            sportField, content, userId);
+                Rating rating = ratingService.createRating(category, userRating, sportField,
+                                                            content, senderId, receiverId);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Rating with ID" + rating.getRatingId() + "created successfully");
             }
         } catch (Exception e) {

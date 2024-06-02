@@ -28,7 +28,6 @@ const RatingModal = ({
   sport,
   playerId,
   playerName,
-  handleRatingCompleted,
   handleSaveRating,
   handleCancel,
 }: RatingModalProps) => {
@@ -48,6 +47,7 @@ const RatingModal = ({
           {playerName && <Text>{playerName}</Text>}
           <Rating
             type="star"
+            startingValue={rating}
             ratingCount={5}
             imageSize={30}
             style={styles.ratingStars}
@@ -65,9 +65,12 @@ const RatingModal = ({
             <CustomButton title="Cancel" onPress={handleCancel} />
             <CustomButton
               title="Save"
-              onPress={() =>
-                handleSaveRating(category, sport, rating, content, playerId)
-              }
+              onPress={() => {
+                handleSaveRating(category, sport, rating, content, playerId);
+                setContent("");
+                setRating(0);
+                handleCancel();
+              }}
             />
           </View>
         </View>

@@ -94,12 +94,11 @@ const MainEventScreen = () => {
     userId: number
   ) => {
     try {
+      console.log("saving comment");
       await addComment(category, sport, userRating, content, userId);
     } catch (error) {
       console.log(error);
     }
-    setShowRatePopup(false);
-    // Save the rating logic here
   };
 
   const handleLeaveEvent = async () => {
@@ -263,9 +262,9 @@ const MainEventScreen = () => {
         title="Rate Organizer"
         category="ORGANIZATION"
         sport={eventData.sport}
-        playerId={ratePlayer?.userId!}
+        playerId={eventData.organizer.userId}
         handleRatingCompleted={handleRatingCompleted}
-        handleSaveRating={handleSaveOrganizerRating}
+        handleSaveRating={handleSaveRating}
         handleCancel={() => setShowOrganizerPopup(false)}
       />
       <EvaluateEventModal

@@ -27,17 +27,21 @@ public class Rating {
     private LocalDate publishDate;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;
+    private User sender;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    private User receiver;
 
 
 
-    public Rating(RatingCategory category, double rating,
-                  SportField sportField, String content, User user) {
+    public Rating(RatingCategory category, double rating, SportField sportField,
+                  String content, User sender, User receiver) {
         this.category = category;
         this.rating = rating;
         this.sportField = sportField;
         this.content = content;
         this.publishDate = LocalDate.now(ZoneId.of("Europe/Istanbul"));
-        this.user = user;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 }

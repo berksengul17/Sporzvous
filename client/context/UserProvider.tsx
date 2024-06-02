@@ -272,30 +272,37 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     sport: string,
     userRating: number,
     content: string,
-    userId: number
+    receiverId: number
   ) => {
     try {
       const formData = new FormData();
       formData.append("category", category);
-      formData.append("sportfield", sport);
+      formData.append("sportField", sport.toUpperCase());
       formData.append("userRating", userRating.toString());
       formData.append("content", content);
-      formData.append("userId", userId.toString());
+      formData.append("senderId", user.userId.toString());
+      formData.append("receiverId", receiverId.toString());
 
-      await axios.post(`${API_URL}/add-comment`, formData),
-        { headers: { "Content-Type": "multipart/form-data" } };
-    } catch (err) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      if (axios.isAxiosError(err)) {
-        // err is an AxiosError here
-        if (err.response && err.response.data && err.response.data.error) {
-          errorMessage = err.response.data.error; // Use the error message from the backend
-        } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
-          errorMessage = err.response?.data;
-        }
+      await axios.post(`${API_URL}/addRating`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (error: any) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
       }
-      throw new Error(errorMessage); // Throw the error so it can be caught in the component
+      console.log(error.config);
     }
   };
 
