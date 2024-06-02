@@ -42,15 +42,12 @@ public class EventService {
     }
 
 
-    public void updateEvent(Long eventId, Event request) {
+    public void changeStatus(Long eventId, int status) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-        validateEvent(request);
-
-        
-
-
+        event.setIsEventOver(status);
+        eventRepository.save(event);
     }
 
     public List<Event> getMyEvents(Long userId) {

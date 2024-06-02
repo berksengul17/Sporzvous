@@ -3,7 +3,7 @@ import ErrorModal from "@/components/ErrorModal";
 import EvaluateEventModal from "@/components/EvaluateEventModal";
 import PlayerRow from "@/components/PlayerRow";
 import RatingModal from "@/components/RatingModal";
-import { Event } from "@/context/EventProvider";
+import { Event, useEventContext } from "@/context/EventProvider";
 import { User, useUserContext } from "@/context/UserProvider";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -43,6 +43,7 @@ const isButtonDisabled = (eventDate: string, eventTime: string): boolean => {
 const MainEventScreen = () => {
   const { event: strEvent } = useLocalSearchParams();
   const { user, leaveEvent } = useUserContext();
+  const { changeStatus } = useEventContext();
 
   const [playerRating, setPlayerRating] = useState(2.5);
   const [eventData, setEventData] = useState<Event>(
@@ -102,9 +103,13 @@ const MainEventScreen = () => {
     }
   };
 
-  const handleFinishEvent = () => {
-    setEventData({ ...eventData, isEventOver: 2 });
-    console.log("finishing...");
+  const handleFinishEvent = async () => {
+    try {
+      setEventData({ ...eventData, isEventOver: 2 });
+      await changeStatus(eventData.eventId, 2);
+    } catch (error) {
+      console.log(error);
+    }
     // Save the status change logic here
   };
 
