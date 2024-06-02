@@ -1,33 +1,31 @@
 import AuthHeader from "@/components/AuthHeader";
-import BottomWaves from "@/components/BottomWaves";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ImageBackground,
   Keyboard,
+  Modal,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  Modal,
-  Pressable,
 } from "react-native";
 
 const VerificationCode = () => {
-  const { query } = URLSearchParams();
+  const { email } = useLocalSearchParams();
   const { verifyCode, resetPassword } = useUserContext();
   const [verificationCode, setVerificationCode] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const email = query.email;
 
   const onSubmitVerificationCode = async () => {
     try {
-      await verifyCode(email, verificationCode);
+      await verifyCode(email as string, verificationCode);
       setModalMessage("Code verified. Please enter your new password.");
       setModalVisible(true);
     } catch (error) {
@@ -38,7 +36,7 @@ const VerificationCode = () => {
 
   const onResendVerificationCode = async () => {
     try {
-      await resetPassword(email, verificationCode, newPassword);
+      await resetPassword(email as string, verificationCode, newPassword);
       setModalMessage(
         "Password reset successfully. You can now log in with your new password."
       );
@@ -109,7 +107,9 @@ const VerificationCode = () => {
                 />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
                 >
                   <CustomText customStyle={styles.textStyle} text="Close" />
                 </Pressable>

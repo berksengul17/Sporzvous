@@ -222,7 +222,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const requestPasswordReset = async (email: string) => {
     try {
-      await axios.post(`${API_URL}/requestPasswordReset`, { email });
+      const formData = new FormData();
+      formData.append("email", email);
+      await axios.post(`${API_URL}/requestPasswordReset`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error)) {
@@ -242,7 +248,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const verifyCode = async (email: string, code: string) => {
     try {
-      await axios.post(`${API_URL}/verifyCode`, { email, code });
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("code", code);
+      await axios.post(`${API_URL}/verifyCode`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(error)) {
