@@ -75,7 +75,12 @@ const StepFive = () => {
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
-    const sportRating = ratings.find((r) => r.sportField === sport.name);
+    const sportRating = ratings.find(
+      (r) =>
+        r.sportField.charAt(0).toUpperCase() +
+          r.sportField.slice(1).toLowerCase() ===
+        sport.name
+    );
     setSelectedSportRating(sportRating ? sportRating.rating : 0);
     setModalVisible(true);
   };
@@ -105,9 +110,14 @@ const StepFive = () => {
 
   const handleRatingCompleted = () => {
     const newRatings = [
-      ...ratings.filter((r) => r.sportField !== selectedSport?.name),
+      ...ratings.filter(
+        (r) =>
+          r.sportField.charAt(0).toUpperCase() +
+            r.sportField.slice(1).toLowerCase() !==
+          selectedSport?.name
+      ),
       {
-        sportField: selectedSport?.name!,
+        sportField: selectedSport?.name.toUpperCase()!,
         rating: selectedSportRating,
       },
     ];

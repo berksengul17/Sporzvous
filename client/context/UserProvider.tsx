@@ -4,7 +4,7 @@ import { Event } from "./EventProvider";
 import { FriendRequest } from "./FriendProvider";
 
 export type Rating = {
-  sportName: string;
+  sportField: string;
   rating: number;
 };
 
