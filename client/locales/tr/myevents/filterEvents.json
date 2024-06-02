@@ -1,0 +1,19 @@
+{
+    "clearFilters": "Filtreleri Temizle",
+    "location": "Konum",
+    "date": "Tarih",
+    "rating": "Değerlendirme",
+    "apply": "Uygula",
+    "chooseLocation": "Konum Seç",
+    "locations": {
+      "All": "Hepsi",
+      "Bornova": "Bornova",
+      "Urla": "Urla"
+    },
+    "dates": {
+      "All": "Hepsi",
+      "Today": "Bugün",
+      "This Week": "Bu Hafta",
+      "This Month": "Bu Ay"
+    }
+  }

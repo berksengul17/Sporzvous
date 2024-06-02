@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import { useTranslation } from "react-i18next";
+import { useDarkMode } from "@/context/DarkModeContext";
 
 const eventLocations = [
   { label: "All", value: "All" },
@@ -27,6 +29,8 @@ const ratingOptions = [
 
 const Page = () => {
   const { filterEvents, filter, setFilter } = useEventContext();
+  const { t } = useTranslation("filterEvents");
+  const { isDarkMode } = useDarkMode();
 
   const applyFilters = async () => {
     await filterEvents();
@@ -34,8 +38,15 @@ const Page = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <View style={styles.container}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: isDarkMode ? "#333" : "#fff" }}
+    >
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "#333" : "#fff" },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => {
             setFilter({
@@ -46,21 +57,48 @@ const Page = () => {
             });
           }}
         >
-          <CustomText customStyle={styles.clearText} text="Clear Filters" />
+          <CustomText customStyle={styles.clearText} text={t("clearFilters")} />
         </TouchableOpacity>
         <View style={styles.titleWrapper}>
-          <CustomText customStyle={styles.sectionTitle} text="Location" />
+          <CustomText
+            customStyle={[
+              styles.sectionTitle,
+              { color: isDarkMode ? "#fff" : "#47315a" },
+            ]}
+            text={t("location")}
+          />
         </View>
         <RNPickerSelect
           onValueChange={(value) => setFilter({ ...filter, location: value })}
-          items={eventLocations}
-          style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
-          placeholder={{ label: "Choose Location", value: null }}
+          items={eventLocations.map((location) => ({
+            ...location,
+            label: t(`locations.${location.value}`),
+          }))}
+          style={{
+            ...pickerSelectStyles,
+            inputIOS: {
+              ...pickerSelectStyles.inputIOS,
+              backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+              color: isDarkMode ? "#fff" : "#000",
+            },
+            inputAndroid: {
+              ...pickerSelectStyles.inputAndroid,
+              backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
+              color: isDarkMode ? "#fff" : "#000",
+            },
+          }}
+          useNativeAndroidPickerStyle={false}
+          placeholder={{ label: t("chooseLocation"), value: null }}
           value={filter.location}
         />
         <View style={[styles.titleWrapper, { marginTop: 20 }]}>
-          <CustomText customStyle={styles.sectionTitle} text="Date" />
+          <CustomText
+            customStyle={[
+              styles.sectionTitle,
+              { color: isDarkMode ? "#fff" : "#47315a" },
+            ]}
+            text={t("date")}
+          />
         </View>
         <View style={styles.buttonContainer}>
           {dateOptions.map((date) => (
@@ -75,17 +113,24 @@ const Page = () => {
               <Text
                 style={[
                   styles.buttonText,
+                  { color: isDarkMode ? "#fff" : "#47315a" },
                   filter.date === date && styles.buttonTextSelected,
                 ]}
               >
-                {date}
+                {t(`dates.${date}`)}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
         <View style={styles.titleWrapper}>
-          <CustomText customStyle={styles.sectionTitle} text="Rating" />
+          <CustomText
+            customStyle={[
+              styles.sectionTitle,
+              { color: isDarkMode ? "#fff" : "#47315a" },
+            ]}
+            text={t("rating")}
+          />
         </View>
         <View style={styles.buttonContainer}>
           {ratingOptions.map((option) => (
@@ -93,6 +138,7 @@ const Page = () => {
               key={option.label}
               style={[
                 styles.button,
+
                 filter.rating === option.minRating && styles.buttonSelected,
               ]}
               onPress={() => setFilter({ ...filter, rating: option.minRating })}
@@ -100,6 +146,7 @@ const Page = () => {
               <Text
                 style={[
                   styles.buttonText,
+                  { color: isDarkMode ? "#fff" : "#47315a" },
                   filter.rating === option.minRating &&
                     styles.buttonTextSelected,
                 ]}
@@ -110,7 +157,7 @@ const Page = () => {
           ))}
         </View>
         <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
-          <Text style={styles.applyButtonText}>Apply</Text>
+          <Text style={styles.applyButtonText}>{t("apply")}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -131,6 +178,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     marginBottom: 5,
+    color: "#47315a",
   },
   titleWrapper: {
     borderBottomWidth: 1,
@@ -179,6 +227,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,

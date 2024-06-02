@@ -17,6 +17,8 @@ import enJoinEvent from '@/locales/en/home/joinEvent.json'
 import enHomeScreen from '@/locales/en/home/homeScreen.json'
 import enCreateEvent from '@/locales/en/home/createEvent.json'
 import enMyeventsLayout from '@/locales/en/myevents/myeventsLayout.json'
+import enFilterEvents from "@/locales/en/myevents/filterEvents.json"
+import enMyeventsPage from "@/locales/en/myevents/myeventsPage.json"
 
 import trDrawer from '@/locales/tr/drawer.json';
 import trHomeLayout from '@/locales/tr/home/homeLayout.json'
@@ -33,6 +35,8 @@ import trJoinEvent from '@/locales/tr/home/joinEvent.json'
 import trHomeScreen from '@/locales/tr/home/homeScreen.json'
 import trCreateEvent from '@/locales/tr/home/createEvent.json'
 import trMyeventsLayout from '@/locales/tr/myevents/myeventsLayout.json'
+import trFilterEvents from "@/locales/tr/myevents/filterEvents.json"
+import trMyeventsPage from "@/locales/tr/myevents/myeventsPage.json"
 
 i18n
   .use(initReactI18next)
@@ -54,7 +58,9 @@ i18n
         joinEvent: enJoinEvent,
         homeScreen: enHomeScreen,
         createEvent: enCreateEvent,
-        myeventsLayout: enMyeventsLayout
+        myeventsLayout: enMyeventsLayout,
+        filterEvents: enFilterEvents,
+        myeventsPage: enMyeventsPage
       },
       tr: {
         drawer: trDrawer,
@@ -71,13 +77,15 @@ i18n
         joinEvent: trJoinEvent,
         homeScreen: trHomeScreen,
         createEvent: trCreateEvent,
-        myeventsLayout: trMyeventsLayout 
+        myeventsLayout: trMyeventsLayout,
+        filterEvents: trFilterEvents,
+        myeventsPage: trMyeventsPage
       },
     },
     lng: I18nManager.isRTL ? 'tr' : 'en',
     fallbackLng: 'en',
     ns: ['drawer', 'settings', 'sportsScreen', 'faq', 'complaint', 'profile', 'profileLayout', 'homeLayout', 'settingsLayout', 'friendLayout', 'friends', 'joinEvent', 'homeScreen',
-      'createEvent', 'myeventsLayout'
+      'createEvent', 'myeventsLayout', 'filterEvents', "myeventsPage"
      ],
     defaultNS: 'drawer',
     interpolation: {

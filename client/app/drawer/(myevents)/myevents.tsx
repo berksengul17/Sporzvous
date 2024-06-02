@@ -18,36 +18,44 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import CheckBox from "expo-checkbox";
+import { useTranslation } from "react-i18next";
+import { useDarkMode } from "@/context/DarkModeContext";
 
 function EventStatus({ isEventOver }: { isEventOver: number }) {
+  const { t } = useTranslation("myeventsPage");
+
   if (isEventOver === 2) {
     return (
       <View style={[styles.statusContainer, styles.completed]}>
         <Entypo name="check" size={16} color="white" />
-        <Text style={styles.statusText}>Completed</Text>
+        <Text style={styles.statusText}>{t("completed")}</Text>
       </View>
     );
   } else if (isEventOver === 1) {
     return (
       <View style={[styles.statusContainer, styles.OnGoing]}>
         <Entypo name="check" size={16} color="white" />
-        <Text style={styles.statusText}>OnGoing</Text>
+        <Text style={styles.statusText}>{t("ongoing")}</Text>
       </View>
     );
   }
   return (
-    <View style={[styles.statusContainer, styles.ongoing]}>
+    <View style={[styles.statusContainer, styles.notStarted]}>
       <MaterialCommunityIcons
         name="timer-sand-complete"
         size={16}
         color="white"
       />
-      <Text style={styles.statusText}>Not Started</Text>
+      <Text style={styles.statusText}>{t("notStarted")}</Text>
     </View>
   );
 }
 
 const EventItem = ({ event }: { event: Event }) => {
+  const { t } = useTranslation("myeventsPage");
+  const { isDarkMode } = useDarkMode();
+
   return (
     <TouchableOpacity
       onPress={() =>
@@ -61,16 +69,34 @@ const EventItem = ({ event }: { event: Event }) => {
       style={styles.card}
     >
       <View style={styles.cardHeader}>
-        <Text style={styles.eventName}>{event.title}</Text>
+        <Text
+          style={[styles.eventName, { color: isDarkMode ? "#fff" : "#333" }]}
+        >
+          {event.title}
+        </Text>
         <EventStatus isEventOver={event.isEventOver} />
       </View>
       <View style={styles.cardContent}>
-        <Text style={styles.eventDetail}>
-          Organizer: {event.organizer.fullName}
+        <Text
+          style={[styles.eventDetail, { color: isDarkMode ? "#fff" : "#666" }]}
+        >
+          {t("organizer")}: {event.organizer.fullName}
         </Text>
-        <Text style={styles.eventDetail}>Sport: {event.sport}</Text>
-        <Text style={styles.eventDetail}>Date: {event.eventDate}</Text>
-        <Text style={styles.eventDetail}>Time: {event.eventTime}</Text>
+        <Text
+          style={[styles.eventDetail, { color: isDarkMode ? "#fff" : "#666" }]}
+        >
+          {t("sport")}: {event.sport}
+        </Text>
+        <Text
+          style={[styles.eventDetail, { color: isDarkMode ? "#fff" : "#666" }]}
+        >
+          {t("date")}: {event.eventDate}
+        </Text>
+        <Text
+          style={[styles.eventDetail, { color: isDarkMode ? "#fff" : "#666" }]}
+        >
+          {t("time")}: {event.eventTime}
+        </Text>
       </View>
       <View style={styles.cardFooter}>
         <TouchableOpacity>
@@ -99,7 +125,10 @@ export default function MyEvents() {
   const { fetchMyEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const [myEvents, setMyEvents] = useState<Event[]>([]);
+  const [showMyEvents, setShowMyEvents] = useState(false);
   const isFocused = useIsFocused();
+  const { t } = useTranslation("myeventsPage");
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     const getMyEvents = async () => {
@@ -112,29 +141,45 @@ export default function MyEvents() {
     }
   }, [isFocused, user]);
 
-  const filteredEvents = myEvents.filter(
-    (event) =>
+  const filteredEvents = myEvents.filter((event) => {
+    const matchesSearchText =
       event.title.toLowerCase().includes(searchText.toLowerCase()) ||
       event.organizer.fullName
         .toLowerCase()
         .includes(searchText.toLowerCase()) ||
-      event.sport.toLowerCase().includes(searchText.toLowerCase())
-  );
+      event.sport.toLowerCase().includes(searchText.toLowerCase());
+    const matchesShowMyEvents =
+      !showMyEvents || event.organizer.fullName === user.fullName;
+
+    return matchesSearchText && matchesShowMyEvents;
+  });
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#333" : "white" },
+      ]}
+    >
       <View style={styles.header}>
-        <View style={styles.searchBar}>
+        <View
+          style={[
+            styles.searchBar,
+            { backgroundColor: isDarkMode ? "#444" : "#F0F0F0" },
+          ]}
+        >
           <Ionicons name="search" size={20} color="#6F6F6F" />
           <TextInput
-            style={styles.searchText}
-            placeholder="Search"
+            style={[styles.searchText, { color: isDarkMode ? "#fff" : "#000" }]}
+            placeholder={t("search")}
             placeholderTextColor="#6F6F6F"
             value={searchText}
             onChangeText={setSearchText}
           />
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push("drawer/(myevents)/filterEvents")}
+        >
           <AntDesign
             name="filter"
             size={30}
@@ -142,6 +187,21 @@ export default function MyEvents() {
             style={styles.filterIcon}
           />
         </TouchableOpacity>
+      </View>
+      <View style={styles.checkboxContainer}>
+        <CheckBox
+          value={showMyEvents}
+          onValueChange={setShowMyEvents}
+          color="#FF5C00"
+        />
+        <Text
+          style={[
+            styles.checkboxLabel,
+            { color: isDarkMode ? "#fff" : "#333" },
+          ]}
+        >
+          {t("showMyEvents")}
+        </Text>
       </View>
       <FlatList
         data={filteredEvents}
@@ -155,7 +215,6 @@ export default function MyEvents() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
     paddingHorizontal: 10,
   },
   header: {
@@ -166,7 +225,6 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#F0F0F0",
     alignItems: "center",
     borderRadius: 10,
     flex: 1,
@@ -178,8 +236,16 @@ const styles = StyleSheet.create({
   filterIcon: {
     marginLeft: 10,
   },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 16,
+  },
   card: {
-    backgroundColor: "white",
     borderRadius: 10,
     padding: 15,
     marginVertical: 8,
@@ -215,6 +281,9 @@ const styles = StyleSheet.create({
   },
   OnGoing: {
     backgroundColor: "lightblue",
+  },
+  notStarted: {
+    backgroundColor: "#FF5C00",
   },
   statusText: {
     color: "white",

@@ -1,0 +1,19 @@
+{
+    "clearFilters": "Clear Filters",
+    "location": "Location",
+    "date": "Date",
+    "rating": "Rating",
+    "apply": "Apply",
+    "chooseLocation": "Choose Location",
+    "locations": {
+      "All": "All",
+      "Bornova": "Bornova",
+      "Urla": "Urla"
+    },
+    "dates": {
+      "All": "All",
+      "Today": "Today",
+      "This Week": "This Week",
+      "This Month": "This Month"
+    }
+  }
