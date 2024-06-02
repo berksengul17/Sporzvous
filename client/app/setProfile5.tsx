@@ -1,4 +1,3 @@
-import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
@@ -76,7 +75,7 @@ const StepFive = () => {
 
   const handleSelectSport = (sport: Sport) => {
     setSelectedSport(sport);
-    const sportRating = ratings.find((r) => r.sportName === sport.name);
+    const sportRating = ratings.find((r) => r.sportField === sport.name);
     setSelectedSportRating(sportRating ? sportRating.rating : 0);
     setModalVisible(true);
   };
@@ -106,9 +105,9 @@ const StepFive = () => {
 
   const handleRatingCompleted = () => {
     const newRatings = [
-      ...ratings.filter((r) => r.sportName !== selectedSport?.name),
+      ...ratings.filter((r) => r.sportField !== selectedSport?.name),
       {
-        sportName: selectedSport?.name!,
+        sportField: selectedSport?.name!,
         rating: selectedSportRating,
       },
     ];

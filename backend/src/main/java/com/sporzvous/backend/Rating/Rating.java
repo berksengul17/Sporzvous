@@ -31,7 +31,9 @@ public class Rating {
 
 
 
-    public Rating(double rating, SportField sportField, String content, User user) {
+    public Rating(RatingCategory category, double rating,
+                  SportField sportField, String content, User user) {
+        this.category = category;
         this.rating = rating;
         this.sportField = sportField;
         this.content = content;

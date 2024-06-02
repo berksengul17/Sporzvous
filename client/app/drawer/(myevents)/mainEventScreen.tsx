@@ -42,7 +42,7 @@ const isButtonDisabled = (eventDate: string, eventTime: string): boolean => {
 
 const MainEventScreen = () => {
   const { event: strEvent } = useLocalSearchParams();
-  const { user, leaveEvent } = useUserContext();
+  const { user, leaveEvent, addComment } = useUserContext();
   const { changeStatus } = useEventContext();
 
   const [playerRating, setPlayerRating] = useState(2.5);
@@ -85,7 +85,19 @@ const MainEventScreen = () => {
     setPlayerRating(rating);
   };
 
-  const handleSaveRating = () => {
+  // TODO catch e error popup ı
+  const handleSaveRating = async (
+    category: string,
+    sport: string,
+    userRating: number,
+    content: string,
+    userId: number
+  ) => {
+    try {
+      await addComment(category, sport, userRating, content, userId);
+    } catch (error) {
+      console.log(error);
+    }
     setShowRatePopup(false);
     // Save the rating logic here
   };
@@ -238,6 +250,9 @@ const MainEventScreen = () => {
       <RatingModal
         visible={showRatePopup}
         title={`Rate: ${ratePlayer?.fullName}`}
+        category="SPORT"
+        sport={eventData.sport}
+        playerId={ratePlayer?.userId!}
         playerName={ratePlayer?.fullName}
         handleRatingCompleted={handleRatingCompleted}
         handleSaveRating={handleSaveRating}
@@ -246,6 +261,9 @@ const MainEventScreen = () => {
       <RatingModal
         visible={showOrganizerPopup}
         title="Rate Organizer"
+        category="ORGANIZATION"
+        sport={eventData.sport}
+        playerId={ratePlayer?.userId!}
         handleRatingCompleted={handleRatingCompleted}
         handleSaveRating={handleSaveOrganizerRating}
         handleCancel={() => setShowOrganizerPopup(false)}

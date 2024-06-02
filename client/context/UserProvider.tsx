@@ -53,6 +53,13 @@ type UserProps = {
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
   joinEvent: (event: Event) => Promise<AxiosResponse>;
   leaveEvent: (eventId: number) => Promise<void>;
+  addComment: (
+    category: string,
+    sport: string,
+    userRating: number,
+    content: string,
+    userId: number
+  ) => Promise<void>;
   logout: () => void;
 };
 
@@ -260,6 +267,38 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const addComment = async (
+    category: string,
+    sport: string,
+    userRating: number,
+    content: string,
+    userId: number
+  ) => {
+    try {
+      const formData = new FormData();
+      formData.append("category", category);
+      formData.append("sportfield", sport);
+      formData.append("userRating", userRating.toString());
+      formData.append("content", content);
+      formData.append("userId", userId.toString());
+
+      await axios.post(`${API_URL}/add-comment`, formData),
+        { headers: { "Content-Type": "multipart/form-data" } };
+    } catch (err) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          errorMessage = err.response.data.error; // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
+      }
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
+    }
+  };
+
   const logout = () => {
     setUser({
       userId: 0,
@@ -286,6 +325,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     updateProfile,
     joinEvent,
     leaveEvent,
+    addComment,
     logout,
   };
 

@@ -39,10 +39,10 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         if (minRating > 0) {
             predicates.add(cb.greaterThanOrEqualTo(event.get("skillRating"), minRating));
         }
-        if (userId != null) {
-            Join<Event, User> users = event.join("users", JoinType.LEFT);
-            predicates.add(cb.equal(users.get("id"), userId));
-        }
+//        if (userId != null) {
+//            Join<Event, User> users = event.join("users", JoinType.LEFT);
+//            predicates.add(cb.equal(users.get("id"), userId));
+//        }
 
         query.where(predicates.toArray(new Predicate[0]));
 

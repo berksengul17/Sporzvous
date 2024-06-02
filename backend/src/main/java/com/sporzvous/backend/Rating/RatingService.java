@@ -24,10 +24,11 @@ public class RatingService {
                 filterState.getCategory()
         );
     }
-    public Rating createRating(Double userRating, SportField sportField, String content, Long userId) {
+    public Rating createRating(RatingCategory category, Double userRating,
+                               SportField sportField, String content, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Rating rating = new Rating(userRating, sportField, content, user);
+        Rating rating = new Rating(category, userRating, sportField, content, user);
         return ratingRepository.save(rating);
     }
 

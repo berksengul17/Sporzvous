@@ -1,56 +1,80 @@
 import CustomButton from "@/components/CustomButton";
-import React from "react";
+import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import { Rating } from "react-native-ratings";
 
 type RatingModalProps = {
   visible: boolean;
   title: string;
+  category: string;
+  sport: string;
+  playerId: number;
   playerName?: string;
   handleRatingCompleted: (rating: number) => void;
-  handleSaveRating: () => void;
+  handleSaveRating: (
+    category: string,
+    sport: string,
+    userRating: number,
+    content: string,
+    userId: number
+  ) => void;
   handleCancel: () => void;
 };
 
 const RatingModal = ({
   visible,
   title,
+  category,
+  sport,
+  playerId,
   playerName,
   handleRatingCompleted,
   handleSaveRating,
   handleCancel,
-}: RatingModalProps) => (
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={visible}
-    onRequestClose={handleCancel}
-  >
-    <View style={styles.popupContainer}>
-      <View style={styles.popup}>
-        <Text style={styles.popupTitle}>{title}</Text>
-        {playerName && <Text>{playerName}</Text>}
-        <Rating
-          type="star"
-          ratingCount={5}
-          imageSize={30}
-          style={styles.ratingStars}
-          onFinishRating={handleRatingCompleted}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Comments"
-          placeholderTextColor="#6F6F6F"
-          multiline={true}
-        />
-        <View style={styles.popupButtons}>
-          <CustomButton title="Cancel" onPress={handleCancel} />
-          <CustomButton title="Save" onPress={handleSaveRating} />
+}: RatingModalProps) => {
+  const [rating, setRating] = useState<number>(0);
+  const [content, setContent] = useState<string>("");
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={handleCancel}
+    >
+      <View style={styles.popupContainer}>
+        <View style={styles.popup}>
+          <Text style={styles.popupTitle}>{title}</Text>
+          {playerName && <Text>{playerName}</Text>}
+          <Rating
+            type="star"
+            ratingCount={5}
+            imageSize={30}
+            style={styles.ratingStars}
+            onFinishRating={(rating: number) => setRating(rating)}
+          />
+          <TextInput
+            style={styles.input}
+            value={content}
+            onChangeText={setContent}
+            placeholder="Comments"
+            placeholderTextColor="#6F6F6F"
+            multiline={true}
+          />
+          <View style={styles.popupButtons}>
+            <CustomButton title="Cancel" onPress={handleCancel} />
+            <CustomButton
+              title="Save"
+              onPress={() =>
+                handleSaveRating(category, sport, rating, content, playerId)
+              }
+            />
+          </View>
         </View>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 export default RatingModal;
 

@@ -5,6 +5,7 @@ import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.Feedback.FeedbackService;
 import com.sporzvous.backend.MailSender.MailSenderService;
 import com.sporzvous.backend.Rating.Rating;
+import com.sporzvous.backend.Rating.RatingCategory;
 import com.sporzvous.backend.Rating.RatingService;
 import com.sporzvous.backend.Rating.SportField;
 import jakarta.servlet.http.HttpServletRequest;
@@ -110,7 +111,8 @@ public class UserController {
     }
 
     @PostMapping("/addRating")
-    public ResponseEntity<?> addComment(@RequestParam("sportField")SportField sportField,
+    public ResponseEntity<?> addComment(@RequestParam("category") RatingCategory category,
+                                        @RequestParam("sportField")SportField sportField,
                                         @RequestParam("userRating")Double userRating,
                                         @RequestParam("content")String content,
                                         @RequestParam("userId")Long userId) {
@@ -119,7 +121,8 @@ public class UserController {
                 return ResponseEntity.badRequest().body("Content capacity is exceeded");
             }
             else {
-                Rating rating = ratingService.createRating(userRating, sportField, content, userId);
+                Rating rating = ratingService.createRating(category, userRating,
+                                                            sportField, content, userId);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Rating with ID" + rating.getRatingId() + "created successfully");
             }
         } catch (Exception e) {

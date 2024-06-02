@@ -1,3 +1,4 @@
+import { useDarkMode } from "@/context/DarkModeContext";
 import { Event, useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
 import {
@@ -8,8 +9,10 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import CheckBox from "expo-checkbox";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   StyleSheet,
@@ -18,9 +21,6 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import CheckBox from "expo-checkbox";
-import { useTranslation } from "react-i18next";
-import { useDarkMode } from "@/context/DarkModeContext";
 
 function EventStatus({ isEventOver }: { isEventOver: number }) {
   const { t } = useTranslation("myeventsPage");
@@ -141,18 +141,16 @@ export default function MyEvents() {
     }
   }, [isFocused, user]);
 
-  const filteredEvents = myEvents.filter((event) => {
-    const matchesSearchText =
-      event.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      event.organizer.fullName
-        .toLowerCase()
-        .includes(searchText.toLowerCase()) ||
-      event.sport.toLowerCase().includes(searchText.toLowerCase());
-    const matchesShowMyEvents =
-      !showMyEvents || event.organizer.fullName === user.fullName;
-
-    return matchesSearchText && matchesShowMyEvents;
-  });
+  const filteredEvents = myEvents
+    ? myEvents.filter(
+        (event) =>
+          event.title.toLowerCase().includes(searchText.toLowerCase()) ||
+          event.organizer.fullName
+            .toLowerCase()
+            .includes(searchText.toLowerCase()) ||
+          event.sport.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : [];
 
   return (
     <View
