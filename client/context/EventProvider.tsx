@@ -56,6 +56,7 @@ type EventContextType = {
     firstTeamScore: string,
     secondTeamScore: string
   ) => Promise<void>;
+  changeStatus: (eventId: number, status: number) => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/event";
@@ -222,6 +223,29 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const changeStatus = async (eventId: number, status: number) => {
+    try {
+      console.log("changing status for", eventId, "to", status);
+      const formData = new FormData();
+      formData.append("status", status.toString());
+      await axios.put(`${API_URL}/change-status/${eventId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+      }
+    }
+  };
+
   const value = {
     events,
     filter,
@@ -234,6 +258,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     removeEvent,
     filterEvents,
     addScore,
+    changeStatus,
   };
 
   return (
