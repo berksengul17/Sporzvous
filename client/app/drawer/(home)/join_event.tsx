@@ -2,8 +2,8 @@ import { Event } from "@/context/EventProvider";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   Button,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import Modal from "react-native-modal/dist/modal";
+import Modal from "react-native-modal";
 import { AirbnbRating } from "react-native-ratings";
 import { useUserContext } from "../../../context/UserProvider";
 
@@ -23,20 +23,21 @@ export default function JoinEventScreen() {
 
   const parsedEvent: Event = JSON.parse(event as string);
   const [isMapVisible, setIsMapVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleJoin = async () => {
-    console.log(event);
     try {
       const response = await joinEvent(parsedEvent);
       if (response.status === 200) {
-        Alert.alert("Success", "You have successfully joined the event.");
-        // Optionally, navigate to another screen or update the state
-        router.back(); // Replace with your desired route
+        setModalMessage("You have successfully joined the event.");
       } else {
-        Alert.alert("Error", "Failed to join the event.");
+        setModalMessage("Failed to join the event.");
       }
+      setModalVisible(true);
     } catch (error) {
-      Alert.alert("Error", "An error occurred while trying to join the event.");
+      setModalMessage("An error occurred while trying to join the event.");
+      setModalVisible(true);
       console.error(error);
     }
   };
@@ -107,7 +108,10 @@ export default function JoinEventScreen() {
             <Text style={styles.joinButtonText}>Join</Text>
           </TouchableOpacity>
         </View>
-        <Modal isVisible={isMapVisible}>
+        <Modal
+          isVisible={isMapVisible}
+          onBackdropPress={() => setIsMapVisible(false)}
+        >
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -133,6 +137,23 @@ export default function JoinEventScreen() {
             />
           </View>
         </Modal>
+        <Modal
+          animationIn="fadeIn"
+          isVisible={modalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{modalMessage}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.textStyle}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -142,20 +163,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgrey",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "orange",
   },
   contentContainer: {
     padding: 16,
@@ -234,5 +241,43 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "80%",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: "#FF5C00",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });

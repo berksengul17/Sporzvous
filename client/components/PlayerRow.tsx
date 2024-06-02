@@ -1,3 +1,4 @@
+import { useDarkMode } from "@/context/DarkModeContext";
 import { Event } from "@/context/EventProvider";
 import { User } from "@/context/UserProvider";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";

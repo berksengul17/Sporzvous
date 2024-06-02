@@ -4,7 +4,6 @@ import { useUserContext } from "@/context/UserProvider";
 import {
   AntDesign,
   Entypo,
-  Feather,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
@@ -66,7 +65,7 @@ const EventItem = ({ event }: { event: Event }) => {
           },
         })
       }
-      style={styles.card}
+      style={[styles.card, { backgroundColor: isDarkMode ? "#444" : "#fff" }]}
     >
       <View style={styles.cardHeader}>
         <Text
@@ -99,14 +98,6 @@ const EventItem = ({ event }: { event: Event }) => {
         </Text>
       </View>
       <View style={styles.cardFooter}>
-        <TouchableOpacity>
-          <Feather
-            name="upload"
-            size={24}
-            color="#FF5C00"
-            style={styles.icon}
-          />
-        </TouchableOpacity>
         <TouchableOpacity>
           <AntDesign
             name="delete"
@@ -142,14 +133,18 @@ export default function MyEvents() {
   }, [isFocused, user]);
 
   const filteredEvents = myEvents
-    ? myEvents.filter(
-        (event) =>
+    ? myEvents.filter((event) => {
+        const matchesSearchText =
           event.title.toLowerCase().includes(searchText.toLowerCase()) ||
           event.organizer.fullName
             .toLowerCase()
             .includes(searchText.toLowerCase()) ||
-          event.sport.toLowerCase().includes(searchText.toLowerCase())
-      )
+          event.sport.toLowerCase().includes(searchText.toLowerCase());
+        const matchesShowMyEvents = showMyEvents
+          ? event.organizer.userId === user.userId
+          : true;
+        return matchesSearchText && matchesShowMyEvents;
+      })
     : [];
 
   return (

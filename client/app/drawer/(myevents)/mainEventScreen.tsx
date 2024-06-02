@@ -5,6 +5,8 @@ import PlayerRow from "@/components/PlayerRow";
 import RatingModal from "@/components/RatingModal";
 import { Event, useEventContext } from "@/context/EventProvider";
 import { User, useUserContext } from "@/context/UserProvider";
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
@@ -14,6 +16,7 @@ import {
   Button,
   FlatList,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -45,6 +48,8 @@ const MainEventScreen = () => {
   const { event: strEvent } = useLocalSearchParams();
   const { user, leaveEvent, addComment } = useUserContext();
   const { changeStatus } = useEventContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("mainEventScreen");
 
   const [playerRating, setPlayerRating] = useState(2.5);
   const [eventData, setEventData] = useState<Event>(
@@ -58,6 +63,7 @@ const MainEventScreen = () => {
   const [showLeaveEventPopup, setShowLeaveEventPopup] = useState(false);
   const [showLeaveEventError, setShowLeaveEventError] = useState(false);
   const [leaveEventError, setLeaveEventError] = useState("");
+  const [showLeaveEventSuccess, setShowLeaveEventSuccess] = useState(false);
   const [ratePlayer, setRatePlayer] = useState<User | null>(null);
   const [mvp, setMvp] = useState("Mvp");
   const [isMapVisible, setIsMapVisible] = useState(false);
@@ -109,7 +115,6 @@ const MainEventScreen = () => {
     setPlayerRating(rating);
   };
 
-  // TODO catch e error popup ı
   const handleSaveRating = async (
     category: string,
     sport: string,
@@ -137,8 +142,7 @@ const MainEventScreen = () => {
     try {
       await leaveEvent(eventData.eventId, userId);
       setShowLeaveEventPopup(false);
-      // TODO değişecek
-      Alert.alert("Success", msg);
+      setShowLeaveEventSuccess(true);
     } catch (error) {
       setLeaveEventError((error as Error).message);
       setShowLeaveEventError(true);
@@ -152,7 +156,6 @@ const MainEventScreen = () => {
     } catch (error) {
       console.log(error);
     }
-    // Save the status change logic here
   };
 
   const handleRateOrganizer = () => {
@@ -172,51 +175,78 @@ const MainEventScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && styles.darkModeBackground]}>
       <View style={styles.eventInfoContainer}>
-        <View style={styles.headerContainer}>
+        <View
+          style={[
+            styles.headerContainer,
+            isDarkMode && { borderBottomColor: "#fff" },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backIconContainer}
           >
             <AntDesign name="back" size={30} color="#FF5C00" />
           </TouchableOpacity>
-          <Text style={styles.header}>{eventData.title}</Text>
+          <Text style={[styles.header, isDarkMode && styles.darkModeText]}>
+            {eventData.title}
+          </Text>
         </View>
         <View style={styles.detailsContainer}>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.eventDate}</Text>
+            <Text style={[styles.details, isDarkMode && styles.darkModeText]}>
+              {eventData.eventDate}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.locationView}
             onPress={handleLocationClick}
           >
-            <Text style={styles.location}>Location</Text>
+            <Text style={[styles.location, isDarkMode && styles.darkModeText]}>
+              {t("location")}
+            </Text>
             <FontAwesome5 name="map-marker-alt" size={24} color="#00C773" />
           </TouchableOpacity>
         </View>
         <View style={styles.detailsContainer}>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.organizer.fullName}</Text>
+            <Text style={[styles.details, isDarkMode && styles.darkModeText]}>
+              {eventData.organizer.fullName}
+            </Text>
           </View>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.eventTime}</Text>
+            <Text style={[styles.details, isDarkMode && styles.darkModeText]}>
+              {eventData.eventTime}
+            </Text>
           </View>
           <View style={styles.label}>
-            <Text style={styles.details}>{eventData.sport}</Text>
+            <Text style={[styles.details, isDarkMode && styles.darkModeText]}>
+              {t(eventData.sport.toLowerCase())}
+            </Text>
           </View>
         </View>
-        <View style={styles.scoreContainer}>
-          {/* <Text style={styles.teamScore}>{event.organizer.fullName}</Text> */}
-          <Text style={styles.teamScore}>{eventData.teams[0].score}</Text>
-          <Text style={styles.scoreDash}>-</Text>
-          <Text style={styles.teamScore}>{eventData.teams[1].score}</Text>
-          {/* <Text style={styles.teamScore}>{event.organizer.fullName}</Text> */}
+        <View
+          style={[styles.scoreContainer, isDarkMode && { borderColor: "#fff" }]}
+        >
+          <Text style={[styles.teamScore, isDarkMode && styles.darkModeText]}>
+            {eventData.teams[0].score}
+          </Text>
+          <Text style={[styles.scoreDash, isDarkMode && styles.darkModeText]}>
+            -
+          </Text>
+          <Text style={[styles.teamScore, isDarkMode && styles.darkModeText]}>
+            {eventData.teams[1].score}
+          </Text>
         </View>
       </View>
       <View style={styles.playersTitleContainer}>
-        <Text style={styles.playersTitle}>Players A</Text>
-        <Text style={styles.playersTitle}>Players B</Text>
+        <Text style={[styles.playersTitle, isDarkMode && styles.darkModeText]}>
+          {t("playersA")}
+        </Text>
+        <Text style={[styles.playersTitle, isDarkMode && styles.darkModeText]}>
+          {t("playersB")}
+        </Text>
       </View>
       <View style={styles.playersContainer}>
         <FlatList
@@ -268,18 +298,18 @@ const MainEventScreen = () => {
         {eventData.organizer.userId !== user.userId &&
           eventData.isEventOver === 0 && (
             <CustomButton
-              title="Leave Event"
+              title={t("leaveEvent")}
               onPress={() => setShowLeaveEventPopup(true)}
             />
           )}
         {eventData.organizer.userId === user.userId &&
           eventData.isEventOver === 1 && (
-            <CustomButton title="Finish" onPress={handleFinishEvent} />
+            <CustomButton title={t("finish")} onPress={handleFinishEvent} />
           )}
         {eventData.organizer.userId === user.userId &&
           eventData.isEventOver === 2 && (
             <CustomButton
-              title="Evaluate Event"
+              title={t("evaluateEvent")}
               disabled={buttonDisabled}
               onPress={handleEvaluateEvent}
               containerStyle={buttonDisabled ? { opacity: 0.5 } : {}}
@@ -288,7 +318,7 @@ const MainEventScreen = () => {
         {eventData.organizer.userId !== user.userId &&
           eventData.isEventOver === 2 && (
             <CustomButton
-              title="Rate Organizer"
+              title={t("rateOrganizer")}
               disabled={buttonDisabled}
               onPress={handleRateOrganizer}
               containerStyle={buttonDisabled ? { opacity: 0.5 } : {}}
@@ -297,7 +327,7 @@ const MainEventScreen = () => {
       </View>
       <RatingModal
         visible={showRatePopup}
-        title={`Rate: ${ratePlayer?.fullName}`}
+        title={`${t("rate")}: ${ratePlayer?.fullName}`}
         category="SPORT"
         sport={eventData.sport}
         playerId={ratePlayer?.userId!}
@@ -308,7 +338,7 @@ const MainEventScreen = () => {
       />
       <RatingModal
         visible={showOrganizerPopup}
-        title="Rate Organizer"
+        title={t("rateOrganizer")}
         category="ORGANIZATION"
         sport={eventData.sport}
         playerId={eventData.organizer.userId}
@@ -348,27 +378,79 @@ const MainEventScreen = () => {
           />
         </View>
       </Modal>
-      {/* TODO stil lazım */}
-      <Modal visible={showLeaveEventPopup} animationType="slide">
-        <View>
-          <Text>Are you sure you want to leave the event?</Text>
-          <Button
-            title="Yes"
-            onPress={() => {
-              handleLeaveEvent(
-                user.userId,
-                "You have successfully left the event."
-              );
-              router.back();
-            }}
-          />
-          <Button title="No" onPress={() => setShowLeaveEventPopup(false)} />
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showLeaveEventPopup}
+        onRequestClose={() => {
+          setShowLeaveEventPopup(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.overlay} />
+          <View
+            style={[
+              styles.modalView,
+              { backgroundColor: isDarkMode ? "#333" : "white" },
+            ]}
+          >
+            <Text style={[styles.modalText, isDarkMode && styles.darkModeText]}>
+              {t("leaveEventConfirm")}
+            </Text>
+            <View style={styles.buttonGrp}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setShowLeaveEventPopup(false)}
+              >
+                <Text style={styles.textStyle}>{t("no")}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={handleLeaveEvent}
+              >
+                <Text style={styles.textStyle}>{t("yes")}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showLeaveEventSuccess}
+        onRequestClose={() => {
+          setShowLeaveEventSuccess(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.overlay} />
+          <View
+            style={[
+              styles.modalView,
+              { backgroundColor: isDarkMode ? "#333" : "white" },
+            ]}
+          >
+            <Text style={[styles.modalText, isDarkMode && styles.darkModeText]}>
+              {t("leaveEventSuccess")}
+            </Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                setShowLeaveEventSuccess(false);
+                router.back();
+              }}
+            >
+              <Text style={styles.textStyle}>{t("ok")}</Text>
+            </Pressable>
+          </View>
         </View>
       </Modal>
       <ErrorModal
         error={leaveEventError}
         modalVisible={showLeaveEventError}
-        setModalVisible={setShowEvaluateEventPopup}
+        setModalVisible={setShowLeaveEventError}
       />
     </View>
   );
@@ -380,6 +462,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+  },
+  darkModeBackground: {
+    backgroundColor: "#333",
   },
   eventInfoContainer: {
     padding: 20,
@@ -406,6 +491,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     color: "#FF5C00",
+  },
+  darkModeText: {
+    color: "white",
   },
   detailsContainer: {
     flexDirection: "row",
@@ -476,7 +564,6 @@ const styles = StyleSheet.create({
     fontSize: 27,
     color: "#FF5C00",
   },
-
   buttonContainer: {
     flexDirection: "row",
     padding: 10,
@@ -490,5 +577,63 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "80%",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonConfirmLocation: {
+    backgroundColor: "#FF5C00",
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 35,
+    position: "absolute",
+    bottom: 50,
+    alignSelf: "center",
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#FF5C00",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  buttonGrp: {
+    width: "45%",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
