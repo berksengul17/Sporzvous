@@ -1,6 +1,7 @@
 package com.sporzvous.backend.Event;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.UserEvent.UserEvent;
@@ -21,7 +22,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "eventId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "eventId")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,10 +44,10 @@ public class Event {
     private User organizer;
 
     @ManyToMany(mappedBy = "events")
+    @JsonIgnore
     private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Team> teams = new ArrayList<>();
     private Integer maxParticipants;
 

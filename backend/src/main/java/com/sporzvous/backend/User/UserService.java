@@ -4,6 +4,7 @@ import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Event.EventRepository;
 import com.sporzvous.backend.Event.EventService;
 import com.sporzvous.backend.FriendRequest.FriendRequestDTO;
+import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.Token.Token;
 import com.sporzvous.backend.Token.TokenRepository;
 import com.sporzvous.backend.UserEvent.UserEventService;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -99,11 +101,12 @@ public class UserService {
         return eventService.addUserToEvent(eventId, user);
     }
 
-
+    @Transactional
     public Event leaveEvent(Long userId, Long eventId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
 
+        userEventService.removeUserEvent(userId, eventId);
         return eventService.removeUserFromEvent(eventId, user);
     }
 

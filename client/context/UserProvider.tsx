@@ -52,6 +52,7 @@ type UserProps = {
   ) => Promise<void>;
   updateProfile: (newUserInfo: UpdateUser) => Promise<void>;
   joinEvent: (event: Event) => Promise<AxiosResponse>;
+  leaveEvent: (eventId: number) => Promise<void>;
   logout: () => void;
 };
 
@@ -241,6 +242,24 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const leaveEvent = async (eventId: number) => {
+    try {
+      await axios.delete(`${API_URL}/${user.userId}/leave/${eventId}`);
+    } catch (err) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          errorMessage = err.response.data.error; // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
+        }
+      }
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
+    }
+  };
+
   const logout = () => {
     setUser({
       userId: 0,
@@ -266,6 +285,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     updateProfile,
     joinEvent,
+    leaveEvent,
     logout,
   };
 

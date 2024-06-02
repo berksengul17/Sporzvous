@@ -1,17 +1,19 @@
 import CustomButton from "@/components/CustomButton";
-import { useEventContext } from "@/context/EventProvider";
+import { Event, useEventContext } from "@/context/EventProvider";
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
 type EvaluateEventModalProps = {
   eventId: number;
   visible: boolean;
+  setEventData: React.Dispatch<React.SetStateAction<Event>>;
   handleCancel: () => void;
 };
 
 const EvaluateEventModal = ({
   eventId,
   visible,
+  setEventData,
   handleCancel,
 }: EvaluateEventModalProps) => {
   const [teamAScore, setTeamAScore] = useState<string>("0");
@@ -21,6 +23,13 @@ const EvaluateEventModal = ({
 
   const handleEvaluateEvent = async () => {
     await addScore(eventId, teamAScore, teamBScore);
+    setEventData((prev) => ({
+      ...prev,
+      teams: [
+        { ...prev.teams[0], score: parseInt(teamAScore) },
+        { ...prev.teams[1], score: parseInt(teamBScore) },
+      ],
+    }));
     handleCancel();
   };
 

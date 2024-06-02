@@ -1,5 +1,6 @@
 package com.sporzvous.backend.Team;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
@@ -8,9 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter
@@ -25,17 +24,18 @@ public class Team {
     private Integer score;
 
     @ManyToMany(mappedBy = "teams")
-    private List<User> users = new ArrayList<>(); // Initialize the list
+    private Set<User> users = new HashSet<>(); // Initialize the list
 
     @ManyToOne
     @JoinColumn(name="event_id", nullable=false)
+    @JsonIgnore
     private Event event;
 
     public Team(String teamName, Event event, Integer teamCapacity) {
         this.teamName = teamName;
         this.event = event;
         this.teamCapacity = teamCapacity;
-        this.users = new ArrayList<>(); // Initialize the list in the constructor
+        this.score = 0;
     }
 
     @Override

@@ -142,7 +142,7 @@ public class UserController {
     public ResponseEntity<?> leaveEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Event event = userService.leaveEvent(userId, eventId);
-            return ResponseEntity.ok("User left event with id" + event.getEventId());
+            return ResponseEntity.ok("User left event with id " + event.getEventId());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
