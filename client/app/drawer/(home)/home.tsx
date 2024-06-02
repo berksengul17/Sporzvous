@@ -19,9 +19,11 @@ import {
 const EventItem = ({ event, user }: { event: Event; user: User }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
   const { t } = useTranslation("homeScreen");
-  const isJoined = event.teams.some((team: Team) =>
-    team.users.some((teamMember: User) => teamMember.userId === user.userId)
-  );
+  const isJoined = event.teams
+    ? event.teams.some((team: Team) =>
+        team.users.some((teamMember: User) => teamMember.userId === user.userId)
+      )
+    : false;
 
   return (
     <TouchableOpacity

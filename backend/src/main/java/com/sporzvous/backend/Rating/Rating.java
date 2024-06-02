@@ -29,6 +29,8 @@ public class Rating {
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 
+
+
     public Rating(double rating, SportField sportField, String content, User user) {
         this.rating = rating;
         this.sportField = sportField;

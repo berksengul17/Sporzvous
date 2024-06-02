@@ -1,6 +1,7 @@
 package com.sporzvous.backend.SportRating;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sporzvous.backend.Rating.SportField;
 import com.sporzvous.backend.User.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ public class SportRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sportId;
-    private String sportName;
+    private SportField sportField;
     private double rating;
 
     @ManyToOne
@@ -23,8 +24,8 @@ public class SportRating {
     @JsonIgnore
     private User user;
 
-    public SportRating(String sportName, double rating, User user) {
-        this.sportName = sportName;
+    public SportRating(SportField sportField, double rating, User user) {
+        this.sportField = sportField;
         this.rating = rating;
         this.user = user;
     }

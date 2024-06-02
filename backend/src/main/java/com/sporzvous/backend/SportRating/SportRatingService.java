@@ -5,7 +5,6 @@ import com.sporzvous.backend.User.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +20,7 @@ public class SportRatingService {
                 .orElseThrow(() -> new IllegalArgumentException("A problem occurred while creating sport rating"));
 
         for (SportRating sportRating : sportRatings) {
-            SportRating newSportRating = new SportRating( sportRating.getSportName(), sportRating.getRating(), user);
+            SportRating newSportRating = new SportRating( sportRating.getSportField(), sportRating.getRating(), user);
             sportRatingRepository.save(newSportRating);
         }
     }

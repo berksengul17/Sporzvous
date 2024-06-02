@@ -30,10 +30,10 @@ public class EventController {
         }
     }
 
-    @PutMapping("/update/{eventId}")
-    public ResponseEntity<String> updateEvent(@PathVariable Long eventId, @RequestBody Event request) {
+    @PutMapping("/change-status/{eventId}")
+    public ResponseEntity<String> changeStatus(@PathVariable Long eventId, @RequestParam int status) {
         try {
-            eventService.updateEvent(eventId, request);
+            eventService.changeStatus(eventId, status);
             return ResponseEntity.ok("Even with id " + eventId + " is updated successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/ratings")
@@ -59,4 +60,29 @@ public class RatingController {
         session.removeAttribute("filterState");
         return ResponseEntity.ok("Filters cleared");
     }
+
+    @GetMapping("/getRatingByOthers/{userId}")
+    public ResponseEntity<?> getRatingByOthers(@PathVariable Long userId) {
+        try {
+            Map<SportField, Double> ratingOverallByOthers = ratingService.getRatingByOthers(userId);
+            return ResponseEntity.ok(ratingOverallByOthers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getOverallRating/{userId}")
+    public ResponseEntity<?> getOverallRating(@PathVariable Long userId) {
+        try {
+            Map<SportField, Double> overallRating = ratingService.getOverallRating(userId);
+            return ResponseEntity.ok(overallRating);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+
+
 }
