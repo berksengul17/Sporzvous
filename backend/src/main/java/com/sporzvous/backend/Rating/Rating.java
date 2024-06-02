@@ -26,10 +26,10 @@ public class Rating {
     private String content;
     private LocalDate publishDate;
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "sender_id", referencedColumnName = "userId")
     private User sender;
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "receiver_id", referencedColumnName = "userId")
     private User receiver;
 
 
