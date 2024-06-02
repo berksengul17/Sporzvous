@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useContext } from "react";
+import Button from "@/components/CustomButton";
+import CustomText from "@/components/CustomText";
+import Rating from "@/components/Rating";
+import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
+import { useUserContext } from "@/context/UserProvider";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Keyboard,
   Platform,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Text,
 } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import ImageViewing from "react-native-image-viewing";
 import Modal from "react-native-modal";
-import { useTranslation } from "react-i18next";
-import Button from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
-import Rating from "@/components/Rating";
-import { Rating as RatingType, useUserContext } from "@/context/UserProvider";
-import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
-import { router } from "expo-router";
+import RNPickerSelect from "react-native-picker-select";
 
 const initialSportsData = [
   { id: "1", label: "Basketball", value: "basketball" },
@@ -170,7 +170,10 @@ const Profile = () => {
                 onPress={() => setImageSourceModalVisible(false)}
               >
                 <View
-                  style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  }}
                 />
               </TouchableWithoutFeedback>
             }

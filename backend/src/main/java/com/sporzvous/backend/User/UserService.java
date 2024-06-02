@@ -138,6 +138,9 @@ public class UserService {
             throw new IllegalArgumentException("There is a problem with gender selection");
         }
 
+        if (profileUpdateDto.getFavoriteSport() != null) {
+            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
+        }
 //        if (profileUpdateDto.getFavoriteSport() != null)  {
 //            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
 //        } else {
