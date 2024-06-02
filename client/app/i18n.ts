@@ -20,6 +20,7 @@ import enMyeventsLayout from '@/locales/en/myevents/myeventsLayout.json'
 import enFilterEvents from "@/locales/en/myevents/filterEvents.json"
 import enMyeventsPage from "@/locales/en/myevents/myeventsPage.json"
 import enMainEventScreen from '@/locales/en/myevents/mainEventScreen.json'
+import enFriendList from '@/locales/en/friend/friendlist.json'
 
 import trDrawer from '@/locales/tr/drawer.json';
 import trHomeLayout from '@/locales/tr/home/homeLayout.json'
@@ -39,7 +40,7 @@ import trMyeventsLayout from '@/locales/tr/myevents/myeventsLayout.json'
 import trFilterEvents from "@/locales/tr/myevents/filterEvents.json"
 import trMyeventsPage from "@/locales/tr/myevents/myeventsPage.json"
 import trMainEventScreen from '@/locales/tr/myevents/mainEventScreen.json'
-import MainEventScreen from './drawer/(myevents)/mainEventScreen';
+import trFriendList from '@/locales/tr/friend/friendlist.json'
 
 i18n
   .use(initReactI18next)
@@ -64,7 +65,8 @@ i18n
         myeventsLayout: enMyeventsLayout,
         filterEvents: enFilterEvents,
         myeventsPage: enMyeventsPage,
-        mainEventScreen: enMainEventScreen
+        mainEventScreen: enMainEventScreen,
+        friendList: enFriendList
       },
       tr: {
         drawer: trDrawer,
@@ -84,13 +86,14 @@ i18n
         myeventsLayout: trMyeventsLayout,
         filterEvents: trFilterEvents,
         myeventsPage: trMyeventsPage,
-        mainEventScreen: trMainEventScreen
+        mainEventScreen: trMainEventScreen,
+        friendList: trFriendList
       },
     },
     lng: I18nManager.isRTL ? 'tr' : 'en',
     fallbackLng: 'en',
     ns: ['drawer', 'settings', 'sportsScreen', 'faq', 'complaint', 'profile', 'profileLayout', 'homeLayout', 'settingsLayout', 'friendLayout', 'friends', 'joinEvent', 'homeScreen',
-      'createEvent', 'myeventsLayout', 'filterEvents', 'myeventsPage', 'mainEventScreen'
+      'createEvent', 'myeventsLayout', 'filterEvents', 'myeventsPage', 'mainEventScreen', 'friendList'
      ],
     defaultNS: 'drawer',
     interpolation: {

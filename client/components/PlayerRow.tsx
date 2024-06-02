@@ -31,6 +31,7 @@ const PlayerRow = ({
   const isPlayerOrganizer = event.organizer.userId === player.userId;
   const isEventStarted = event.isEventOver !== 0;
   const isEventOver = event.isEventOver === 2;
+  const { isDarkMode } = useDarkMode();
 
   return (
     <>
@@ -39,7 +40,14 @@ const PlayerRow = ({
           style={styles.playerName}
           onPress={() => handlePlayerPress(player)}
         >
-          <Text style={{ fontSize: 20 }}>{player.fullName}</Text>
+          <Text
+            style={[
+              { fontSize: 20, color: "#333" },
+              isDarkMode && { color: "#fff" },
+            ]}
+          >
+            {player.fullName}
+          </Text>
         </TouchableOpacity>
         {isOrganizer && !isPlayerOrganizer && !isEventStarted && (
           <TouchableOpacity

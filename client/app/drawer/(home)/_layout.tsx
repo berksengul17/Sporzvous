@@ -15,6 +15,9 @@ const _layout = () => {
   const { isDarkMode } = useDarkMode();
   const { t } = useTranslation("homeLayout");
   const [imageUri, setImageUri] = useState("");
+  const getColor = (isProfileEditable, isDarkMode) => {
+    return isProfileEditable ? "#FF5C00" : isDarkMode ? "#fff" : "#6F6F6F";
+  };
 
   const getImageUri = () => {
     const documentBase64 = user.image;
@@ -155,7 +158,7 @@ const _layout = () => {
             <FontAwesome
               name="pencil-square-o"
               size={30}
-              color={isProfileEditable ? "#FF5C00" : "#6F6F6F"}
+              style={{ color: getColor(isProfileEditable, isDarkMode) }}
               onPress={() => {
                 setProfileEditable(!isProfileEditable);
               }}

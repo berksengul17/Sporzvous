@@ -29,6 +29,9 @@ export default function FriendsScreen() {
   const [searchText, setSearchText] = useState("");
   const [friendName, setFriendName] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isConfirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -48,6 +51,9 @@ export default function FriendsScreen() {
           },
         }
       );
+      setModalVisible(false);
+      setConfirmationMessage(t("sendRequestConfirm"));
+      setConfirmationModalVisible(true);
     } catch (err) {
       let errorMessage = t("unexpectedError");
       if (axios.isAxiosError(err)) {
@@ -57,7 +63,8 @@ export default function FriendsScreen() {
           errorMessage = err.response?.data;
         }
       }
-      alert(errorMessage);
+      setConfirmationMessage(errorMessage);
+      setConfirmationModalVisible(true);
     }
   };
 
@@ -115,11 +122,40 @@ export default function FriendsScreen() {
               <CustomButton
                 title={t("sendRequest")}
                 onPress={sendRequest}
-                containerStyle={{ width: 130 }}
-                backgroundColor={isDarkMode ? "#FF5C00" : "#FF5C00"}
+                containerStyle={{
+                  width: 130,
+                  backgroundColor: isDarkMode ? "#FF5C00" : "#FF5C00",
+                }}
                 textStyle={{ color: isDarkMode ? "#fff" : "#fff" }}
               />
             </View>
+          </View>
+        </Modal>
+
+        <Modal
+          isVisible={isConfirmationModalVisible}
+          onBackdropPress={() => setConfirmationModalVisible(false)}
+        >
+          <View
+            style={[
+              styles.confirmationModal,
+              { backgroundColor: isDarkMode ? "#333" : "white" },
+            ]}
+          >
+            <Text
+              style={[
+                styles.confirmationText,
+                { color: isDarkMode ? "#FF5C00" : "#FF5C00" },
+              ]}
+            >
+              {confirmationMessage}
+            </Text>
+            <CustomButton
+              title="OK"
+              onPress={() => setConfirmationModalVisible(false)}
+              containerStyle={{ width: 80 }}
+              textStyle={{ color: isDarkMode ? "#fff" : "#FF5C00" }}
+            />
           </View>
         </Modal>
       </View>
@@ -239,5 +275,14 @@ const styles = StyleSheet.create({
   },
   friendListContainer: {
     flex: 1,
+  },
+  confirmationModal: {
+    padding: 20,
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  confirmationText: {
+    fontSize: 18,
+    marginBottom: 20,
   },
 });
