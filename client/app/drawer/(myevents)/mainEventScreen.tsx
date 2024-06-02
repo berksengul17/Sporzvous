@@ -407,7 +407,9 @@ const MainEventScreen = () => {
               </Pressable>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={handleLeaveEvent}
+                onPress={() =>
+                  handleLeaveEvent(user.userId, t("leaveEventConfirm"))
+                }
               >
                 <Text style={styles.textStyle}>{t("yes")}</Text>
               </Pressable>
