@@ -18,8 +18,9 @@ import { useUserContext } from "../../../context/UserProvider";
 
 export default function JoinEventScreen() {
   const router = useRouter();
-  const { event } = useGlobalSearchParams();
+  const { event, isJoined } = useGlobalSearchParams();
   const { joinEvent } = useUserContext();
+
   const parsedEvent: Event = JSON.parse(event as string);
   const [isMapVisible, setIsMapVisible] = useState<boolean>(false);
 
@@ -78,6 +79,7 @@ export default function JoinEventScreen() {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Minimum Skill Level</Text>
           <AirbnbRating
+            isDisabled={true}
             count={5}
             reviews={[]}
             defaultRating={parsedEvent.skillRating}
@@ -94,7 +96,14 @@ export default function JoinEventScreen() {
           >
             <Text style={styles.locationButtonText}>See Location</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.joinButton} onPress={handleJoin}>
+          <TouchableOpacity
+            style={[
+              styles.joinButton,
+              isJoined === "true" ? { opacity: 0.5 } : {},
+            ]}
+            onPress={handleJoin}
+            disabled={isJoined === "true"}
+          >
             <Text style={styles.joinButtonText}>Join</Text>
           </TouchableOpacity>
         </View>

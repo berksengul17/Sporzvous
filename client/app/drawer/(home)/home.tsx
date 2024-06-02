@@ -1,5 +1,5 @@
 import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
-import { Event, useEventContext } from "@/context/EventProvider";
+import { Event, Team, useEventContext } from "@/context/EventProvider";
 import { User, useUserContext } from "@/context/UserProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused, useRoute } from "@react-navigation/native";
@@ -19,8 +19,8 @@ import {
 const EventItem = ({ event, user }: { event: Event; user: User }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
   const { t } = useTranslation("homeScreen");
-  const isJoined = event.users.some(
-    (participant) => participant.userId === user.userId
+  const isJoined = event.teams.some((team: Team) =>
+    team.users.some((teamMember: User) => teamMember.userId === user.userId)
   );
 
   return (
@@ -29,7 +29,10 @@ const EventItem = ({ event, user }: { event: Event; user: User }) => {
       onPress={() =>
         router.push({
           pathname: "drawer/(home)/join_event",
-          params: { event: JSON.stringify(event) },
+          params: {
+            event: JSON.stringify(event),
+            isJoined: isJoined.toString(),
+          },
         })
       }
     >
@@ -52,7 +55,7 @@ const EventItem = ({ event, user }: { event: Event; user: User }) => {
         <Text style={styles.capacity}>
           {event.participants}/{event.maxParticipants}
         </Text>
-        {isJoined && <Text>Joined</Text>}
+        {isJoined && <Text style={styles.capacity}>Joined</Text>}
       </View>
     </TouchableOpacity>
   );
@@ -60,7 +63,7 @@ const EventItem = ({ event, user }: { event: Event; user: User }) => {
 
 export default function HomeScreen() {
   const { user } = useUserContext();
-  const { events, fetchAllEvents } = useEventContext();
+  const { events, filterEvents } = useEventContext();
   const [searchText, setSearchText] = useState("");
   const route = useRoute();
   const { sport } = route.params;
@@ -69,14 +72,15 @@ export default function HomeScreen() {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    const getAllEvents = async () => {
+    const fetchEvents = async () => {
       console.log("fetching my events");
-      await fetchAllEvents();
+      await filterEvents();
       console.log("fetched my events");
     };
 
     if (isFocused) {
-      getAllEvents();
+      console.log("fetching all events");
+      fetchEvents();
     }
   }, [isFocused]);
 
@@ -95,9 +99,10 @@ export default function HomeScreen() {
     );
   }
 
+  // TODO eventleri spora göre burda filtreleme
+  // backend de filtreli al
   const filteredEvents = events.filter(
     (event) =>
-      event.isEventOver === 0 &&
       event.sport.toLowerCase() === sport.toLowerCase() &&
       (event.title.toLowerCase().includes(searchText.toLowerCase()) ||
         event.organizer.fullName
@@ -144,7 +149,7 @@ export default function HomeScreen() {
           onPress={() =>
             router.push({
               pathname: "drawer/(home)/filterModal",
-              params: { filteredEvents: JSON.stringify(filteredEvents) },
+              params: { filteredEvents: JSON.stringify(filterEvents) },
             })
           }
           style={styles.filterButton}

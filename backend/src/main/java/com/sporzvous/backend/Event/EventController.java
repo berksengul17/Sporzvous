@@ -29,6 +29,17 @@ public class EventController {
                     .body(e.getMessage());
         }
     }
+
+    @PutMapping("/update/{eventId}")
+    public ResponseEntity<String> updateEvent(@PathVariable Long eventId, @RequestBody Event request) {
+        try {
+            eventService.updateEvent(eventId, request);
+            return ResponseEntity.ok("Even with id " + eventId + " is updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/addScore/{eventId}")
     public ResponseEntity<?> addScore(@PathVariable Long eventId,
                                       @RequestParam Integer firstTeamScore,
@@ -78,13 +89,14 @@ public class EventController {
     public ResponseEntity<?> filterEvents(@RequestParam(required = false) String sport,
                                           @RequestParam(required = false) String locationCity,
                                           @RequestParam(required = false) String locationDistrict,
-                                          @RequestParam(required = false) LocalDate eventDate,
+                                          @RequestParam(required = false) LocalDate startDate,
+                                          @RequestParam(required = false) LocalDate endDate,
                                           @RequestParam(required = false, defaultValue = "0") Integer isEventOver,
                                           @RequestParam(required = false) Long userId,
                                           @RequestParam(required = false, defaultValue = "0") double minRating) {
         try {
             return ResponseEntity.ok(eventService.filterEvents(sport, locationCity, locationDistrict,
-                                                            eventDate, isEventOver, userId, minRating));
+                                                            startDate, endDate, isEventOver, userId, minRating));
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());

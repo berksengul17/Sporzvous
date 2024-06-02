@@ -47,6 +47,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
+    @JsonIgnore
     private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -72,7 +73,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "team_id")
     )
     @JsonIgnore
-    private List<Team> teams = new ArrayList<>();
+    private Set<Team> teams = new HashSet<>();
 
     @OneToMany(mappedBy = "sender")
     private Set<FriendRequest> sentRequests = new HashSet<>();
@@ -134,4 +135,10 @@ public class User {
     public String getImageAsBase64() {
         return this.image != null ? Base64.getEncoder().encodeToString(this.image) : null;
     }
+
+    public void removeTeam(Team team) {
+        this.teams.remove(team);
+        team.getUsers().remove(this);
+    }
+
 }

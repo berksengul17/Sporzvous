@@ -4,13 +4,13 @@ import com.sporzvous.backend.Team.Team;
 import com.sporzvous.backend.Team.TeamService;
 import com.sporzvous.backend.User.User;
 import com.sporzvous.backend.User.UserRepository;
-import com.sporzvous.backend.User.UserService;
 import com.sporzvous.backend.UserEvent.UserEventService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
@@ -26,37 +26,7 @@ public class EventService {
     @Transactional
     public Event saveEvent(Event event) {
 
-        if (Objects.equals(event.getTitle(), "")) {
-            throw new IllegalArgumentException("Title cannot be Empty");
-
-        } else if ((event.getTitle().length()) > 40) {
-            throw new IllegalArgumentException("Title cannot be longer than 40");
-
-        } else if (Objects.equals(event.getSport(), "")) {
-            throw new IllegalArgumentException("Sport cannot be empty");
-
-        } else if (Objects.equals(event.getLocationCity(), "")) {
-            throw new IllegalArgumentException("LocationCity cannot be empty");
-
-        } else if (Objects.equals(event.getLocationDistrict(), "")) {
-            throw new IllegalArgumentException("LocationDistrict cannot be empty");
-
-        } else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null) {
-            throw new IllegalArgumentException("Event with no participants cannot created");
-
-        } else if (event.getMaxParticipants() > 30) {
-            throw new IllegalArgumentException("Event with this number of participants cannot created");
-
-        } else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Date can't be before the current date.");
-
-        } else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
-            throw new IllegalArgumentException("Time can't be before the current time.");
-        } else if (event.getLatitude() == 0) {
-            throw new IllegalArgumentException("Location is not chosen");
-        } else if (event.getLongitude() == 0) {
-            throw new IllegalArgumentException("Location is not chosen");
-        }
+        validateEvent(event);
 
         Event eventObj = new Event(event.getTitle(), event.getSport(), event.getLocationCity(),
                 event.getLocationDistrict(), event.getParticipants(), event.getTeamNumber(), event.getEventDate(),
@@ -71,6 +41,18 @@ public class EventService {
         return eventRepository.save(eventObj);
     }
 
+
+    public void updateEvent(Long eventId, Event request) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        validateEvent(request);
+
+        
+
+
+    }
+
     public List<Event> getMyEvents(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -79,6 +61,19 @@ public class EventService {
 
         return allEvents.stream()
                 .filter(event -> event.getUsers().contains(user) || event.getOrganizer().equals(user))
+                // FIXME bu kısım daha genel bir yerde olmalı sanırım
+                .map(event -> {
+                    LocalDateTime eventDateTime = LocalDateTime.of(event.getEventDate(), event.getEventTime());
+                        if (LocalDateTime.now().withSecond(0).withNano(0).equals(eventDateTime.withSecond(0).withNano(0))) {
+                        event.setIsEventOver(1);
+                        return eventRepository.save(event);
+                    } else if(LocalDateTime.now().isAfter(eventDateTime.plusHours(6))) {
+                        event.setIsEventOver(2);
+                        return eventRepository.save(event);
+                    }
+
+                    return event;
+                })
                 .toList();
     }
 
@@ -91,8 +86,13 @@ public class EventService {
     }
 
     public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
-                                    LocalDate eventDate, int isEventOver, Long userId, double minRating) {
-        return eventRepository.filterEvents(sport, locationCity, locationDistrict, eventDate, isEventOver, userId, minRating);
+                                    LocalDate startDate, LocalDate endDate, int isEventOver, Long userId, double minRating) {
+        return eventRepository.filterEvents(sport, locationCity, locationDistrict,
+                startDate, endDate, isEventOver, userId, minRating)
+                .stream()
+                .filter(event -> event.getIsEventOver() == 0 &&
+                        !Objects.equals(event.getOrganizer().getUserId(), userId))
+                .toList();
     }
 
     public List<User> getEventUsers(Long eventId) {
@@ -118,6 +118,13 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event with id " + eventId + " not found"));
 
         event.getUsers().remove(user);
+        event.setParticipants(event.getParticipants() - 1);
+        // Remove user from team
+        for (Team team : event.getTeams()) {
+            if (team.getUsers().contains(user)) {
+                user.removeTeam(team);
+            }
+        }
         return eventRepository.save(event);
     }
 
@@ -158,5 +165,39 @@ public class EventService {
     public Event getEvent(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    }
+
+    private void validateEvent(Event event) {
+        if (Objects.equals(event.getTitle(), "")) {
+            throw new IllegalArgumentException("Title cannot be Empty");
+
+        } else if ((event.getTitle().length()) > 40) {
+            throw new IllegalArgumentException("Title cannot be longer than 40");
+
+        } else if (Objects.equals(event.getSport(), "")) {
+            throw new IllegalArgumentException("Sport cannot be empty");
+
+        } else if (Objects.equals(event.getLocationCity(), "")) {
+            throw new IllegalArgumentException("LocationCity cannot be empty");
+
+        } else if (Objects.equals(event.getLocationDistrict(), "")) {
+            throw new IllegalArgumentException("LocationDistrict cannot be empty");
+
+        } else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null) {
+            throw new IllegalArgumentException("Event with no participants cannot created");
+
+        } else if (event.getMaxParticipants() > 30) {
+            throw new IllegalArgumentException("Event with this number of participants cannot created");
+
+        } else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Date can't be before the current date.");
+
+        } else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
+            throw new IllegalArgumentException("Time can't be before the current time.");
+        } else if (event.getLatitude() == 0) {
+            throw new IllegalArgumentException("Location is not chosen");
+        } else if (event.getLongitude() == 0) {
+            throw new IllegalArgumentException("Location is not chosen");
+        }
     }
 }

@@ -15,7 +15,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     @Override
     public List<Event> filterEvents(String sport, String locationCity, String locationDistrict,
-                                    LocalDate eventDate, int isEventOver, Long userId, double minRating) {
+                                    LocalDate startDate, LocalDate endDate, int isEventOver, Long userId, double minRating) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> query = cb.createQuery(Event.class);
         Root<Event> event = query.from(Event.class);
@@ -31,8 +31,9 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         if (locationDistrict != null && !locationDistrict.isEmpty()) {
             predicates.add(cb.equal(event.get("locationDistrict"), locationDistrict));
         }
-        if (eventDate != null) {
-            predicates.add(cb.greaterThanOrEqualTo(event.get("eventDate"), eventDate));
+        if (startDate != null && endDate != null) {
+            predicates.add(cb.greaterThanOrEqualTo(event.get("eventDate"), startDate));
+            predicates.add(cb.lessThanOrEqualTo(event.get("eventDate"), endDate));
         }
         predicates.add(cb.equal(event.get("isEventOver"), isEventOver));
         if (minRating > 0) {

@@ -19,19 +19,6 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-const getEventStatus = (isEventOver) => {
-  switch (isEventOver) {
-    case 0:
-      return "Not Started";
-    case 1:
-      return "OnGoing";
-    case 2:
-      return "Finished";
-    default:
-      return "Unknown";
-  }
-};
-
 function EventStatus({ isEventOver }: { isEventOver: number }) {
   if (isEventOver === 2) {
     return (
@@ -67,47 +54,7 @@ const EventItem = ({ event }: { event: Event }) => {
         router.push({
           pathname: "drawer/(myevents)/mainEventScreen",
           params: {
-            event: JSON.stringify({
-              eventId: 1,
-              title: "Dkdkk",
-              sport: "Tennis",
-              locationCity: "Diyarbakır",
-              locationDistrict: "Lice",
-              participants: 0,
-              teamNumber: 2,
-              eventDate: "2024-06-12",
-              eventTime: "21:52:00",
-              skillRating: 2.5,
-              locationIndex: "5",
-              isEventOver: 1,
-              organizer: {
-                userId: 1,
-                email: "a@gmail.com",
-                password: "123",
-                fullName: "Berk Şengül",
-                username: "bekirsama",
-                country: "Turkey",
-                image: null,
-                age: 21,
-                gender: "Male",
-                favoriteSport: "Football",
-                eventCount: 12,
-                isVerified: 0,
-                status: null,
-                events: [],
-                friends: [],
-                teams: [],
-                sentRequests: [],
-                receivedRequests: [],
-                sportRatings: [],
-                imageAsBase64: null,
-              },
-              users: [],
-              maxParticipants: 2,
-              latitude: null,
-              longitude: null,
-              organizerImage: "data:image/jpeg;base64,null",
-            }),
+            event: JSON.stringify({ ...event }),
           },
         })
       }
@@ -123,6 +70,7 @@ const EventItem = ({ event }: { event: Event }) => {
         </Text>
         <Text style={styles.eventDetail}>Sport: {event.sport}</Text>
         <Text style={styles.eventDetail}>Date: {event.eventDate}</Text>
+        <Text style={styles.eventDetail}>Time: {event.eventTime}</Text>
       </View>
       <View style={styles.cardFooter}>
         <TouchableOpacity>
@@ -163,14 +111,6 @@ export default function MyEvents() {
       getMyEvents();
     }
   }, [isFocused, user]);
-
-  useEffect(() => {
-    myEvents.forEach((event: Event) => {
-      console.log(event.eventId);
-      console.log(event.organizer.fullName);
-      console.log("----------------");
-    });
-  }, [myEvents]);
 
   const filteredEvents = myEvents.filter(
     (event) =>

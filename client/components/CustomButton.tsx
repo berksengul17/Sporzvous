@@ -11,14 +11,21 @@ import {
 
 interface Props {
   title: string;
+  disabled?: boolean;
   onPress: () => void;
   containerStyle?: ViewStyle;
   textStyle?: TextStyle;
 }
 
-const Button = ({ title, onPress, containerStyle, textStyle }: Props) => {
+const Button = ({
+  title,
+  disabled,
+  onPress,
+  containerStyle,
+  textStyle,
+}: Props) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
       <View style={[styles.container, containerStyle]}>
         <Text style={[styles.text, textStyle]}>{title}</Text>
       </View>

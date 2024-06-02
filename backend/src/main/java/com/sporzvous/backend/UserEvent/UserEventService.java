@@ -24,8 +24,19 @@ public class UserEventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         UserEvent userEvent = new UserEvent(user, event);
-        UserEvent savedUserEvent = userEventRepository.save(userEvent);
-        System.out.println("UserEvent saved: " + savedUserEvent);
-        return savedUserEvent;
+        return userEventRepository.save(userEvent);
+    }
+
+    @Transactional
+    public void removeUserEvent(Long userId, Long eventId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+
+        UserEvent userEvent = userEventRepository.findByUserAndEvent(user, event);
+        userEventRepository.delete(userEvent);
     }
 }

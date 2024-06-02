@@ -1,6 +1,7 @@
 import CustomText from "@/components/CustomText";
 import { useEventContext } from "@/context/EventProvider";
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -25,17 +26,11 @@ const ratingOptions = [
 ];
 
 const Page = () => {
-  const { filterEvents } = useEventContext();
+  const { filterEvents, filter, setFilter } = useEventContext();
 
-  const [selectedSport, setSelectedSport] = useState("All");
-  const [selectedLocation, setSelectedLocation] = useState("All");
-  const [selectedDate, setSelectedDate] = useState("All");
-  const [selectedRating, setSelectedRating] = useState(0);
-
-  const applyFilters = () => {
-    filterEvents(selectedSport, selectedLocation, selectedDate, selectedRating)
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+  const applyFilters = async () => {
+    await filterEvents();
+    router.back();
   };
 
   return (
@@ -43,9 +38,12 @@ const Page = () => {
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() => {
-            setSelectedSport("All");
-            setSelectedDate("All");
-            setSelectedRating(0);
+            setFilter({
+              ...filter,
+              location: "All",
+              date: "All",
+              rating: 0,
+            });
           }}
         >
           <CustomText customStyle={styles.clearText} text="Clear Filters" />
@@ -54,12 +52,12 @@ const Page = () => {
           <CustomText customStyle={styles.sectionTitle} text="Location" />
         </View>
         <RNPickerSelect
-          onValueChange={(value) => setSelectedLocation(value)}
+          onValueChange={(value) => setFilter({ ...filter, location: value })}
           items={eventLocations}
           style={pickerSelectStyles}
           useNativeAndroidPickerStyle={false} // this needs to be false to use your custom styles
           placeholder={{ label: "Choose Location", value: null }}
-          value={selectedLocation}
+          value={filter.location}
         />
         <View style={[styles.titleWrapper, { marginTop: 20 }]}>
           <CustomText customStyle={styles.sectionTitle} text="Date" />
@@ -70,14 +68,14 @@ const Page = () => {
               key={date}
               style={[
                 styles.button,
-                selectedDate === date && styles.buttonSelected,
+                filter.date === date && styles.buttonSelected,
               ]}
-              onPress={() => setSelectedDate(date)}
+              onPress={() => setFilter({ ...filter, date })}
             >
               <Text
                 style={[
                   styles.buttonText,
-                  selectedDate === date && styles.buttonTextSelected,
+                  filter.date === date && styles.buttonTextSelected,
                 ]}
               >
                 {date}
@@ -95,14 +93,14 @@ const Page = () => {
               key={option.label}
               style={[
                 styles.button,
-                selectedRating === option.minRating && styles.buttonSelected,
+                filter.rating === option.minRating && styles.buttonSelected,
               ]}
-              onPress={() => setSelectedRating(option.minRating)}
+              onPress={() => setFilter({ ...filter, rating: option.minRating })}
             >
               <Text
                 style={[
                   styles.buttonText,
-                  selectedRating === option.minRating &&
+                  filter.rating === option.minRating &&
                     styles.buttonTextSelected,
                 ]}
               >

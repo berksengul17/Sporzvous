@@ -1,6 +1,13 @@
 import { User, useUserContext } from "@/context/UserProvider";
 import axios from "axios";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
+
+export type Team = {
+  teamId: number;
+  teamName: string;
+  users: User[];
+  score: number;
+};
 
 // Define the type for an event
 export type Event = {
@@ -21,26 +28,29 @@ export type Event = {
   organizerImage?: string;
   latitude: number;
   longitude: number;
-  users: User[];
+  teams: Team[];
 };
 
-type CreateEvent = Omit<Event, "eventId">;
+type CreateEvent = Omit<Event, "eventId" | "teams">;
+
+type Filter = {
+  location: string;
+  date: string;
+  rating: number;
+};
 
 // Define the type for the context
 type EventContextType = {
   events: Event[];
+  filter: Filter;
+  setFilter: React.Dispatch<React.SetStateAction<Filter>>;
   fetchAllEvents: () => Promise<void>;
   fetchMyEvents: () => Promise<Event[]>;
   fetchEvent: (id: number) => Promise<Event>;
   addEvent: (event: CreateEvent) => Promise<void>;
   updateEvent: (id: number, updatedEvent: Event) => void;
   removeEvent: (id: number) => void;
-  filterEvents: (
-    sport: string,
-    location: string,
-    date: string,
-    rating: number
-  ) => Promise<void>;
+  filterEvents: () => Promise<void>;
   addScore: (
     eventId: number,
     firstTeamScore: string,
@@ -57,10 +67,11 @@ const EventContext = createContext<EventContextType | null>(null);
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
-
-  useEffect(() => {
-    fetchAllEvents();
-  }, [user]);
+  const [filter, setFilter] = useState<Filter>({
+    location: "All",
+    date: "All",
+    rating: 0,
+  });
 
   const fetchAllEvents = async () => {
     const response = await axios.get(`${API_URL}/get-events/${user.userId}`);
@@ -72,10 +83,21 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await axios.get(
         `${API_URL}/get-my-events/${user.userId}`
       );
-      console.log(response.data);
-      return response.data;
+      console.log("RESPONSE", response.data);
+
+      const events = response.data.map((event: Event) => {
+        console.log("Processing event:", event);
+        return {
+          ...event,
+          eventTime: event.eventTime.slice(0, 5),
+        };
+      });
+
+      console.log("MY EVENTS", events);
+
+      return events;
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching my events:", error);
     }
   };
 
@@ -121,45 +143,50 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
-  const filterEvents = async (
-    sport: string,
-    location: string,
-    date: string,
-    rating: number
-  ) => {
+  const filterEvents = async () => {
     try {
-      const today = new Date();
-
-      let dateFilter;
-      switch (date) {
+      let startDate;
+      let endDate;
+      let currDate: Date = new Date();
+      switch (filter.date) {
         case "All":
-          dateFilter = null;
+          startDate = null;
+          endDate = null;
           break;
         case "Today":
-          dateFilter = today.toISOString().split("T")[0];
+          startDate = currDate.toISOString().split("T")[0];
+          endDate = currDate.toISOString().split("T")[0];
           break;
         case "This Week":
-          const lastWeek = new Date();
-          lastWeek.setDate(today.getDate() - 7);
-          dateFilter = lastWeek.toISOString().split("T")[0];
+          const first = currDate.getDate() - currDate.getDay();
+          const last = first + 6;
+          startDate = currDate.toISOString().split("T")[0];
+          endDate = new Date(currDate.setDate(last))
+            .toISOString()
+            .split("T")[0];
           break;
         case "This Month":
-          const lastMonth = new Date();
-          lastMonth.setMonth(today.getMonth() - 1);
-          dateFilter = lastMonth.toISOString().split("T")[0];
+          const year = currDate.getFullYear();
+          const month = currDate.getMonth() + 1;
+          endDate = new Date(year, month, 0).toISOString().split("T")[0];
           break;
       }
 
       const filteredEvents = await axios.get(`${API_URL}/filter`, {
         params: {
-          sport: sport === "All" ? null : sport,
-          locationDistrict: location === "All" ? null : location,
-          eventDate: dateFilter,
-          minRating: rating,
+          locationDistrict: filter.location === "All" ? null : location,
+          startDate,
+          endDate,
+          minRating: filter.rating,
         },
       });
-      console.log("filtered events", filteredEvents.data);
-      setEvents(filteredEvents.data);
+
+      setEvents(
+        filteredEvents.data.map((event: Event) => ({
+          ...event,
+          eventTime: event.eventTime.slice(0, 5),
+        }))
+      );
     } catch (error) {
       console.log(error);
     }
@@ -197,7 +224,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value = {
     events,
-    setEvents,
+    filter,
+    setFilter,
     fetchAllEvents,
     fetchMyEvents,
     fetchEvent,
