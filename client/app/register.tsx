@@ -25,6 +25,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
   const [countryCode, setCountryCode] = useState("TR");
   const [country, setCountry] = useState({
     name: { common: "Turkey" },
@@ -33,6 +34,12 @@ const Register = () => {
   const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   const onSignUp = async () => {
+    if (password !== passwordAgain) {
+      setErrorRegister("Passwords do not match.");
+      setModalVisible(true);
+      return;
+    }
+
     try {
       await signUp(
         { username, email, password, country: country.name.common },
@@ -89,6 +96,8 @@ const Register = () => {
                 />
                 <TextInput
                   style={styles.input}
+                  value={passwordAgain}
+                  onChangeText={setPasswordAgain}
                   placeholder="Confirm Password"
                   placeholderTextColor={"#6F6F6F"}
                   secureTextEntry
