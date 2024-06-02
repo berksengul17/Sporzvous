@@ -246,6 +246,7 @@ public class UserService {
     }
 
     public void sendVerificationCode(User user) {
+
         String code = generateVerificationCode();
         verificationCodes.put(user.getEmail(), code);
         mailSenderService.sendVerificationCodeEmail(user, code);

@@ -1,7 +1,7 @@
 import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ImageBackground,
@@ -13,14 +13,18 @@ import {
   Modal,
   Pressable,
 } from "react-native";
+import VerificationCode from "./verificationCode";
+import { useUserContext } from "@/context/UserProvider";
 
 const SetNewPassword = () => {
+  const { email, verificationCode } = useLocalSearchParams();
   const [password, setPassword] = useState("");
+  const { resetPassword } = useUserContext();
   const [confirmPassword, setConfirmPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const onSetNewPassword = () => {
+  const onSetNewPassword = async () => {
     if (password !== confirmPassword) {
       setModalMessage("Passwords do not match. Please try again.");
       setModalVisible(true);
@@ -28,7 +32,20 @@ const SetNewPassword = () => {
       // Simulate setting the new password
       setModalMessage("Your password has been successfully set.");
       setModalVisible(true);
-      router.navigate("/index.tsx");
+    }
+    try {
+      await resetPassword(
+        email as string,
+        verificationCode as string,
+        password
+      );
+      setModalMessage(
+        "Password reset successfully. You can now log in with your new password."
+      );
+      setModalVisible(true);
+    } catch (error) {
+      setModalMessage("Failed to reset password. Please try again.");
+      setModalVisible(true);
     }
   };
 
