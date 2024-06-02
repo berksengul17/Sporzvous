@@ -1,6 +1,5 @@
 import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
-import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
 import { t } from "i18next";
@@ -22,13 +21,11 @@ const Forgotpw = () => {
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [errorResetRequest, setErrorResetRequest] = useState("");
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const onRequestPasswordReset = async () => {
     try {
       await requestPasswordReset(email);
       setErrorResetRequest("");
-      setSuccessModalVisible(true);
       router.push({ pathname: "verificationCode", params: { email } });
     } catch (error) {
       // Handle error
@@ -69,31 +66,6 @@ const Forgotpw = () => {
             </View>
           </View>
         </ImageBackground>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={successModalVisible}
-          onRequestClose={() => {
-            setModalVisible(!successModalVisible);
-          }}
-        >
-          <View style={styles.overlay}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  An email is sent for password reset if account exists.
-                </Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!successModalVisible)}
-                >
-                  <CustomText customStyle={styles.textStyle} text="Close" />
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
-
         <Modal
           animationType="fade"
           transparent={true}

@@ -1,20 +1,19 @@
 import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
 import CustomText from "@/components/CustomText";
+import { useUserContext } from "@/context/UserProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ImageBackground,
   Keyboard,
+  Modal,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  Modal,
-  Pressable,
 } from "react-native";
-import VerificationCode from "./verificationCode";
-import { useUserContext } from "@/context/UserProvider";
 
 const SetNewPassword = () => {
   const { email, verificationCode } = useLocalSearchParams();
@@ -29,29 +28,30 @@ const SetNewPassword = () => {
       setModalMessage("Passwords do not match. Please try again.");
       setModalVisible(true);
     } else {
-      // Simulate setting the new password
-      setModalMessage("Your password has been successfully set.");
-      setModalVisible(true);
-    }
-    try {
-      await resetPassword(
-        email as string,
-        verificationCode as string,
-        password
-      );
-      setModalMessage(
-        "Password reset successfully. You can now log in with your new password."
-      );
-      setModalVisible(true);
-    } catch (error) {
-      setModalMessage("Failed to reset password. Please try again.");
-      setModalVisible(true);
+      try {
+        await resetPassword(
+          email as string,
+          verificationCode as string,
+          password
+        );
+        setModalMessage(
+          "Password reset successfully. You can now log in with your new password."
+        );
+        setModalVisible(true);
+      } catch (error: any) {
+        // setModalMessage("Failed to reset password. Please try again.");
+        setModalMessage(error.message);
+        setModalVisible(true);
+      }
     }
   };
 
   const onCloseModal = () => {
     setModalVisible(false);
-    if (modalMessage === "Your password has been successfully set.") {
+    if (
+      modalMessage ===
+      "Password reset successfully. You can now log in with your new password."
+    ) {
       router.dismissAll();
     }
   };

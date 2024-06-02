@@ -26,8 +26,6 @@ const VerificationCode = () => {
   const onSubmitVerificationCode = async () => {
     try {
       await verifyCode(email as string, verificationCode);
-      setModalMessage("Code verified. Please enter your new password.");
-      setModalVisible(true);
       router.push({
         pathname: "setNewPassword",
         params: { email, verificationCode },
@@ -64,7 +62,8 @@ const VerificationCode = () => {
                 <AuthHeader />
                 <CustomText
                   customStyle={styles.infoText}
-                  text="Please enter the verification code sent to your email."
+                  text="A verification code has been sent to your email if 
+                  there is an account associated with the email."
                 />
                 <TextInput
                   style={styles.input}
