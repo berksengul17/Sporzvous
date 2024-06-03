@@ -33,7 +33,8 @@ export type Event = {
 type CreateEvent = Omit<Event, "eventId" | "teams">;
 
 type Filter = {
-  location: string;
+  locationCity: string | null;
+  locationDistrict: string | null;
   date: string;
   rating: number;
   userId: number;
@@ -69,7 +70,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useUserContext();
   const [events, setEvents] = useState<Event[]>([]);
   const [filter, setFilter] = useState<Filter>({
-    location: "All",
+    locationCity: null,
+    locationDistrict: null,
     date: "All",
     rating: 0,
     userId: 0,
@@ -115,7 +117,6 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
   const addEvent = async (event: CreateEvent) => {
     try {
       const response = await axios.post(`${API_URL}/create`, event);
-      fetchAllEvents(); // Optionally update events state if needed
     } catch (err) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (axios.isAxiosError(err)) {
@@ -176,7 +177,8 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
       const filteredEvents = await axios.get(`${API_URL}/filter`, {
         params: {
-          locationDistrict: filter.location === "All" ? null : location,
+          locationCity: filter.locationCity,
+          locationDistrict: filter.locationDistrict,
           startDate,
           endDate,
           minRating: filter.rating,
