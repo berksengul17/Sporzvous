@@ -1,8 +1,12 @@
 import CustomText from "@/components/CustomText";
+import { useDarkMode } from "@/context/DarkModeContext";
 import { useEventContext } from "@/context/EventProvider";
+import axios from "axios";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,14 +14,7 @@ import {
   View,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
-import { useTranslation } from "react-i18next";
-import { useDarkMode } from "@/context/DarkModeContext";
 
-const eventLocations = [
-  { label: "All", value: "All" },
-  { label: "Bornova", value: "Bornova" },
-  { label: "Urla", value: "Urla" },
-];
 const dateOptions = ["All", "Today", "This Week", "This Month"];
 const ratingOptions = [
   { label: "All", minRating: 0 },
@@ -28,13 +25,55 @@ const ratingOptions = [
 ];
 
 const Page = () => {
-  const { filterEvents, filter, setFilter } = useEventContext();
+  const { filterEvents, filter, setFilter, events } = useEventContext();
+  const [cities, setCities] = useState([]);
+  const [villages, setVillages] = useState([]);
+  const [locationCity, setLocationCity] = useState<string>("");
+  const [locationVillage, setLocationVillage] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+
   const { t } = useTranslation("filterEvents");
   const { isDarkMode } = useDarkMode();
 
   const applyFilters = async () => {
+    setFilter({ ...filter, locationCity, locationDistrict: locationVillage });
     await filterEvents();
     router.back();
+  };
+
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.geonames.org/searchJSON?username=emreerol0&country=TR&featureClass=P&maxRows=83`
+      )
+      .then((response) => {
+        const cityList = response.data.geonames.map((city: any) => ({
+          label: city.name,
+          value: city.name,
+        }));
+        setCities(cityList);
+        setLocationVillage("");
+      })
+      .catch((error) => {
+        console.error("Error fetching cities:", error);
+      });
+  }, []);
+
+  const fetchVillages = (city: string) => {
+    axios
+      .get(
+        `http://api.geonames.org/searchJSON?username=emreerol0&q=${city}&maxRows=60&featureClass=P`
+      )
+      .then((response) => {
+        const villageList = response.data.geonames.map((village: any) => ({
+          label: village.name,
+          value: village.name,
+        }));
+        setVillages(villageList);
+      })
+      .catch((error) => {
+        console.error("Error fetching villages:", error);
+      });
   };
 
   return (
@@ -51,7 +90,8 @@ const Page = () => {
           onPress={() => {
             setFilter({
               ...filter,
-              location: "All",
+              locationCity: null,
+              locationDistrict: null,
               date: "All",
               rating: 0,
             });
@@ -68,29 +108,53 @@ const Page = () => {
             text={t("location")}
           />
         </View>
-        <RNPickerSelect
-          onValueChange={(value) => setFilter({ ...filter, location: value })}
-          items={eventLocations.map((location) => ({
-            ...location,
-            label: t(`locations.${location.value}`),
-          }))}
-          style={{
-            ...pickerSelectStyles,
-            inputIOS: {
-              ...pickerSelectStyles.inputIOS,
-              backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
-              color: isDarkMode ? "#fff" : "#000",
-            },
-            inputAndroid: {
-              ...pickerSelectStyles.inputAndroid,
-              backgroundColor: isDarkMode ? "#444" : "#F0F0F0",
-              color: isDarkMode ? "#fff" : "#000",
-            },
-          }}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{ label: t("chooseLocation"), value: null }}
-          value={filter.location}
-        />
+        <View style={{ flexDirection: "row" }}>
+          <RNPickerSelect
+            useNativeAndroidPickerStyle={false}
+            onValueChange={(city) => {
+              setLocationCity(city);
+              setSelectedCity(city);
+              fetchVillages(city);
+            }}
+            items={cities}
+            placeholder={{
+              label: t("city"),
+              value: null,
+              color: "#9EA0A4",
+            }}
+            style={{
+              inputAndroid: [
+                styles.pickerStyles,
+                isDarkMode && styles.darkModePicker,
+              ],
+              inputIOS: [
+                styles.pickerStyles,
+                isDarkMode && styles.darkModePicker,
+              ],
+            }}
+          />
+          <RNPickerSelect
+            useNativeAndroidPickerStyle={false}
+            onValueChange={setLocationVillage}
+            items={villages}
+            placeholder={{
+              label: t("village"),
+              value: null,
+              color: "#9EA0A4",
+            }}
+            style={{
+              inputAndroid: [
+                styles.pickerStyles,
+                isDarkMode && styles.darkModePicker,
+              ],
+              inputIOS: [
+                styles.pickerStyles,
+                isDarkMode && styles.darkModePicker,
+              ],
+            }}
+            disabled={!selectedCity}
+          />
+        </View>
         <View style={[styles.titleWrapper, { marginTop: 20 }]}>
           <CustomText
             customStyle={[
@@ -125,10 +189,10 @@ const Page = () => {
 
         <View style={styles.titleWrapper}>
           <CustomText
-            customStyle={[
-              styles.sectionTitle,
-              { color: isDarkMode ? "#fff" : "#47315a" },
-            ]}
+            customStyle={{
+              ...styles.sectionTitle,
+              color: isDarkMode ? "#fff" : "#47315a",
+            }}
             text={t("rating")}
           />
         </View>
@@ -210,6 +274,22 @@ const styles = StyleSheet.create({
   },
   buttonTextSelected: {
     fontSize: 14,
+    color: "white",
+  },
+  pickerStyles: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    color: "black",
+    fontFamily: Platform.select({
+      android: "OpenSans_400Regular",
+      ios: "OpenSans-Regular",
+    }),
+  },
+  darkModePicker: {
+    borderColor: "#424242",
     color: "white",
   },
   applyButton: {

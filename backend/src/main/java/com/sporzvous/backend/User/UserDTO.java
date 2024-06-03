@@ -19,6 +19,7 @@ public class UserDTO {
     private String fullName;
     private String username;
     private int age;
+    private int eventCount;
     private String gender;
     private String favoriteSport;
     private List<FriendRequestDTO> receivedFriendRequests;
