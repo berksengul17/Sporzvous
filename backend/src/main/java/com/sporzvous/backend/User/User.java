@@ -1,9 +1,7 @@
 package com.sporzvous.backend.User;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sporzvous.backend.Event.Event;
 import com.sporzvous.backend.Feedback.Feedback;
 import com.sporzvous.backend.FriendRequest.FriendRequest;
@@ -16,7 +14,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -37,7 +38,7 @@ public class User {
     private int age;
     private String gender;
     private String favoriteSport;
-    private int eventCount;
+    private int eventCount = 0;
     private int isVerified;
     private UserStatus status;
     @ManyToMany
@@ -95,7 +96,7 @@ public class User {
 
     public User(Long userId, String email, String fullName,
                 String username, String country, int age, String gender,
-                String favoriteSport, int eventCount, int isVerified, UserStatus status) {
+                String favoriteSport, int isVerified, UserStatus status) {
         this.userId = userId;
         this.email = email;
         this.fullName = fullName;
@@ -104,14 +105,13 @@ public class User {
         this.age = age;
         this.gender = gender;
         this.favoriteSport = favoriteSport;
-        this.eventCount = eventCount;
         this.isVerified = isVerified;
         this.status = status;
     }
 
     public User(Long userId, String email, String password, String fullName,
                 String username, String country, int age, String gender,
-                String favoriteSport, int eventCount) {
+                String favoriteSport) {
         this.userId = userId;
         this.email = email;
         this.password = password;
@@ -121,7 +121,6 @@ public class User {
         this.age = age;
         this.gender = gender;
         this.favoriteSport = favoriteSport;
-        this.eventCount = eventCount;
     }
 
     public User(String email, String password, String username, String country) {

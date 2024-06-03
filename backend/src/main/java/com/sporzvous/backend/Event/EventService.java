@@ -51,6 +51,7 @@ public class EventService {
         if (status == 2) {
             for (User user : event.getUsers()) {
                 user.setEventCount(user.getEventCount() + 1);
+                userRepository.save(user);
             }
         }
         return eventRepository.save(event);
