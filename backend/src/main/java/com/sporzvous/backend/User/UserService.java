@@ -76,6 +76,7 @@ public class UserService {
                     userInfo.getFullName(),
                     userInfo.getUsername(),
                     userInfo.getAge(),
+                    userInfo.getEventCount(),
                     userInfo.getGender(),
                     userInfo.getFavoriteSport(),
                     receivedRequests,

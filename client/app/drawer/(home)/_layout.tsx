@@ -1,10 +1,10 @@
+import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
 import { useUserContext } from "@/context/UserProvider";
-import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { Stack, router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, Image } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
+import { Image, TouchableOpacity } from "react-native";
 
 export const unstable_settings = {
   initialRouteName: "join_event",
@@ -95,7 +95,7 @@ const _layout = () => {
               <Image
                 source={{
                   uri:
-                    imageUri ||
+                    user.image ||
                     Image.resolveAssetSource(
                       require("../../../assets/images/default-profile-photo.jpg")
                     ).uri,
