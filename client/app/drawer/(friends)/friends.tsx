@@ -20,6 +20,7 @@ import {
 import Modal from "react-native-modal";
 import { useDarkMode } from "@/context/DarkModeContext"; // Adjust the import path as necessary
 import { useTranslation } from "react-i18next"; // Import useTranslation
+import Toast from "react-native-toast-message";
 
 export default function FriendsScreen() {
   const { user } = useUserContext();
@@ -32,6 +33,7 @@ export default function FriendsScreen() {
   const [isConfirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [errorAddFriend, setErrorAddFriend] = useState("");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -51,20 +53,34 @@ export default function FriendsScreen() {
           },
         }
       );
-      setModalVisible(false);
-      setConfirmationMessage(t("sendRequestConfirm"));
-      setConfirmationModalVisible(true);
+      setErrorAddFriend("");
+      toggleModal();
+      Toast.show({
+        type: "error",
+        text1: t("unexpectedError"),
+        text2: "errorMessage",
+        position: "bottom",
+      });
+      //setConfirmationMessage(t("sendRequestConfirm"));
+      //setConfirmationModalVisible(true);
     } catch (err) {
-      let errorMessage = t("unexpectedError");
+      setErrorAddFriend(t("unexpectedError"));
+
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
-          errorMessage = err.response.data.error;
+          setErrorAddFriend(err.response.data.error);
         } else if (err instanceof Error) {
-          errorMessage = err.response?.data;
+          setErrorAddFriend(err.response?.data);
         }
       }
-      setConfirmationMessage(errorMessage);
-      setConfirmationModalVisible(true);
+
+      Toast.show({
+        type: "error",
+        text1: t("unexpectedError"),
+        text2: "errorMessage",
+        position: "bottom",
+      });
+      //se
     }
   };
 

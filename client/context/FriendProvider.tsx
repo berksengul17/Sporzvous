@@ -62,24 +62,18 @@ export const FriendProvider = ({ children }: { children: React.ReactNode }) => {
           })
         )
       );
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
+    } catch (err) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(err)) {
+        // err is an AxiosError here
+        if (err.response && err.response.data && err.response.data.error) {
+          errorMessage = err.response.data.error; // Use the error message from the backend
+        } else if (err instanceof Error) {
+          // Handle other types of errors (non-Axios errors)
+          errorMessage = err.response?.data;
         }
       }
+      throw new Error(errorMessage); // Throw the error so it can be caught in the component
     }
   };
 

@@ -16,7 +16,20 @@ export type Comment = {
 
 type CommentProps = {
   comments: Comment[];
+  filter: Filter;
+  setFilter: React.Dispatch<React.SetStateAction<Filter>>;
   fetchComments: () => Promise<void>;
+  filterComments: () => Promise<void>;
+};
+
+type Filter = {
+  sport: string;
+  locationCity: string;
+  locationDistrict: string;
+  date: string;
+  isEventOver: boolean;
+  userId: number;
+  minRating: number;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/ratings";
@@ -29,6 +42,15 @@ export const CommentProvider = ({
   children: React.ReactNode;
 }) => {
   const { user } = useUserContext();
+  const [filter, setFilter] = useState<Filter>({
+    sport: "",
+    locationCity: "",
+    locationDistrict: "",
+    date: "",
+    isEventOver: false,
+    userId: 0,
+    minRating: 0,
+  });
   const [comments, setComments] = useState<Comment[]>([]);
 
   const fetchComments = async () => {
@@ -74,11 +96,65 @@ export const CommentProvider = ({
     }
   };
 
+  const filterComments = async () => {
+    try {
+      let startDate;
+      let endDate;
+      let currDate: Date = new Date();
+      switch (filter.date) {
+        case "All":
+          startDate = null;
+          endDate = null;
+          break;
+        case "Today":
+          startDate = currDate.toISOString().split("T")[0];
+          endDate = currDate.toISOString().split("T")[0];
+          break;
+        case "This Week":
+          const first = currDate.getDate() - currDate.getDay();
+          const last = first + 6;
+          startDate = currDate.toISOString().split("T")[0];
+          endDate = new Date(currDate.setDate(last))
+            .toISOString()
+            .split("T")[0];
+          break;
+        case "This Month":
+          const year = currDate.getFullYear();
+          const month = currDate.getMonth() + 1;
+          endDate = new Date(year, month, 0).toISOString().split("T")[0];
+          break;
+      }
+
+      const filteredComments = await axios.get(`${API_URL}/filter`, {
+        params: {
+          sport: filter.sport.toUpperCase(),
+          locationCity: filter.locationCity,
+          locationDistrict: filter.locationDistrict,
+          startDate,
+          endDate,
+          isEventOver: filter.isEventOver,
+          userId: filter.userId,
+          minRating: filter.minRating,
+        },
+      });
+
+      setComments(
+        filteredComments.data.map((comment: Comment) => {
+          return {
+            ...comment,
+          };
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchComments();
   }, []);
 
-  const value = { comments, fetchComments };
+  const value = { comments, filter, setFilter, fetchComments, filterComments };
 
   return (
     <CommentContext.Provider value={value}>{children}</CommentContext.Provider>

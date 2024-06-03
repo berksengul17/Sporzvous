@@ -25,7 +25,7 @@ public class RatingRepositoryCustomImpl implements RatingRepositoryCustom{
         List<Predicate> predicates = new ArrayList<>();
 
         if (sport != null && !sport.isEmpty()) {
-            predicates.add(cb.equal(rating.get("field"), "sport"));
+            predicates.add(cb.equal(rating.get("sport_field"), sport));
         }
         if (date != null) {
             predicates.add(cb.equal(rating.get("publishDate"), date.toString()));

@@ -58,6 +58,7 @@ type EventContextType = {
     secondTeamScore: string
   ) => Promise<void>;
   changeStatus: (eventId: number, status: number) => Promise<void>;
+  deleteEvent: (id: number) => void;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/event";
@@ -227,6 +228,27 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const deleteEvent = async (eventId: number) => {
+    try {
+      const response = await axios.delete(`${API_URL}/delete/${eventId}`);
+      return response.data; // Assuming the server responds with a message
+    } catch (error) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          errorMessage = error.response.data.error;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+      }
+      throw new Error(errorMessage);
+    }
+  };
+
   const changeStatus = async (eventId: number, status: number) => {
     try {
       console.log("changing status for", eventId, "to", status);
@@ -263,6 +285,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     filterEvents,
     addScore,
     changeStatus,
+    deleteEvent,
   };
 
   return (

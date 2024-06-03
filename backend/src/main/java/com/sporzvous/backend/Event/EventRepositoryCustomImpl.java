@@ -22,7 +22,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (sport != null && !sport.isEmpty()) {
+            if (sport != null && !sport.isEmpty()) {
             predicates.add(cb.equal(event.get("sport"), sport));
         }
         if (locationCity != null && !locationCity.isEmpty()) {
