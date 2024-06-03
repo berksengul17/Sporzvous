@@ -8,12 +8,12 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
-  Alert,
   Pressable,
 } from "react-native";
 import CustomText from "@/components/CustomText";
 import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 
 const initialSportsData = [
@@ -65,6 +65,7 @@ const SportCard = ({
 
 const StepFour = () => {
   const { user, updateProfile } = useUserContext();
+  const { t } = useTranslation("setProfile4");
   const [selectedSport, setSelectedSport] = useState<Sport>();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -92,7 +93,7 @@ const StepFour = () => {
             <View style={styles.headerContainer}>
               <CustomText
                 customStyle={styles.headerText}
-                text="Select Your Favorite Sport"
+                text={t("select_favorite_sport")}
               />
             </View>
             <View style={styles.sportsGrid}>
@@ -110,14 +111,14 @@ const StepFour = () => {
                 style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
               >
-                <Text style={styles.buttonText}>Back</Text>
+                <Text style={styles.buttonText}>{t("back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rightButton]}
                 onPress={handleNext}
               >
                 <Text style={[styles.buttonText, { color: "white" }]}>
-                  Next
+                  {t("next")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -133,13 +134,13 @@ const StepFour = () => {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>
-                  Please select a favorite sport.
+                  {t("select_favorite_sport_error")}
                 </Text>
                 <Pressable
                   style={[styles.errorButton, styles.buttonClose]}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <Text style={styles.textStyle}>Close</Text>
+                  <Text style={styles.textStyle}>{t("close")}</Text>
                 </Pressable>
               </View>
             </View>

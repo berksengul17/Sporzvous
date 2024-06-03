@@ -1,0 +1,12 @@
+{
+    "username": "Username",
+    "email": "E-mail",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "passwords_do_not_match": "Passwords do not match.",
+    "back": "Back",
+    "sign_up": "Sign up",
+    "hide_modal": "Close",
+    "select_language": "Select Language"
+  }
+  

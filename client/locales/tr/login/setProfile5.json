@@ -1,0 +1,12 @@
+{
+    "rate_skills": "Bu sporlar için yeteneklerinizi değerlendirin",
+    "fetch_ratings_error": "Değerlendirmeleri almak başarısız oldu. Lütfen tekrar deneyin.",
+    "unexpected_error": "Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.",
+    "rate_skill_level": "Yetenek seviyenizi değerlendirin",
+    "close": "Kapat",
+    "save": "Kaydet",
+    "back": "Geri",
+    "next": "İleri",
+    "select_language": "Dil Seçimi"
+  }
+  

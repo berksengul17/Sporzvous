@@ -1,0 +1,15 @@
+{
+    "welcome": "Welcome to Sporzvous!",
+    "welcome_description": "Step into the world of Sporzvous, where your passion for sports meets cutting-edge technology! Our app is designed to bring sports enthusiasts together, offering a dynamic platform to create, join, and participate in a wide range of sports events. Experience seamless interaction, robust event management, and a thriving community of like-minded individuals, all at your fingertips.",
+    "features": "Features:",
+    "feature_create_join_events": "• Users can create or join existing events for a variety of sports.",
+    "feature_rate_others": "• Users can rate others based on their performance in events.",
+    "feature_must_join": "• Users must join events if they want to participate. Bad intentions will be punished upon reports of other users.",
+    "feature_event_duration": "• Duration of events is determined by the organizer. Ratings are available when events are finished.",
+    "feature_organize_events": "• Users can organize events with players of similar skill levels, ensuring balanced and enjoyable matches.",
+    "community_guidelines": "Community Guidelines:",
+    "guidelines_description": "We prioritize respect and courtesy within our community. When using the in-app chat feature, please adhere to our general courtesy rules. Always communicate respectfully and uphold the spirit of sportsmanship. Users who do not follow these guidelines will be banned upon receiving reports from other users.",
+    "ok_got_it": "OK, got it!",
+    "select_language": "Select Language"
+  }
+  

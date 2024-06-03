@@ -10,8 +10,11 @@ import CustomButton from "@/components/CustomButton";
 import { router } from "expo-router";
 import AuthHeader from "@/components/AuthHeader";
 import CustomText from "@/components/CustomText";
+import { useTranslation } from "react-i18next";
 
 const WelcomeScreen = () => {
+  const { t } = useTranslation("setProfile1");
+
   return (
     <ImageBackground
       source={require("../assets/images/sporzvouswp.png")}
@@ -24,20 +27,20 @@ const WelcomeScreen = () => {
           </View>
           <CustomText
             customStyle={styles.welcomeText}
-            text="Let's fire up your profile! 🔥"
+            text={t("lets_fire_up")}
           />
           <CustomText
             customStyle={styles.descriptionText}
-            text="Get ready to enhance your experience by setting up your profile. Fill
-            in your details to connect with others and participate in exciting
-            sports events."
+            text={t("get_ready")}
           />
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.rightButton]}
               onPress={() => router.push("setProfile2")}
             >
-              <Text style={[styles.buttonText, { color: "white" }]}>Next</Text>
+              <Text style={[styles.buttonText, { color: "white" }]}>
+                {t("next")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -57,8 +60,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     width: "100%",
-    justifyContent: "center", // Center the container vertically
-    alignItems: "center", // Center the container horizontally
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerContainer: {
     marginBottom: 20,
@@ -74,8 +77,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 15,
-    width: "80%", // Make the container width smaller
-    height: "52%", // Limit the container height
+    width: "80%",
+    height: "52%",
     position: "relative",
   },
   welcomeText: {

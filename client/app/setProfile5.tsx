@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Sport } from "./setProfile4";
 
 const initialSportsData = [
@@ -50,6 +51,7 @@ const SportCard = ({
 
 const StepFive = () => {
   const { user, setUser } = useUserContext();
+  const { t } = useTranslation("setProfile5");
   const [selectedSport, setSelectedSport] = useState<Sport>();
   const [selectedSportRating, setSelectedSportRating] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -66,7 +68,7 @@ const StepFive = () => {
         );
         setRatings(response.data);
       } catch (err) {
-        setErrorRating("Failed to fetch ratings. Please try again.");
+        setErrorRating(t("fetch_ratings_error"));
       }
     };
 
@@ -95,7 +97,7 @@ const StepFive = () => {
       setUser({ ...user, ratings });
       router.navigate("/drawer/(home)/sportsScreen");
     } catch (err) {
-      setErrorRating("An unexpected error occurred. Please try again.");
+      setErrorRating(t("unexpected_error"));
       if (axios.isAxiosError(err)) {
         if (err.response && err.response.data && err.response.data.error) {
           setErrorRating(err.response.data.error);
@@ -136,7 +138,7 @@ const StepFive = () => {
             <View style={styles.headerContainer}>
               <CustomText
                 customStyle={styles.headerText}
-                text="Rate your skills for these sports"
+                text={t("rate_skills")}
               />
             </View>
             <View style={styles.sportsGrid}>
@@ -153,7 +155,7 @@ const StepFive = () => {
                 style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
               >
-                <Text style={styles.buttonText}>Back</Text>
+                <Text style={styles.buttonText}>{t("back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Ionicons name="checkmark" size={30} color="#fff" />
@@ -169,7 +171,7 @@ const StepFive = () => {
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalView}>
-                <Text style={styles.modalTitle}>Rate your skill level</Text>
+                <Text style={styles.modalTitle}>{t("rate_skill_level")}</Text>
                 <Text style={styles.modalSportName}>{selectedSport?.name}</Text>
                 <View style={styles.ratingStars}>
                   <Rating
@@ -183,14 +185,14 @@ const StepFive = () => {
                     style={[styles.button, styles.leftButton]}
                     onPress={() => setModalVisible(false)}
                   >
-                    <Text style={styles.buttonText}>Close</Text>
+                    <Text style={styles.buttonText}>{t("close")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.button, styles.rightButton]}
                     onPress={handleRatingCompleted}
                   >
                     <Text style={[styles.buttonText, { color: "white" }]}>
-                      Save
+                      {t("save")}
                     </Text>
                   </TouchableOpacity>
                 </View>

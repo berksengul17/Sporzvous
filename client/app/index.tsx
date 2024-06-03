@@ -17,14 +17,18 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
   const { login } = useUserContext();
+  const { t, i18n } = useTranslation("login");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [errorLogin, setErrorLogin] = useState("");
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
 
   const onLogin = async () => {
     try {
@@ -36,8 +40,13 @@ const LoginPage = () => {
       setErrorLogin("");
     } catch (error) {
       setErrorLogin((error as Error).message);
-      setModalVisible(true); // Show modal on error
+      setModalVisible(true);
     }
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    setLanguageModalVisible(false);
   };
 
   return (
@@ -46,7 +55,7 @@ const LoginPage = () => {
         <ImageBackground
           source={require("../assets/images/sporzvouswp.png")}
           style={styles.background}
-          imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
+          imageStyle={{ opacity: 0.3 }}
         >
           <View style={styles.overlay}>
             <View style={styles.container}>
@@ -56,37 +65,44 @@ const LoginPage = () => {
                   style={[styles.input, { marginBottom: 15 }]}
                   value={email}
                   onChangeText={setEmail}
-                  placeholder="Username"
+                  placeholder={t("username")}
                   placeholderTextColor={"#6F6F6F"}
                 />
                 <TextInput
                   style={[styles.input, { marginBottom: 24 }]}
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="Password"
+                  placeholder={t("password")}
                   placeholderTextColor={"#6F6F6F"}
                   secureTextEntry
                 />
                 <CustomButton
                   onPress={onLogin}
-                  title="Login"
+                  title={t("login")}
                   containerStyle={styles.loginButton}
                 />
                 <TouchableOpacity onPress={() => router.navigate("/forgotpw")}>
                   <CustomText
-                    text="Reset Password"
+                    text={t("reset_password")}
                     customStyle={styles.resetText}
                   />
                 </TouchableOpacity>
                 <CustomButton
                   onPress={() => router.navigate("/register")}
-                  title="Sign up for free"
+                  title={t("sign_up_for_free")}
                   containerStyle={styles.signUpButton}
                 />
               </View>
             </View>
           </View>
         </ImageBackground>
+        <MaterialIcons
+          name="language"
+          size={30}
+          color="black"
+          style={styles.languageIcon}
+          onPress={() => setLanguageModalVisible(true)}
+        />
         <Modal
           animationType="fade"
           transparent={true}
@@ -110,6 +126,40 @@ const LoginPage = () => {
             </View>
           </View>
         </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={languageModalVisible}
+          onRequestClose={() => {
+            setLanguageModalVisible(!languageModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.languageModalView}>
+              <Text style={{ fontWeight: "bold" }}>{t("select_language")}</Text>
+              <View style={styles.buttonContainer}>
+                <Pressable
+                  style={styles.languageButton}
+                  onPress={() => changeLanguage("en")}
+                >
+                  <Text style={styles.textStyle}>English</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.languageButton}
+                  onPress={() => changeLanguage("tr")}
+                >
+                  <Text style={styles.textStyle}>Türkçe</Text>
+                </Pressable>
+              </View>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setLanguageModalVisible(!languageModalVisible)}
+              >
+                <Text style={styles.textStyle}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -125,22 +175,28 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)", // Subtle darker overlay to improve text visibility
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
   container: {
     flex: 1,
-    width: "90%", // Add padding from left and right
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20, // Optional: add inner padding if needed
+    paddingHorizontal: 20,
+  },
+  languageIcon: {
+    position: "absolute",
+    top: 60, // Adjust based on your design
+    right: 20, // Adjust based on your design
+    zIndex: 10, // Ensure it is on top of other elements
   },
   formContainer: {
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Slight background color for form container
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 10,
     padding: 20,
   },
@@ -152,7 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 15,
     marginVertical: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for input fields
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     fontSize: 16,
   },
   loginButton: {
@@ -196,6 +252,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  languageModalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   button: {
     borderRadius: 20,
     padding: 10,
@@ -206,6 +277,14 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: "#FF5C00",
+  },
+  languageButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: "#FF5C00",
+    marginVertical: 10,
+    marginHorizontal: 15,
   },
   textStyle: {
     color: "white",
@@ -218,6 +297,11 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    margin: 5,
+    paddingVertical: 10,
   },
 });
 

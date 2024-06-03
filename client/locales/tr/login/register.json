@@ -1,0 +1,12 @@
+{
+    "username": "Kullanıcı Adı",
+    "email": "E-posta",
+    "password": "Şifre",
+    "confirm_password": "Şifreyi Onayla",
+    "passwords_do_not_match": "Şifreler uyuşmuyor.",
+    "back": "Geri",
+    "sign_up": "Kayıt Ol",
+    "hide_modal": "Kapat",
+    "select_language": "Dil Seçimi"
+  }
+  

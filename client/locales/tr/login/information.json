@@ -1,0 +1,15 @@
+{
+    "welcome": "Sporzvous'a Hoşgeldiniz!",
+    "welcome_description": "Sporzvous dünyasına adım atın, spor tutkunuzun ileri teknoloji ile buluştuğu yer! Uygulamamız, spor meraklılarını bir araya getirmek için tasarlandı ve çeşitli spor etkinlikleri yaratmak, katılmak ve katılmak için dinamik bir platform sunuyor. Kesintisiz etkileşim, sağlam etkinlik yönetimi ve benzer düşüncelere sahip bireylerden oluşan gelişen bir topluluğu parmaklarınızın ucunda deneyimleyin.",
+    "features": "Özelliklerimiz:",
+    "feature_create_join_events": "• Kullanıcılar, çeşitli sporlar için mevcut etkinlikleri oluşturabilir veya mevcut etkinliklere katılabilir.",
+    "feature_rate_others": "• Kullanıcılar, etkinliklerdeki performanslarına göre diğerlerini değerlendirebilir.",
+    "feature_must_join": "• Katılmak istiyorlarsa kullanıcılar etkinliklere katılmalıdır. Diğer kullanıcıların bildirmesi durumunda kötü niyetler cezalandırılacaktır.",
+    "feature_event_duration": "• Etkinliklerin süresi organizatör tarafından belirlenir. Etkinlikler tamamlandığında derecelendirmeler mevcuttur.",
+    "feature_organize_events": "• Kullanıcılar, benzer beceri seviyelerindeki oyuncularla etkinlikler düzenleyerek dengeli ve keyifli maçlar sağlayabilir.",
+    "community_guidelines": "Topluluk Kuralları:",
+    "guidelines_description": "Topluluğumuzda saygı ve nezaketi ön planda tutuyoruz. Uygulama içi sohbet özelliğini kullanırken genel nezaket kurallarımıza uyun. Her zaman saygılı bir şekilde iletişim kurun ve spor ruhunu koruyun. Bu kurallara uymayan kullanıcılar, diğer kullanıcıların bildirmesi üzerine yasaklanacaktır.",
+    "ok_got_it": "Tamam, anladım!",
+    "select_language": "Dil Seçimi"
+  }
+  

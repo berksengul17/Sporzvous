@@ -1,0 +1,16 @@
+{
+    "fill_in_details": "Fill in your personal details",
+    "name_surname": "Name/Surname",
+    "enter_full_name": "Enter your full name",
+    "age": "Age",
+    "enter_age": "Enter your age",
+    "gender": "Gender",
+    "select_gender": "Select your gender...",
+    "male": "Male",
+    "female": "Female",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "select_language": "Select Language"
+  }
+  

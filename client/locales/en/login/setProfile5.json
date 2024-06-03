@@ -1,0 +1,12 @@
+{
+    "rate_skills": "Rate your skills for these sports",
+    "fetch_ratings_error": "Failed to fetch ratings. Please try again.",
+    "unexpected_error": "An unexpected error occurred. Please try again.",
+    "rate_skill_level": "Rate your skill level",
+    "close": "Close",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "select_language": "Select Language"
+  }
+  

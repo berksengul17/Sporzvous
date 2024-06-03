@@ -1,0 +1,16 @@
+{
+    "fill_in_details": "Kişisel bilgilerinizi doldurun",
+    "name_surname": "Ad/Soyad",
+    "enter_full_name": "Tam adınızı girin",
+    "age": "Yaş",
+    "enter_age": "Yaşınızı girin",
+    "gender": "Cinsiyet",
+    "select_gender": "Cinsiyetinizi seçin...",
+    "male": "Erkek",
+    "female": "Kadın",
+    "back": "Geri",
+    "next": "İleri",
+    "close": "Kapat",
+    "select_language": "Dil Seçimi"
+  }
+  

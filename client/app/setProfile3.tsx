@@ -14,10 +14,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { uploadToFirebase } from "../firebaseConfig";
 
 const StepThree = () => {
   const { user, updateProfile } = useUserContext();
+  const { t } = useTranslation("setProfile3");
   const defaultImageUri = Image.resolveAssetSource(
     require("../assets/images/defaultpp.jpg")
   ).uri;
@@ -34,7 +36,7 @@ const StepThree = () => {
     if (source === "camera") {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== "granted") {
-        alert("Sorry, we need camera permissions to make this work!");
+        alert(t("camera_permission"));
         return;
       }
       result = await ImagePicker.launchCameraAsync({
@@ -48,7 +50,7 @@ const StepThree = () => {
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
+        alert(t("gallery_permission"));
         return;
       }
       result = await ImagePicker.launchImageLibraryAsync({
@@ -86,7 +88,9 @@ const StepThree = () => {
         <View style={styles.overlay}>
           <View style={styles.container}>
             <View style={styles.headerContainer}>
-              <Text style={styles.headerText}>Upload Your Profile Picture</Text>
+              <Text style={styles.headerText}>
+                {t("upload_profile_picture")}
+              </Text>
             </View>
             <View style={styles.imagePickerContainer}>
               <TouchableOpacity
@@ -114,14 +118,14 @@ const StepThree = () => {
                 style={[styles.button, styles.leftButton]}
                 onPress={() => router.back()}
               >
-                <Text style={styles.buttonText}>Back</Text>
+                <Text style={styles.buttonText}>{t("back")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rightButton]}
                 onPress={handleNext}
               >
                 <Text style={[styles.buttonText, { color: "white" }]}>
-                  Next
+                  {t("next")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -135,13 +139,15 @@ const StepThree = () => {
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalView}>
-                <Text style={styles.modalTitle}>Select Image Source</Text>
+                <Text style={styles.modalTitle}>
+                  {t("select_image_source")}
+                </Text>
                 <TouchableOpacity
                   style={styles.modalOption}
                   onPress={() => handleImagePick("camera")}
                 >
                   <Ionicons name="camera" size={24} color="#FF5C00" />
-                  <Text style={styles.modalOptionText}>Take Photo</Text>
+                  <Text style={styles.modalOptionText}>{t("take_photo")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.modalOption}
@@ -153,7 +159,7 @@ const StepThree = () => {
                     color="#FF5C00"
                   />
                   <Text style={styles.modalOptionText}>
-                    Choose from Gallery
+                    {t("choose_from_gallery")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -161,7 +167,7 @@ const StepThree = () => {
                   onPress={() => setModalVisible(false)}
                 >
                   <Ionicons name="arrow-back" size={24} color="#FF5C00" />
-                  <Text style={styles.modalOptionText}>Cancel</Text>
+                  <Text style={styles.modalOptionText}>{t("cancel")}</Text>
                 </TouchableOpacity>
               </View>
             </View>

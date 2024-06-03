@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
-  Alert,
   Text,
   Pressable,
   TouchableOpacity,
@@ -17,10 +16,11 @@ import CustomText from "@/components/CustomText";
 import RNPickerSelect from "react-native-picker-select";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const StepTwo = () => {
   const { user, updateProfile } = useUserContext();
+  const { t } = useTranslation("setProfile2");
   const [fullName, setFullName] = useState<string>("");
   const [age, setAge] = useState<string>("");
   const [gender, setGender] = useState<string>("");
@@ -55,38 +55,41 @@ const StepTwo = () => {
               <View style={styles.headerContainer}>
                 <CustomText
                   customStyle={styles.headerText}
-                  text="Fill in your personal details"
+                  text={t("fill_in_details")}
                 />
               </View>
               <View style={styles.userInfo}>
-                <CustomText text="Name/Surname" customStyle={styles.label} />
+                <CustomText
+                  text={t("name_surname")}
+                  customStyle={styles.label}
+                />
                 <TextInput
                   value={fullName}
                   onChangeText={setFullName}
                   style={styles.inputs}
-                  placeholder="Enter your full name"
+                  placeholder={t("enter_full_name")}
                   placeholderTextColor="#c1bbbb"
                 />
               </View>
               <View style={styles.userInfo}>
-                <CustomText text="Age" customStyle={styles.label} />
+                <CustomText text={t("age")} customStyle={styles.label} />
                 <TextInput
                   value={age}
                   onChangeText={setAge}
                   keyboardType="numeric"
                   style={styles.inputs}
-                  placeholder="Enter your age"
+                  placeholder={t("enter_age")}
                   placeholderTextColor="#c1bbbb"
                 />
               </View>
               <View style={styles.userInfo}>
-                <CustomText text="Gender" customStyle={styles.label} />
+                <CustomText text={t("gender")} customStyle={styles.label} />
                 <View style={{ flex: 1 }}>
                   <RNPickerSelect
                     onValueChange={(newGender) => setGender(newGender)}
                     items={[
-                      { label: "Male", value: "male" },
-                      { label: "Female", value: "female" },
+                      { label: t("male"), value: "male" },
+                      { label: t("female"), value: "female" },
                     ]}
                     useNativeAndroidPickerStyle={false}
                     style={{
@@ -94,7 +97,7 @@ const StepTwo = () => {
                       inputAndroid: inputStyle,
                     }}
                     placeholder={{
-                      label: "Select your gender...",
+                      label: t("select_gender"),
                       value: null,
                     }}
                   />
@@ -105,14 +108,14 @@ const StepTwo = () => {
                   style={[styles.button, styles.leftButton]}
                   onPress={() => router.back()}
                 >
-                  <Text style={styles.buttonText}>Back</Text>
+                  <Text style={styles.buttonText}>{t("back")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.button, styles.rightButton]}
                   onPress={handleNext}
                 >
                   <Text style={[styles.buttonText, { color: "white" }]}>
-                    Next
+                    {t("next")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -133,7 +136,7 @@ const StepTwo = () => {
                   style={[styles.errorButton, styles.buttonClose]}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <Text style={styles.textStyle}>Close</Text>
+                  <Text style={styles.textStyle}>{t("close")}</Text>
                 </Pressable>
               </View>
             </View>

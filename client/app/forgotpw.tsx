@@ -2,7 +2,7 @@ import AuthHeader from "@/components/AuthHeader";
 import CustomButton from "@/components/CustomButton";
 import { useUserContext } from "@/context/UserProvider";
 import { router } from "expo-router";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import {
   ImageBackground,
@@ -18,6 +18,8 @@ import {
 
 const Forgotpw = () => {
   const { requestPasswordReset } = useUserContext();
+  const { t } = useTranslation("forgotPw");
+
   const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [errorResetRequest, setErrorResetRequest] = useState("");
@@ -28,9 +30,8 @@ const Forgotpw = () => {
       setErrorResetRequest("");
       router.push({ pathname: "verificationCode", params: { email } });
     } catch (error) {
-      // Handle error
       setErrorResetRequest((error as Error).message);
-      setModalVisible(true); // Show error modal
+      setModalVisible(true);
     }
   };
 
@@ -40,7 +41,7 @@ const Forgotpw = () => {
         <ImageBackground
           source={require("../assets/images/sporzvouswp.png")}
           style={styles.background}
-          imageStyle={{ opacity: 0.3 }} // Adjust the opacity here
+          imageStyle={{ opacity: 0.3 }}
         >
           <View style={styles.overlay}>
             <View style={styles.container}>
@@ -50,16 +51,16 @@ const Forgotpw = () => {
                   style={styles.input}
                   value={email}
                   onChangeText={setEmail}
-                  placeholder="E-Mail"
+                  placeholder={t("email")}
                   placeholderTextColor={"#6F6F6F"}
                 />
                 <CustomButton
                   onPress={onRequestPasswordReset}
-                  title="Request Password Reset"
+                  title={t("request_password_reset")}
                 />
                 <CustomButton
                   onPress={() => router.back()}
-                  title="Back"
+                  title={t("back")}
                   containerStyle={styles.backBtn}
                 />
               </View>
@@ -75,7 +76,6 @@ const Forgotpw = () => {
           }}
         >
           <View style={styles.centeredView}>
-            <View style={styles.overlay} />
             <View style={styles.modalView}>
               <Text style={styles.modalText}>{errorResetRequest}</Text>
               <Pressable
@@ -102,23 +102,23 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)", // Subtle darker overlay to improve text visibility
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
   container: {
     flex: 1,
-    width: "90%", // Add padding from left and right
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20, // Optional: add inner padding if needed
+    paddingHorizontal: 20,
   },
   formContainer: {
     height: "60%",
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Slight background color for form container
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 10,
     padding: 40,
     marginTop: 50,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 15,
     marginVertical: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for input fields
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     fontSize: 16,
   },
   backButtonText: {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slight background color for modal view
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
-    color: "#000", // Black text color for modal text
+    color: "#000",
   },
   backBtn: {
     width: "100%",
