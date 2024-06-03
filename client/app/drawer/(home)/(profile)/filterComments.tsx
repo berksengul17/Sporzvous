@@ -1,6 +1,8 @@
 import CustomText from "@/components/CustomText";
+import { useCommentContext } from "@/context/CommentProvider";
 import { useRoute } from "@react-navigation/native";
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,18 +12,18 @@ import {
 } from "react-native";
 
 // Constants for filter options
-const sportsTypes = [
-  "All",
-  "Basketball",
-  "Football",
-  "Volleyball",
-  "Tennis",
-  "Baseball",
-  "Badminton",
-  "Handball",
-  "Ice Hockey",
-  "Paintball",
+const initialSportsData = [
+  { id: "1", label: "Basketball", value: "basketball" },
+  { id: "2", label: "Football", value: "football" },
+  { id: "3", label: "Volleyball", value: "volleyball" },
+  { id: "4", label: "Tennis", value: "tennis" },
+  { id: "5", label: "Baseball", value: "baseball" },
+  { id: "6", label: "Badminton", value: "badminton" },
+  { id: "7", label: "Handball", value: "handball" },
+  { id: "8", label: "Ice Hockey", value: "ice_hockey" }, // Corrected value
+  { id: "9", label: "Paintball", value: "paintball" }, // Corrected value
 ];
+
 const dateOptions = ["All", "Today", "This Week", "This Month"];
 const ratingOptions = [
   { label: "All", minRating: 0 },
@@ -33,6 +35,7 @@ const ratingOptions = [
 
 const FilterComments = () => {
   const route = useRoute();
+  const { filter, setFilter, filterComments } = useCommentContext();
   const { sortedComments: sortedCommentsJson } = route.params; // Destructure and retrieve the event JSON string
 
   let sortedComments;
@@ -47,23 +50,22 @@ const FilterComments = () => {
   //   return ["All"]; // Fallback to default if sortedComments is not available
   // }, [sortedComments]);
 
-  const [selectedSport, setSelectedSport] = useState("All");
-  const [selectedDate, setSelectedDate] = useState("All");
-  const [selectedRating, setSelectedRating] = useState(0);
-
-  const applyFilters = () => ({
-    sport: selectedSport,
-    date: selectedDate,
-    rating: selectedRating,
-  });
+  const applyFilters = async () => {
+    setFilter({ ...filter });
+    await filterComments();
+    router.back();
+  };
 
   return (
     <ScrollView style={styles.container}>
       <TouchableOpacity
         onPress={() => {
-          setSelectedSport("All");
-          setSelectedDate("All");
-          setSelectedRating(0);
+          setFilter({
+            ...filter,
+            sport: "All",
+            date: "All",
+            minRating: 0,
+          });
         }}
       >
         <CustomText customStyle={styles.clearText} text="Clear Filters" />
@@ -73,22 +75,22 @@ const FilterComments = () => {
         <CustomText customStyle={styles.sectionTitle} text="Sport" />
       </View>
       <View style={styles.buttonContainer}>
-        {sportsTypes.map((sport) => (
+        {initialSportsData.map((sport) => (
           <TouchableOpacity
-            key={sport}
+            key={sport.id}
             style={[
               styles.button,
-              selectedSport === sport && styles.buttonSelected,
+              filter.sport === sport.label && styles.buttonSelected,
             ]}
-            onPress={() => setSelectedSport(sport)}
+            onPress={() => setFilter({ ...filter, sport: sport.label })}
           >
             <Text
               style={[
                 styles.buttonText,
-                selectedSport === sport && styles.buttonTextSelected,
+                filter.sport === sport.label && styles.buttonTextSelected,
               ]}
             >
-              {sport}
+              {sport.label}
             </Text>
           </TouchableOpacity>
         ))}
@@ -103,14 +105,14 @@ const FilterComments = () => {
             key={date}
             style={[
               styles.button,
-              selectedDate === date && styles.buttonSelected,
+              filter.date === date && styles.buttonSelected,
             ]}
-            onPress={() => setSelectedDate(date)}
+            onPress={() => setFilter({ ...filter, date })}
           >
             <Text
               style={[
                 styles.buttonText,
-                selectedDate === date && styles.buttonTextSelected,
+                filter.date === date && styles.buttonTextSelected,
               ]}
             >
               {date}
@@ -127,14 +129,16 @@ const FilterComments = () => {
             key={option.label}
             style={[
               styles.button,
-              selectedRating === option.minRating && styles.buttonSelected,
+              filter.minRating === option.minRating && styles.buttonSelected,
             ]}
-            onPress={() => setSelectedRating(option.minRating)}
+            onPress={() =>
+              setFilter({ ...filter, minRating: option.minRating })
+            }
           >
             <Text
               style={[
                 styles.buttonText,
-                selectedRating === option.minRating &&
+                filter.minRating === option.minRating &&
                   styles.buttonTextSelected,
               ]}
             >

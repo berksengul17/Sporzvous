@@ -1,9 +1,9 @@
-import { useEventContext } from "@/context/EventProvider";
-import { useUserContext } from "@/context/UserProvider";
 import { useDarkMode } from "@/context/DarkModeContext";
-import { useTranslation } from "react-i18next";
+import { Event } from "@/context/EventProvider";
+import { useUserContext } from "@/context/UserProvider";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   Pressable,
@@ -32,13 +32,8 @@ export default function JoinEventScreen() {
 
   const handleJoin = async () => {
     try {
-      const response = await joinEvent(parsedEvent);
-      if (response.status === 200) {
-        setModalMessage(t("joinSuccess"));
-      } else {
-        setModalMessage(t("joinFail"));
-      }
-      setModalVisible(true);
+      await joinEvent(parsedEvent);
+      router.back();
     } catch (error) {
       setModalMessage(t("joinError"));
       setModalVisible(true);

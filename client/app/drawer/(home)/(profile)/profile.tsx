@@ -3,6 +3,7 @@ import CustomText from "@/components/CustomText";
 import Rating from "@/components/Rating";
 import { useDarkMode } from "@/context/DarkModeContext"; // Ensure this is the correct path to your DarkModeContext
 import { useUserContext } from "@/context/UserProvider";
+import { uploadToFirebase } from "@/firebaseConfig";
 import {
   useOrganizationRatings,
   useOverallRatings,
@@ -126,8 +127,11 @@ const Profile = () => {
     }
 
     if (!result.canceled && result.assets.length > 0) {
-      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-      setImageUri(base64Image);
+      const { uri } = result.assets[0];
+      setImageUri(uri);
+      const uploadResp = await uploadToFirebase(uri, uri.split("/").pop());
+      console.log(uploadResp);
+      await updateProfile({ ...user, image: uploadResp.downloadUrl });
     }
     setImageSourceModalVisible(false);
   };
@@ -285,17 +289,6 @@ const Profile = () => {
               </View>
             </View>
           </Modal>
-          <View style={{ alignItems: "center" }}>
-            <CustomText
-              text={t("verified")}
-              customStyle={{
-                alignSelf: "flex-start",
-                marginBottom: 10,
-                color: isDarkMode ? "#fff" : "#333",
-              }}
-            />
-            <CustomText text="" customStyle={styles.headerRectangle} />
-          </View>
           <View style={{ alignItems: "center" }}>
             <CustomText
               text={t("eventCount")}
