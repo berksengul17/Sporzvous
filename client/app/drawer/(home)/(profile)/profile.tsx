@@ -305,7 +305,7 @@ const Profile = () => {
               }}
             />
             <CustomText
-              text="107"
+              text={user.eventCount.toString()}
               customStyle={{
                 ...styles.headerRectangle,
                 color: isDarkMode ? "#fff" : "#333",

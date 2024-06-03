@@ -55,7 +55,7 @@ public class RatingController {
         }
     }
 
-    @GetMapping("/get-all-comments/{userID}")
+    @GetMapping("/get-all-comments/{userId}")
     public ResponseEntity<?> getComments(@PathVariable Long userId ) {
         try {
             List<Rating> ratings = ratingService.getComments(userId);

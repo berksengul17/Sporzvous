@@ -1,16 +1,27 @@
-import React, { useMemo, useState } from "react";
+import CustomText from "@/components/CustomText";
+import { useRoute } from "@react-navigation/native";
+import React, { useState } from "react";
 import {
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
+  View,
 } from "react-native";
-import { Entypo, AntDesign } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import CustomText from "@/components/CustomText";
 
 // Constants for filter options
+const sportsTypes = [
+  "All",
+  "Basketball",
+  "Football",
+  "Volleyball",
+  "Tennis",
+  "Baseball",
+  "Badminton",
+  "Handball",
+  "Ice Hockey",
+  "Paintball",
+];
 const dateOptions = ["All", "Today", "This Week", "This Month"];
 const ratingOptions = [
   { label: "All", minRating: 0 },
@@ -28,13 +39,13 @@ const FilterComments = () => {
   if (sortedCommentsJson) {
     sortedComments = JSON.parse(sortedCommentsJson);
   }
-  const sportsTypes = useMemo(() => {
-    if (sortedComments) {
-      const types = new Set(sortedComments.map((comment) => comment.type));
-      return ["All", ...types];
-    }
-    return ["All"]; // Fallback to default if sortedComments is not available
-  }, [sortedComments]);
+  // const sportsTypes = useMemo(() => {
+  //   if (sortedComments) {
+  //     const types = new Set(sortedComments.map((comment) => comment.type));
+  //     return ["All", ...types];
+  //   }
+  //   return ["All"]; // Fallback to default if sortedComments is not available
+  // }, [sortedComments]);
 
   const [selectedSport, setSelectedSport] = useState("All");
   const [selectedDate, setSelectedDate] = useState("All");
