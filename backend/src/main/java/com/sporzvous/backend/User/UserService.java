@@ -71,7 +71,7 @@ public class UserService {
 
             return new UserDTO(
                     userInfo.getUserId(),
-                    userInfo.getImageAsBase64(),
+                    userInfo.getImage(),
                     userInfo.getEmail(),
                     userInfo.getFullName(),
                     userInfo.getUsername(),
@@ -142,9 +142,11 @@ public class UserService {
         if (profileUpdateDto.getFavoriteSport() != null) {
             user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
         }
-//        if (profileUpdateDto.getFavoriteSport() != null)  {
-//            user.setFavoriteSport(profileUpdateDto.getFavoriteSport());
-//        } else {
+
+        if (profileUpdateDto.getImage() != null)  {
+            user.setImage(profileUpdateDto.getImage());
+        }
+//        else {
 //            throw new IllegalArgumentException("Favorite sport is not chosen while updating");
 //        }
 //

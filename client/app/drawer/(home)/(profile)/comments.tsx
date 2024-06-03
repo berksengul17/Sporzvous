@@ -1,18 +1,16 @@
+import CommentItem from "@/components/CommentItem";
+import CustomText from "@/components/CustomText";
+import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  View,
-  StyleSheet,
   FlatList,
-  TouchableOpacity,
   ScrollView,
-  Modal,
-  Button,
-  Text,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import CommentItem from "@/components/CommentItem";
-import { router } from "expo-router";
-import CustomText from "@/components/CustomText";
+
 import { useCommentContext } from "@/context/CommentProvider";
 import { useUserContext } from "@/context/UserProvider";
 import { useIsFocused } from "@react-navigation/native";
@@ -45,76 +43,66 @@ const parseDate = (dateStr) => {
 };
 
 const Page = () => {
-  const { fetchComments } = useCommentContext();
+  const { comments, fetchComments } = useCommentContext();
   const { user } = useUserContext();
   const [selectedType, setSelectedType] = useState("All");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedSport, setSelectedSport] = useState("");
   const isFocused = useIsFocused();
-  const [commentData, setCommentData] = useState<Comment[]>([]);
 
   useEffect(() => {
-    const getMyEvents = async () => {
-      console.log("fetching my events");
-      setCommentData(await fetchComments());
-      console.log("fetched my events");
+    const getMyComments = async () => {
+      console.log("fetching my comments");
+      await fetchComments();
+      console.log("fetched my comments");
     };
     if (isFocused) {
-      getMyEvents();
+      getMyComments();
     }
   }, [isFocused, user]);
 
-  const sortedComments = useMemo(() => {
-    return commentData
-      .map((comment) => ({
-        ...comment,
-        readableDate: parseDate(comment.commentDate),
-        // Adding a sortableDate for consistent sorting
-        sortableDate: new Date(
-          comment.commentDate.split("/").reverse().join("-")
-        ),
-      }))
-      .sort((a, b) => b.sortableDate - a.sortableDate); // Sort by newly created sortableDate
-  }, [commentData]);
+  // const comments = useMemo(() => {
+  //   return myComments
+  //     .map((comment) => ({
+  //       ...comment,
+  //       readableDate: parseDate(comment.commentDate),
+  //       // Adding a sortableDate for consistent sorting
+  //       sortableDate: new Date(
+  //         comment.commentDate.split("/").reverse().join("-")
+  //       ),
+  //     }))
+  //     .sort((a, b) => b.sortableDate - a.sortableDate); // Sort by newly created sortableDate
+  // }, []);
 
   const filterCounts = useMemo(() => {
-    const countMap = { All: sortedComments.length, Organization: 0, Sports: 0 };
-    sortedComments.forEach((comment) => {
-      if (comment.type === "Organization") {
+    const countMap = { All: comments.length, Organization: 0, Sports: 0 };
+    comments.forEach((comment) => {
+      if (comment.type === "ORGANIZATION") {
         countMap["Organization"] += 1;
       } else {
         countMap["Sports"] += 1;
       }
     });
     return countMap;
-  }, [sortedComments]);
+  }, [comments]);
 
-  const filters = useMemo(
-    () => ["All", "Organization", "Sports"],
-    [commentData]
-  );
+  const filters = useMemo(() => ["All", "Organization", "Sports"], []);
 
   const filteredComments = useMemo(() => {
     switch (selectedType) {
       case "All":
-        return sortedComments;
+        return comments;
       case "Organization":
-        return sortedComments.filter(
-          (comment) => comment.type === "Organization"
-        );
+        return comments.filter((comment) => comment.type === "ORGANIZATION");
       case "Sports":
-        return sortedComments.filter(
-          (comment) => comment.type !== "Organization"
-        );
+        return comments.filter((comment) => comment.type !== "ORGANIZATION");
       default:
         return [];
     }
-  }, [selectedType, sortedComments]);
+  }, [selectedType, comments]);
 
   const sportTypes = useMemo(() => {
-    const types = new Set(sortedComments.map((comment) => comment.type));
+    const types = new Set(comments.map((comment) => comment.type));
     return ["All", ...types];
-  }, [sortedComments]);
+  }, [comments]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -149,7 +137,7 @@ const Page = () => {
           onPress={() =>
             router.push({
               pathname: "drawer/(home)/(profile)/filterComments",
-              params: { sortedComments: JSON.stringify(sortedComments) },
+              params: { comments: JSON.stringify(comments) },
             })
           }
         >
@@ -159,7 +147,7 @@ const Page = () => {
       <FlatList
         data={filteredComments}
         renderItem={({ item }) => <CommentItem comment={item} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );

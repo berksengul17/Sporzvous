@@ -41,7 +41,7 @@ const EventItem = ({ event, user }: { event: Event; user: User }) => {
     >
       <Image
         source={
-          event.organizerImage ? { uri: event.organizerImage } : defaultImage
+          event.organizer.image ? { uri: event.organizer.image } : defaultImage
         }
         style={styles.eventImage}
       />

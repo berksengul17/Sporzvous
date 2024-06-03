@@ -1,20 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { User } from "./UserProvider";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { User, useUserContext } from "./UserProvider";
 
-type Comment = {
+export type Comment = {
   id: number;
   type: string;
+  sportField: string;
   rating: number;
-  commentor: User;
-  commentDate: string;
   commentPreview: string;
-  profilePicUrl: string;
+  commentDate: string;
+  event: Event;
+  commentor: User;
+  receiver: User;
 };
 
 type CommentProps = {
   comments: Comment[];
-  fetchComments: () => void;
+  fetchComments: () => Promise<void>;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/ratings";
@@ -26,26 +28,49 @@ export const CommentProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { user } = useUserContext();
   const [comments, setComments] = useState<Comment[]>([]);
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`${API_URL}/get-all-comments`);
+      const response = await axios.get(
+        `${API_URL}/get-all-comments/${user.userId}`
+      );
       console.log("RESPONSE", response.data);
 
-      const comments = response.data.map((comment: Comment) => {
-        console.log("Processing event:", comment);
-        return {
-          ...comment,
-          commentDate: new Date(comment.commentDate).toLocaleDateString(),
-        };
-      });
-
-      console.log("MY Comments", comments);
-
-      return comments;
+      if (response.data.length > 0) {
+        setComments(
+          response.data.map(
+            (comment: {
+              ratingId: number;
+              category: string;
+              sportField: string;
+              rating: number;
+              content: string;
+              publishDate: string;
+              event: Event;
+              sender: User;
+              receiver: User;
+            }) => {
+              return {
+                id: comment.ratingId,
+                type: comment.category,
+                sportField: comment.sportField,
+                rating: comment.rating,
+                commentPreview: comment.content,
+                commentDate: comment.publishDate,
+                event: comment.event,
+                commentor: comment.sender,
+                receiver: comment.receiver,
+              };
+            }
+          )
+        );
+      }
     } catch (error) {
       console.error("Failed to fetch comments", error);
+      console.log("Failed to fetch comments", error.request);
+      console.log("Failed to fetch comments", error.response);
     }
   };
 

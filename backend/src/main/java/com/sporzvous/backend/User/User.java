@@ -33,8 +33,7 @@ public class User {
     private String fullName;
     private String username;
     private String country;
-    @Lob
-    private byte[] image;
+    private String image;
     private int age;
     private String gender;
     private String favoriteSport;
@@ -130,10 +129,6 @@ public class User {
         this.password = password;
         this.username = username;
         this.country = country;
-    }
-
-    public String getImageAsBase64() {
-        return this.image != null ? Base64.getEncoder().encodeToString(this.image) : null;
     }
 
     public void removeTeam(Team team) {

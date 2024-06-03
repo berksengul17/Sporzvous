@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserDTO {
     private Long userId;
-    private String base64Img;
+    private String img;
     private String email;
     private String fullName;
     private String username;

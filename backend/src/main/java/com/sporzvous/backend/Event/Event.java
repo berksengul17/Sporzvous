@@ -58,11 +58,6 @@ public class Event {
     private Double latitude;
     private Double longitude;
 
-    @JsonInclude
-    public String getOrganizerImage() {
-        return organizer != null ? "data:image/jpeg;base64," + organizer.getImageAsBase64() : null;
-    }
-
     public Event(String title, String sport, String locationCity,
             String locationDistrict, Integer participants,
             Integer teamNumber, LocalDate eventDate,

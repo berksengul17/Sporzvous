@@ -181,10 +181,10 @@ public class EventService {
         } else if (Objects.equals(event.getSport(), "")) {
             throw new IllegalArgumentException("Sport cannot be empty");
 
-        } else if (Objects.equals(event.getLocationCity(), "")) {
+        } else if (event.getLocationCity() == null) {
             throw new IllegalArgumentException("LocationCity cannot be empty");
 
-        } else if (Objects.equals(event.getLocationDistrict(), "")) {
+        } else if (event.getLocationDistrict() == null) {
             throw new IllegalArgumentException("LocationDistrict cannot be empty");
 
         } else if (Objects.equals(event.getMaxParticipants(), 0) || event.getMaxParticipants() == null) {
@@ -193,13 +193,24 @@ public class EventService {
         } else if (event.getMaxParticipants() > 30) {
             throw new IllegalArgumentException("Event with this number of participants cannot created");
 
-        } else if (event.getEventDate() == null || event.getEventDate().isBefore(LocalDate.now())) {
+        }else if (event.getMaxParticipants() % 2 == 1) {
+            throw new IllegalArgumentException("Event with odd number of participants cannot created");
+
+        } else if (event.getEventDate() == null) {
+            throw new IllegalArgumentException("Date can't be empty.");
+
+        } else if (event.getEventDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Date can't be before the current date.");
 
-        } else if (event.getEventDate().equals(LocalDate.now()) && (event.getEventTime() == null || event.getEventTime().isBefore(LocalTime.now()))) {
+        }else if (event.getEventTime() == null) {
+            throw new IllegalArgumentException("Time can't be empty.");
+
+        } else if (event.getEventDate().equals(LocalDate.now()) && event.getEventTime().isBefore(LocalTime.now())) {
             throw new IllegalArgumentException("Time can't be before the current time.");
+
         } else if (event.getLatitude() == 0) {
             throw new IllegalArgumentException("Location is not chosen");
+
         } else if (event.getLongitude() == 0) {
             throw new IllegalArgumentException("Location is not chosen");
         }

@@ -1,4 +1,3 @@
-import CustomButton from "@/components/CustomButton";
 import { useUserContext } from "@/context/UserProvider";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -14,8 +13,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Pressable,
 } from "react-native";
+import { uploadToFirebase } from "../firebaseConfig";
 
 const StepThree = () => {
   const { user, updateProfile } = useUserContext();
@@ -61,14 +60,19 @@ const StepThree = () => {
     }
 
     if (!result.canceled && result.assets.length > 0) {
-      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-      setProfileImage(base64Image);
+      const { uri } = result.assets[0];
+      setProfileImage(uri);
     }
     setModalVisible(false);
   };
 
   const handleNext = async () => {
-    await updateProfile({ ...user, image: profileImage });
+    const uploadResp = await uploadToFirebase(
+      profileImage,
+      profileImage.split("/").pop()
+    );
+    console.log(uploadResp);
+    await updateProfile({ ...user, image: uploadResp.downloadUrl });
     setProfileImage(defaultImageUri); // Reset the image back to default
     router.navigate("setProfile4");
   };

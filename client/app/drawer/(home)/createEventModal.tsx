@@ -1,15 +1,18 @@
+import Rating from "@/components/Rating";
+import { useDarkMode } from "@/context/DarkModeContext";
 import { useEventContext } from "@/context/EventProvider";
 import { useUserContext } from "@/context/UserProvider";
-import { useDarkMode } from "@/context/DarkModeContext";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   Button,
   Image,
   Keyboard,
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
@@ -20,13 +23,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from "react-native-picker-select";
-import Rating from "@/components/Rating";
 import CustomButton from "../../../components/CustomButton";
-import { useTranslation } from "react-i18next";
 
 const Page = () => {
   const router = useRouter();
@@ -169,348 +170,364 @@ const Page = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView
-        style={[
-          styles.createEventContainer,
-          isDarkMode && styles.darkModeBackground,
-        ]}
-      >
-        <View style={styles.eventInformationContainer}>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("title")}
-              </Text>
-            </View>
-            <View style={styles.eventInformationInput}>
-              <TextInput
-                value={title}
-                onChangeText={setTitle}
-                placeholder={t("title")}
-                placeholderTextColor={"#6F6F6F"}
-                style={[styles.inputBox, isDarkMode && styles.darkModeInput]}
-              />
-            </View>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("sport")}
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <View style={{ flex: 1 }}>
-                <RNPickerSelect
-                  useNativeAndroidPickerStyle={false}
-                  onValueChange={(sport) => setSport(sport)}
-                  items={[
-                    { label: t("basketball"), value: "Basketball" },
-                    { label: t("football"), value: "Football" },
-                    { label: t("volleyball"), value: "Volleyball" },
-                    { label: t("tennis"), value: "Tennis" },
-                    { label: t("baseball"), value: "Baseball" },
-                    { label: t("badminton"), value: "Badminton" },
-                    { label: t("handball"), value: "Handball" },
-                    { label: t("ice_hockey"), value: "Ice Hockey" },
-                    { label: t("paintball"), value: "Paintball" },
-                  ]}
-                  placeholder={{
-                    label: t("select_sport"),
-                    value: null,
-                    color: "#9EA0A4",
-                  }}
-                  style={{
-                    inputAndroid: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                    inputIOS: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                  }}
-                />
-              </View>
-            </View>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("location")}
-              </Text>
-            </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
-                <RNPickerSelect
-                  useNativeAndroidPickerStyle={false}
-                  onValueChange={(city) => {
-                    setLocationCity(city);
-                    setSelectedCity(city);
-                    fetchVillages(city);
-                  }}
-                  items={cities}
-                  placeholder={{
-                    label: t("city"),
-                    value: null,
-                    color: "#9EA0A4",
-                  }}
-                  style={{
-                    inputAndroid: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                    inputIOS: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                  }}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <RNPickerSelect
-                  useNativeAndroidPickerStyle={false}
-                  onValueChange={setLocationVillage}
-                  items={villages}
-                  placeholder={{
-                    label: t("village"),
-                    value: null,
-                    color: "#9EA0A4",
-                  }}
-                  style={{
-                    inputAndroid: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                    inputIOS: [
-                      styles.pickerStyles,
-                      isDarkMode && styles.darkModePicker,
-                    ],
-                  }}
-                  disabled={!selectedCity}
-                />
-              </View>
-            </View>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("max_player")}
-              </Text>
-            </View>
-            <View style={styles.eventInformationInput}>
-              <TextInput
-                value={playerCapacity}
-                onChangeText={setpPlayerCapacity}
-                placeholder={t("player_capacity")}
-                placeholderTextColor={"#6F6F6F"}
-                style={[styles.inputBox, isDarkMode && styles.darkModeInput]}
-              />
-            </View>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("date")}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={showDatePicker}
-              style={[
-                styles.eventTimeInput,
-                isDarkMode && styles.darkModeInput,
-              ]}
-            >
-              <Text style={[styles.dateBox, isDarkMode && styles.darkModeText]}>
-                {date || t("choose_date")}
-              </Text>
-
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirmDate}
-                onCancel={hideDatePicker}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("time")}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={showTimePicker}
-              style={[
-                styles.eventTimeInput,
-                isDarkMode && styles.darkModeInput,
-              ]}
-            >
-              <Text style={[styles.dateBox, isDarkMode && styles.darkModeText]}>
-                {time || t("choose_time")}
-              </Text>
-              <DateTimePickerModal
-                isVisible={isTimePickerVisible}
-                mode="time"
-                onConfirm={handleConfirmTime}
-                onCancel={hideTimePicker}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.eventInformationRow}>
-            <View style={styles.eventInformationTitle}>
-              <Text
-                numberOfLines={2}
-                style={[
-                  styles.eventInformationTitleFonts,
-                  isDarkMode && styles.darkModeText,
-                ]}
-              >
-                {t("min_skill_level")}
-              </Text>
-            </View>
-            <Rating
-              customStyles={[styles.ratingStars]}
-              value={5}
-              onFinishRating={handleRatingCompleted}
-            />
-          </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            title={t("choose_location")}
-            onPress={handleChooseLocation}
-            color="green"
-          />
-          <CustomButton title={t("create")} onPress={handleAddEvent} />
-        </View>
-        <View style={styles.wave}>
-          <Image source={require("../../../assets/images/Waves.png")} />
-        </View>
-
-        {isMapVisible && (
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={isMapVisible}
-            onRequestClose={() => {
-              setIsMapVisible(!isMapVisible);
-            }}
+    <KeyboardAvoidingView>
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView
+            style={[
+              styles.createEventContainer,
+              isDarkMode && styles.darkModeBackground,
+            ]}
           >
-            <View style={styles.mapContainer}>
-              <MapView
-                style={styles.map}
-                initialRegion={{
-                  latitude: 39.9334, // Central latitude of Turkey (Ankara)
-                  longitude: 32.8597, // Central longitude of Turkey (Ankara)
-                  latitudeDelta: 10, // Adjust the delta to cover the entire country
-                  longitudeDelta: 10, // Adjust the delta to cover the entire country
-                }}
-                onPress={handleMapPress}
-              >
-                {selectedLocationLatitude !== null &&
-                  selectedLocationLongitude !== null && (
-                    <Marker
-                      coordinate={{
-                        latitude: selectedLocationLatitude,
-                        longitude: selectedLocationLongitude,
+            <View style={styles.eventInformationContainer}>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("title")}
+                  </Text>
+                </View>
+                <View style={styles.eventInformationInput}>
+                  <TextInput
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder={t("title")}
+                    placeholderTextColor={"#6F6F6F"}
+                    style={[
+                      styles.inputBox,
+                      isDarkMode && styles.darkModeInput,
+                    ]}
+                  />
+                </View>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("sport")}
+                  </Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flex: 1 }}>
+                    <RNPickerSelect
+                      useNativeAndroidPickerStyle={false}
+                      onValueChange={(sport) => setSport(sport)}
+                      items={[
+                        { label: t("basketball"), value: "Basketball" },
+                        { label: t("football"), value: "Football" },
+                        { label: t("volleyball"), value: "Volleyball" },
+                        { label: t("tennis"), value: "Tennis" },
+                        { label: t("baseball"), value: "Baseball" },
+                        { label: t("badminton"), value: "Badminton" },
+                        { label: t("handball"), value: "Handball" },
+                        { label: t("ice_hockey"), value: "Ice Hockey" },
+                        { label: t("paintball"), value: "Paintball" },
+                      ]}
+                      placeholder={{
+                        label: t("select_sport"),
+                        value: null,
+                        color: "#9EA0A4",
                       }}
-                      title={t("selected_location")}
-                      description={t("chosen_location")}
+                      style={{
+                        inputAndroid: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                        inputIOS: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                      }}
                     />
-                  )}
-              </MapView>
-              <Pressable
-                style={[styles.buttonConfirmLocation, styles.buttonClose]}
-                onPress={() => {
+                  </View>
+                </View>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("location")}
+                  </Text>
+                </View>
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <View style={{ flex: 1 }}>
+                    <RNPickerSelect
+                      useNativeAndroidPickerStyle={false}
+                      onValueChange={(city) => {
+                        setLocationCity(city);
+                        setSelectedCity(city);
+                        fetchVillages(city);
+                      }}
+                      items={cities}
+                      placeholder={{
+                        label: t("city"),
+                        value: null,
+                        color: "#9EA0A4",
+                      }}
+                      style={{
+                        inputAndroid: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                        inputIOS: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                      }}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <RNPickerSelect
+                      useNativeAndroidPickerStyle={false}
+                      onValueChange={setLocationVillage}
+                      items={villages}
+                      placeholder={{
+                        label: t("village"),
+                        value: null,
+                        color: "#9EA0A4",
+                      }}
+                      style={{
+                        inputAndroid: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                        inputIOS: [
+                          styles.pickerStyles,
+                          isDarkMode && styles.darkModePicker,
+                        ],
+                      }}
+                      disabled={!selectedCity}
+                    />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("max_player")}
+                  </Text>
+                </View>
+                <View style={styles.eventInformationInput}>
+                  <TextInput
+                    value={playerCapacity}
+                    onChangeText={setpPlayerCapacity}
+                    placeholder={t("player_capacity")}
+                    placeholderTextColor={"#6F6F6F"}
+                    style={[
+                      styles.inputBox,
+                      isDarkMode && styles.darkModeInput,
+                    ]}
+                  />
+                </View>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("date")}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={showDatePicker}
+                  style={[
+                    styles.eventTimeInput,
+                    isDarkMode && styles.darkModeInput,
+                  ]}
+                >
+                  <Text
+                    style={[styles.dateBox, isDarkMode && styles.darkModeText]}
+                  >
+                    {date || t("choose_date")}
+                  </Text>
+
+                  <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    onConfirm={handleConfirmDate}
+                    onCancel={hideDatePicker}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("time")}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={showTimePicker}
+                  style={[
+                    styles.eventTimeInput,
+                    isDarkMode && styles.darkModeInput,
+                  ]}
+                >
+                  <Text
+                    style={[styles.dateBox, isDarkMode && styles.darkModeText]}
+                  >
+                    {time || t("choose_time")}
+                  </Text>
+                  <DateTimePickerModal
+                    isVisible={isTimePickerVisible}
+                    mode="time"
+                    onConfirm={handleConfirmTime}
+                    onCancel={hideTimePicker}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.eventInformationRow}>
+                <View style={styles.eventInformationTitle}>
+                  <Text
+                    numberOfLines={2}
+                    style={[
+                      styles.eventInformationTitleFonts,
+                      isDarkMode && styles.darkModeText,
+                    ]}
+                  >
+                    {t("min_skill_level")}
+                  </Text>
+                </View>
+                <Rating
+                  customStyles={[styles.ratingStars]}
+                  value={5}
+                  onFinishRating={handleRatingCompleted}
+                />
+              </View>
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                title={t("choose_location")}
+                onPress={handleChooseLocation}
+                color="green"
+              />
+              <CustomButton title={t("create")} onPress={handleAddEvent} />
+            </View>
+            <View style={styles.wave}>
+              <Image source={require("../../../assets/images/Waves.png")} />
+            </View>
+
+            {isMapVisible && (
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={isMapVisible}
+                onRequestClose={() => {
                   setIsMapVisible(!isMapVisible);
                 }}
               >
-                <Text style={styles.textStyle}>{t("confirm_location")}</Text>
-              </Pressable>
-            </View>
-          </Modal>
-        )}
+                <View style={styles.mapContainer}>
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
+                      latitude: 39.9334, // Central latitude of Turkey (Ankara)
+                      longitude: 32.8597, // Central longitude of Turkey (Ankara)
+                      latitudeDelta: 10, // Adjust the delta to cover the entire country
+                      longitudeDelta: 10, // Adjust the delta to cover the entire country
+                    }}
+                    onPress={handleMapPress}
+                  >
+                    {selectedLocationLatitude !== null &&
+                      selectedLocationLongitude !== null && (
+                        <Marker
+                          coordinate={{
+                            latitude: selectedLocationLatitude,
+                            longitude: selectedLocationLongitude,
+                          }}
+                          title={t("selected_location")}
+                          description={t("chosen_location")}
+                        />
+                      )}
+                  </MapView>
+                  <Pressable
+                    style={[styles.buttonConfirmLocation, styles.buttonClose]}
+                    onPress={() => {
+                      setIsMapVisible(!isMapVisible);
+                    }}
+                  >
+                    <Text style={styles.textStyle}>
+                      {t("confirm_location")}
+                    </Text>
+                  </Pressable>
+                </View>
+              </Modal>
+            )}
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.overlay} />
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{errorAddEvent}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>{t("hide_modal")}</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.overlay} />
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>{errorAddEvent}</Text>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  >
+                    <Text style={styles.textStyle}>{t("hide_modal")}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={successModalVisible}
-          onRequestClose={() => {
-            setSuccessModalVisible(false);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.overlay} />
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{t("create_success")}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => {
-                  setSuccessModalVisible(false);
-                  router.back();
-                }}
-              >
-                <Text style={styles.textStyle}>OK</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={successModalVisible}
+              onRequestClose={() => {
+                setSuccessModalVisible(false);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.overlay} />
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>{t("create_success")}</Text>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => {
+                      setSuccessModalVisible(false);
+                      router.back();
+                    }}
+                  >
+                    <Text style={styles.textStyle}>OK</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

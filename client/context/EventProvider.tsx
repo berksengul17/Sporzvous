@@ -25,7 +25,6 @@ export type Event = {
   locationIndex: string;
   isEventOver: number;
   organizer: User;
-  organizerImage?: string;
   latitude: number;
   longitude: number;
   teams: Team[];

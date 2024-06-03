@@ -55,6 +55,17 @@ public class RatingController {
         }
     }
 
+    @GetMapping("/get-all-comments/{userId}")
+    public ResponseEntity<?> getComments(@PathVariable Long userId ) {
+        try {
+            List<Rating> ratings = ratingService.getComments(userId);
+            return ResponseEntity.ok(ratings);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/clearFilters")
     public ResponseEntity<?> clearFilters(HttpSession session) {
         session.removeAttribute("filterState");

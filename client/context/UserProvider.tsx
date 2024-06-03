@@ -15,6 +15,7 @@ export type User = {
   username: string;
   fullName: string;
   age: number;
+  eventCount: number;
   gender: string;
   favoriteSport: string;
   receivedFriendRequests: FriendRequest[];
@@ -83,6 +84,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     username: "",
     fullName: "",
     age: 0,
+    eventCount: 0,
     gender: "",
     favoriteSport: "",
     receivedFriendRequests: [],
@@ -106,6 +108,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         username: response.data.username,
         fullName: response.data.fullName,
         age: response.data.age,
+        eventCount: response.data.eventCount,
         gender: response.data.gender,
         favoriteSport: response.data.favoriteSport,
         receivedFriendRequests: response.data.receivedFriendRequests,
@@ -178,11 +181,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       const {
         userId,
-        base64Img,
+        img,
         email: userEmail,
         username,
         fullName,
         age,
+        eventCount,
         gender,
         favoriteSport,
         receivedFriendRequests,
@@ -191,11 +195,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser({
         userId,
-        image: `data:image/jpeg;base64,${base64Img}`, // add the base64 prefix
+        image: img, // add the base64 prefix
         email: userEmail,
         username,
         fullName,
         age,
+        eventCount,
         gender,
         favoriteSport,
         receivedFriendRequests,
@@ -313,7 +318,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         username: newUserInfo.username,
         fullName: newUserInfo.fullName,
         age: newUserInfo.age,
-        image: newUserInfo.image?.split(",")[1], // only get the base64 string
+        image: newUserInfo.image, // only get the base64 string
         gender: newUserInfo.gender,
         favoriteSport: newUserInfo.favoriteSport,
         ratings: newUserInfo.ratings,
@@ -345,20 +350,41 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const leaveEvent = async (eventId: number, userId: number) => {
     try {
+      console.log("leavingEvent");
       await axios.delete(`${API_URL}/${userId}/leave/${eventId}`);
-    } catch (err) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      if (axios.isAxiosError(err)) {
-        // err is an AxiosError here
-        if (err.response && err.response.data && err.response.data.error) {
-          errorMessage = err.response.data.error; // Use the error message from the backend
-        } else if (err instanceof Error) {
-          // Handle other types of errors (non-Axios errors)
-          errorMessage = err.response?.data;
-        }
+    } catch (error: any) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
       }
-      throw new Error(errorMessage); // Throw the error so it can be caught in the component
+      console.log(error.config);
     }
+
+    // catch (err) {
+
+    //   let errorMessage = "An unexpected error occurred. Please try again.";
+    //   if (axios.isAxiosError(err)) {
+    //     // err is an AxiosError here
+    //     if (err.response && err.response.data && err.response.data.error) {
+    //       errorMessage = err.response.data.error; // Use the error message from the backend
+    //     } else if (err instanceof Error) {
+    //       // Handle other types of errors (non-Axios errors)
+    //       errorMessage = err.response?.data;
+    //     }
+    //   }
+    //   throw new Error(errorMessage); // Throw the error so it can be caught in the component
+    // }
   };
 
   const addComment = async (
@@ -410,6 +436,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       username: "",
       fullName: "",
       age: 0,
+      eventCount: 0,
       gender: "",
       favoriteSport: "",
       receivedFriendRequests: [],

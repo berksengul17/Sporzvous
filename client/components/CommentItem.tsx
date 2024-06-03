@@ -1,14 +1,16 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { Comment } from "@/context/CommentProvider";
 import {
   FontAwesome,
-  MaterialCommunityIcons,
   FontAwesome5,
   FontAwesome6,
+  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const normalizeTypeName = (type) => type.replace(/\s+/g, "").toLowerCase();
+const normalizeTypeName = (type: string) =>
+  type.replace(/\s+/g, "").toLowerCase();
 
 const iconMapping = {
   organization: { name: "briefcase", library: FontAwesome },
@@ -22,20 +24,20 @@ const iconMapping = {
   fitness: { name: "fitness-center", library: MaterialIcons },
 };
 
-const getIcon = (type) => {
-  const normalizedType = normalizeTypeName(type);
-  const { name, library } = iconMapping[normalizedType] || {
-    name: "question-circle",
-    library: FontAwesome,
-  };
-  return React.createElement(library, {
-    name: name,
-    size: 24,
-    color: "#FF5C00",
-  });
-};
+// const getIcon = (type: string) => {
+//   const normalizedType = normalizeTypeName(type);
+//   const { name, library } = iconMapping[normalizedType] || {
+//     name: "question-circle",
+//     library: FontAwesome,
+//   };
+//   return React.createElement(library, {
+//     name: name,
+//     size: 24,
+//     color: "#FF5C00",
+//   });
+// };
 
-const CommentItem = ({ comment }) => (
+const CommentItem = ({ comment }: { comment: Comment }) => (
   <View style={styles.commentContainer}>
     <TouchableOpacity
       style={styles.picAndName}
@@ -43,21 +45,23 @@ const CommentItem = ({ comment }) => (
     >
       <Image
         source={{
-          uri: comment.profilePicUrl || "https://via.placeholder.com/48",
+          uri: "https://via.placeholder.com/48", // comment.profilePicUrl ||
         }} // Placeholder URL for profile picture
         style={styles.profilePic}
       />
-      <Text style={styles.commentor}>{comment.commentor}</Text>
+      <Text style={styles.commentor}>{comment.commentor.fullName}</Text>
     </TouchableOpacity>
     <View style={styles.commentDetails}>
       <View style={styles.commentHeader}>
-        {getIcon(comment.type)}
         <Text style={styles.typeRating}>
-          {comment.type}: {comment.rating}
+          {comment.sportField.slice(0, 1).toUpperCase() +
+            comment.sportField.slice(1).toLowerCase()}
+          {comment.type === "ORGANIZATION" ? " Organization" : ""} :{" "}
+          {comment.rating}
         </Text>
       </View>
       <Text style={styles.commentPreview}>{comment.commentPreview}</Text>
-      <Text style={styles.commentInfo}>{comment.readableDate}</Text>
+      <Text style={styles.commentInfo}>{comment.commentDate}</Text>
     </View>
   </View>
 );
