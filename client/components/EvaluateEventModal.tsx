@@ -57,7 +57,9 @@ const EvaluateEventModal = ({
             <TextInput
               keyboardType="numeric"
               value={teamAScore}
-              onChangeText={setTeamAScore}
+              onChangeText={(text) =>
+                text ? setTeamAScore(text) : setTeamAScore("0")
+              }
               style={styles.evaluateInputs}
               placeholder="Team A Score"
               placeholderTextColor="#6F6F6F"
@@ -65,7 +67,9 @@ const EvaluateEventModal = ({
             <TextInput
               keyboardType="numeric"
               value={teamBScore}
-              onChangeText={setTeamBScore}
+              onChangeText={(text) =>
+                text ? setTeamBScore(text) : setTeamBScore("0")
+              }
               style={styles.evaluateInputs}
               placeholder="Team B Score"
               placeholderTextColor="#6F6F6F"

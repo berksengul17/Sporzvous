@@ -58,7 +58,7 @@ const ChatScreen: React.FC = () => {
     console.log("Initializing WebSocket connection...");
     stompClient = new Client();
     stompClient.configure({
-      brokerURL: "ws://192.168.1.43:8082/ws",
+      brokerURL: "ws://192.168.1.106:8082/ws",
       reconnectDelay: 5000,
       onConnect: onConnected,
       onStompError: onStompError,
@@ -345,15 +345,6 @@ const ChatScreen: React.FC = () => {
                 ]}
               >
                 {formatTime(item.timestamp)}
-              </Text>
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontSize: 10,
-                  color: "#fff",
-                }}
-              >
-                {item.readStatus.toString()}
               </Text>
             </View>
           );
