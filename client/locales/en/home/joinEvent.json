@@ -12,7 +12,8 @@
       "date": "Date",
       "time": "Time",
       "minSkillLevel": "Minimum Skill Level",
-      "chooseLocation": "Choose Location",
-      "join": "Join"
+      "seeLocation": "See Location",
+      "join": "Join",
+      "close": "Close"
   }
   

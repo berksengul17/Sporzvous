@@ -12,6 +12,7 @@
     "date": "Tarih",
     "time": "Saat",
     "minSkillLevel": "Minimum Beceri Seviyesi",
-    "chooseLocation": "Konum Seç",
-    "join": "Katıl"
+    "seeLocation": "Konumu Gör",
+    "join": "Katıl",
+    "close": "Kapat"
   }

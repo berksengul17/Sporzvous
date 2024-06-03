@@ -1,4 +1,7 @@
-import { Event } from "@/context/EventProvider";
+import { useEventContext } from "@/context/EventProvider";
+import { useUserContext } from "@/context/UserProvider";
+import { useDarkMode } from "@/context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -14,12 +17,13 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import Modal from "react-native-modal";
 import { AirbnbRating } from "react-native-ratings";
-import { useUserContext } from "../../../context/UserProvider";
 
 export default function JoinEventScreen() {
   const router = useRouter();
   const { event, isJoined } = useGlobalSearchParams();
   const { joinEvent } = useUserContext();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation("joinEvent");
 
   const parsedEvent: Event = JSON.parse(event as string);
   const [isMapVisible, setIsMapVisible] = useState<boolean>(false);
@@ -30,55 +34,126 @@ export default function JoinEventScreen() {
     try {
       const response = await joinEvent(parsedEvent);
       if (response.status === 200) {
-        setModalMessage("You have successfully joined the event.");
+        setModalMessage(t("joinSuccess"));
       } else {
-        setModalMessage("Failed to join the event.");
+        setModalMessage(t("joinFail"));
       }
       setModalVisible(true);
     } catch (error) {
-      setModalMessage("An error occurred while trying to join the event.");
+      setModalMessage(t("joinError"));
       setModalVisible(true);
       console.error(error);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? "#333" : "white" },
+      ]}
+    >
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Organizer</Text>
-          <Text style={styles.value}>{parsedEvent.organizer.fullName}</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("organizer")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
+            {parsedEvent.organizer.fullName}
+          </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Sport</Text>
-          <Text style={styles.value}>{parsedEvent.sport}</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("sport")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
+            {parsedEvent.sport}
+          </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Location</Text>
-          <Text style={styles.value}>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("location")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
             {parsedEvent.locationCity}, {parsedEvent.locationDistrict}
           </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>People Count</Text>
-          <Text style={styles.value}>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("peopleCount")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
             {parsedEvent.participants}/{parsedEvent.maxParticipants}
           </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Team Count</Text>
-          <Text style={styles.value}>{parsedEvent.teamNumber}</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("teamCount")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
+            {parsedEvent.teamNumber}
+          </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Date</Text>
-          <Text style={styles.value}>{parsedEvent.eventDate}</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("date")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
+            {parsedEvent.eventDate}
+          </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Time</Text>
-          <Text style={styles.value}>{parsedEvent.eventTime}</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("time")}
+          </Text>
+          <Text style={[styles.value, isDarkMode && styles.darkModeText]}>
+            {parsedEvent.eventTime}
+          </Text>
         </View>
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Minimum Skill Level</Text>
+        <View
+          style={[
+            styles.detailContainer,
+            { backgroundColor: isDarkMode ? "#222" : "#f8f9fa" },
+          ]}
+        >
+          <Text style={[styles.label, isDarkMode && styles.darkModeText]}>
+            {t("minSkillLevel")}
+          </Text>
           <AirbnbRating
             isDisabled={true}
             count={5}
@@ -95,7 +170,7 @@ export default function JoinEventScreen() {
             style={styles.locationButton}
             onPress={() => setIsMapVisible(true)}
           >
-            <Text style={styles.locationButtonText}>See Location</Text>
+            <Text style={styles.locationButtonText}>{t("seeLocation")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -105,7 +180,7 @@ export default function JoinEventScreen() {
             onPress={handleJoin}
             disabled={isJoined === "true"}
           >
-            <Text style={styles.joinButtonText}>Join</Text>
+            <Text style={styles.joinButtonText}>{t("join")}</Text>
           </TouchableOpacity>
         </View>
         <Modal
@@ -116,8 +191,8 @@ export default function JoinEventScreen() {
             <MapView
               style={styles.map}
               initialRegion={{
-                latitude: parsedEvent.latitude, // Event latitude
-                longitude: parsedEvent.longitude, // Event longitude
+                latitude: parsedEvent.latitude,
+                longitude: parsedEvent.longitude,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
               }}
@@ -131,7 +206,7 @@ export default function JoinEventScreen() {
               />
             </MapView>
             <Button
-              title="Close"
+              title={t("close")}
               onPress={() => setIsMapVisible(false)}
               color="red"
             />
@@ -143,13 +218,25 @@ export default function JoinEventScreen() {
           onBackdropPress={() => setModalVisible(false)}
         >
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{modalMessage}</Text>
+            <View
+              style={[
+                styles.modalView,
+                { backgroundColor: isDarkMode ? "#333" : "white" },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.modalText,
+                  { color: isDarkMode ? "#fff" : "#333" },
+                ]}
+              >
+                {modalMessage}
+              </Text>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.textStyle}>Close</Text>
+                <Text style={styles.textStyle}>{t("close")}</Text>
               </Pressable>
             </View>
           </View>
@@ -173,7 +260,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     padding: 10,
-    backgroundColor: "#f8f9fa",
     borderRadius: 10,
   },
   label: {
@@ -187,6 +273,9 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 2,
     textAlign: "right",
+  },
+  darkModeText: {
+    color: "#fff",
   },
   starContainer: {
     marginTop: 10,

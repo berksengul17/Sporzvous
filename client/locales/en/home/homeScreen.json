@@ -13,7 +13,8 @@
 
       "loading": "Loading...",
       "upcomingEvents": "Upcoming {{sport}} Events",
-      "search": "Search"
+      "search": "Search",
+      "organizator": "Organizator"
 
   }
   

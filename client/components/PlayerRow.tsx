@@ -1,13 +1,18 @@
 import { useDarkMode } from "@/context/DarkModeContext";
 import { Event } from "@/context/EventProvider";
 import { User } from "@/context/UserProvider";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Button from "./CustomButton";
 
 type PlayerRowProps = {
-  player: User;
+  player: User | null; // Adjusted to accept null for joinable places
   event: Event;
   isSelf: boolean;
   isOrganizer: boolean;
@@ -29,7 +34,7 @@ const PlayerRow = ({
 }: PlayerRowProps) => {
   const [isLeaveEventPopupVisible, setLeaveEventPopupVisible] = useState(false);
   const [isKickedModalVisible, setKickedModalVisible] = useState(false);
-  const isPlayerOrganizer = event.organizer.userId === player.userId;
+  const isPlayerOrganizer = player && event.organizer.userId === player.userId;
   const isEventStarted = event.isEventOver !== 0;
   const isEventOver = event.isEventOver === 2;
   const { isDarkMode } = useDarkMode();
@@ -42,36 +47,61 @@ const PlayerRow = ({
 
   return (
     <>
-      <View style={styles.playerRow}>
-        <TouchableOpacity
-          style={styles.playerName}
-          onPress={() => handlePlayerPress(player)}
-        >
-          <Text
-            style={[
-              { fontSize: 20, color: "#333" },
-              isDarkMode && { color: "#fff" },
-            ]}
-          >
-            {player.fullName}
-          </Text>
-        </TouchableOpacity>
-        {isOrganizer && !isPlayerOrganizer && !isEventStarted && (
-          <TouchableOpacity
-            style={styles.deletePlayer}
-            onPress={() => setLeaveEventPopupVisible(true)}
-          >
-            <MaterialIcons name="delete-outline" size={29} color="#FF3647" />
-          </TouchableOpacity>
-        )}
-        {isEventOver && !isSelf && (
-          <TouchableOpacity
-            disabled={commentDisabled}
-            style={[styles.ratePlayer, { opacity: commentDisabled ? 0.3 : 1 }]}
-            onPress={() => handleRatePress(player)}
-          >
-            <AntDesign name="staro" size={24} color="black" />
-          </TouchableOpacity>
+      <View style={[styles.playerRow, isDarkMode && styles.darkPlayerRow]}>
+        {player ? (
+          <>
+            <TouchableOpacity
+              style={styles.playerInfo}
+              onPress={() => handlePlayerPress(player)}
+            >
+              <Text
+                style={[
+                  styles.playerName,
+                  { color: isDarkMode ? "#fff" : "#333" },
+                ]}
+              >
+                {player.fullName}
+              </Text>
+              {isPlayerOrganizer && (
+                <MaterialCommunityIcons
+                  name="crown"
+                  size={20}
+                  color={"#FF5C00"}
+                  style={{ marginHorizontal: 4 }}
+                />
+              )}
+            </TouchableOpacity>
+            <View style={styles.iconsContainer}>
+              {isOrganizer && !isPlayerOrganizer && !isEventStarted && (
+                <TouchableOpacity
+                  style={styles.deletePlayer}
+                  onPress={() => setLeaveEventPopupVisible(true)}
+                >
+                  <MaterialIcons
+                    name="delete-outline"
+                    size={20}
+                    color="#FF3647"
+                  />
+                </TouchableOpacity>
+              )}
+              {isEventOver && !isSelf && (
+                <TouchableOpacity
+                  disabled={commentDisabled}
+                  style={[
+                    styles.ratePlayer,
+                    { opacity: commentDisabled ? 0.3 : 1 },
+                  ]}
+                  onPress={() => handleRatePress(player)}
+                >
+                  <AntDesign name="staro" size={20} color="black" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </>
+        ) : (
+          <View style={styles.joinablePlace}>
+            <Ionicons name="person-circle-outline" size={20} color="#FF5C00" />
+          </View>
         )}
       </View>
       <Modal
@@ -83,7 +113,7 @@ const PlayerRow = ({
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
-              Are you sure you want to kick {player.username}?
+              Are you sure you want to kick {player?.username}?
             </Text>
             <View style={styles.buttonContainer}>
               <Button
@@ -103,7 +133,7 @@ const PlayerRow = ({
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>{player.username} kicked</Text>
+            <Text style={styles.modalText}>{player?.username} kicked</Text>
             <Button title="OK" onPress={() => setKickedModalVisible(false)} />
           </View>
         </View>
@@ -116,20 +146,46 @@ export default PlayerRow;
 
 const styles = StyleSheet.create({
   playerRow: {
-    flex: 1,
     flexDirection: "row",
-    margin: 2,
-    padding: 5,
-    alignContent: "center",
+    alignItems: "center",
+    margin: 5,
+    padding: 10,
+    backgroundColor: "#eaeaea",
+    borderRadius: 10,
+  },
+  darkPlayerRow: {
+    backgroundColor: "#222",
+  },
+  playerInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "space-between",
   },
   playerName: {
-    flex: 1,
+    fontSize: 20,
+    marginRight: 10,
+  },
+  iconsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   ratePlayer: {
     marginHorizontal: 4,
   },
   deletePlayer: {
     marginHorizontal: 4,
+  },
+  joinablePlace: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  joinableText: {
+    fontSize: 20,
+    color: "green",
+    marginRight: 10,
   },
   centeredView: {
     flex: 1,

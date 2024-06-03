@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
     elevation: 15,
     width: "80%", // Make the container width smaller
     height: "52%", // Limit the container height
-    justifyContent: "center", // Center the content vertically within the container
     position: "relative",
   },
   welcomeText: {

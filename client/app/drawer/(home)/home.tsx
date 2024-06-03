@@ -19,6 +19,7 @@ import {
 const EventItem = ({ event, user }: { event: Event; user: User }) => {
   const defaultImage = require("../../../assets/images/default-profile-photo.jpg");
   const { t } = useTranslation("homeScreen");
+  const { isDarkMode } = useDarkMode();
   const isJoined = event.teams
     ? event.teams.some((team: Team) =>
         team.users.some((teamMember: User) => teamMember.userId === user.userId)
@@ -45,9 +46,14 @@ const EventItem = ({ event, user }: { event: Event; user: User }) => {
         style={styles.eventImage}
       />
       <View style={styles.eventInfo}>
-        <Text style={styles.username}>{event.organizer.fullName}</Text>
-        <Text numberOfLines={1} style={styles.eventName}>
+        <Text
+          numberOfLines={1}
+          style={[styles.eventName, isDarkMode && { color: "#fff" }]}
+        >
           {event.title}
+        </Text>
+        <Text style={[styles.username, isDarkMode && { color: "lightgray" }]}>
+          {t("organizator")}: {event.organizer.fullName}
         </Text>
       </View>
       <View style={styles.eventInfo}>
@@ -228,6 +234,7 @@ const styles = StyleSheet.create({
   },
   eventInfo: {
     flex: 1,
+    justifyContent: "space-between",
   },
   eventImage: {
     width: 50,
@@ -236,10 +243,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   username: {
-    fontWeight: "bold",
+    color: "#6F6F6F",
   },
   eventName: {
-    color: "#6F6F6F",
+    fontWeight: "bold",
   },
   sport: {
     color: "#FF5C00",

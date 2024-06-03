@@ -55,8 +55,8 @@ const MainEventScreen = () => {
   const [eventData, setEventData] = useState<Event>(
     JSON.parse(strEvent as string)
   );
-  const [teamA, setTeamA] = useState<User[]>();
-  const [teamB, setTeamB] = useState<User[]>();
+  const [teamA, setTeamA] = useState<User[]>([]);
+  const [teamB, setTeamB] = useState<User[]>([]);
   const [showRatePopup, setShowRatePopup] = useState(false);
   const [showOrganizerPopup, setShowOrganizerPopup] = useState(false);
   const [showEvaluateEventPopup, setShowEvaluateEventPopup] = useState(false);
@@ -174,6 +174,35 @@ const MainEventScreen = () => {
     setIsMapVisible(true);
   };
 
+  const renderPlayerRows = (team: User[], teamSize: number) => {
+    const playerRows = [];
+
+    for (let i = 0; i < teamSize; i++) {
+      playerRows.push(
+        <PlayerRow
+          key={i}
+          player={team[i] || null}
+          event={eventData}
+          isSelf={team[i] && team[i].userId === user.userId}
+          isOrganizer={user.userId === eventData.organizer.userId}
+          commentDisabled={
+            team[i] ? ratingReceiverIds.includes(team[i].userId) : false
+          }
+          handleKickPlayer={() =>
+            handleLeaveEvent(
+              team[i].userId,
+              `You have successfully kicked ${team[i].username}.`
+            )
+          }
+          handlePlayerPress={handlePlayerPress}
+          handleRatePress={handleRatePress}
+        />
+      );
+    }
+
+    return playerRows;
+  };
+
   return (
     <View style={[styles.container, isDarkMode && styles.darkModeBackground]}>
       <View style={styles.eventInfoContainer}>
@@ -249,50 +278,12 @@ const MainEventScreen = () => {
         </Text>
       </View>
       <View style={styles.playersContainer}>
-        <FlatList
-          data={teamA}
-          renderItem={({ item }) => (
-            <PlayerRow
-              player={item}
-              event={eventData}
-              isSelf={item.userId === user.userId}
-              isOrganizer={user.userId === eventData.organizer.userId}
-              commentDisabled={ratingReceiverIds.includes(item.userId)}
-              handleKickPlayer={() =>
-                handleLeaveEvent(
-                  item.userId,
-                  `You have successfully kicked ${item.username}.`
-                )
-              }
-              handlePlayerPress={handlePlayerPress}
-              handleRatePress={handleRatePress}
-            />
-          )}
-          keyExtractor={(item) => item.userId.toString()}
-          style={{ width: "100%" }}
-        />
-        <FlatList
-          data={teamB}
-          renderItem={({ item }) => (
-            <PlayerRow
-              player={item}
-              event={eventData}
-              isSelf={item.userId === user.userId}
-              isOrganizer={user.userId === eventData.organizer.userId}
-              commentDisabled={ratingReceiverIds.includes(item.userId)}
-              handleKickPlayer={() =>
-                handleLeaveEvent(
-                  item.userId,
-                  `You have successfully kicked ${item.username}.`
-                )
-              }
-              handlePlayerPress={handlePlayerPress}
-              handleRatePress={handleRatePress}
-            />
-          )}
-          keyExtractor={(item) => item.userId.toString()}
-          style={{ width: "100%" }}
-        />
+        <View style={{ flex: 1, borderRightWidth: 1 }}>
+          {renderPlayerRows(teamA, eventData.maxParticipants / 2)}
+        </View>
+        <View style={{ flex: 1, borderLeftWidth: 1 }}>
+          {renderPlayerRows(teamB, eventData.maxParticipants / 2)}
+        </View>
       </View>
       <View style={styles.buttonContainer}>
         {eventData.organizer.userId !== user.userId &&
@@ -552,7 +543,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignSelf: "center",
     paddingBottom: 10,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomColor: "grey",
     width: "95%",
   },

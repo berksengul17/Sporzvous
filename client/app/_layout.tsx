@@ -13,6 +13,7 @@ import * as encoding from "text-encoding";
 import { WebSocket } from "ws";
 import { TextDecoder, TextEncoder } from "text-encoding";
 import { DarkModeProvider } from "@/context/DarkModeContext";
+import CustomStatusBar from "@/components/CustomStatusBar";
 
 // Example usage
 const decoder = new TextDecoder("utf-8");

@@ -13,6 +13,7 @@
 
       "loading": "Yükleniyor...",
       "upcomingEvents": "Yaklaşan {{sport}} Etkinlikleri",
-      "search": "Ara"
+      "search": "Ara",
+      "organizator": "Organizatör"
   }
   
